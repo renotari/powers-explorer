@@ -59,14 +59,14 @@ export class ScaleCalculator {
   }
 
   /**
-   * Calculate object size proportional to displayed distance using logarithmic scaling
+   * Calculate object size proportional to displayed distance
    *
-   * CRITICAL: Uses same logarithmic scale as realToScreen() for consistency
-   * This ensures objects appear at their true proportional size relative to distance
+   * CRITICAL: Distance uses logarithmic scaling, but object size relative to
+   * that scaled distance uses LINEAR proportion to maintain dimensional accuracy
    *
-   * Example: Earth-Sun distance at 800px screen width
-   * - Sun diameter: 1.39B meters → ~7.4px
-   * - Earth diameter: 12.7M meters → ~0.07px (floor to 1px)
+   * Example: Earth-Sun distance at 896px screen width (70% of 1280px)
+   * - Sun diameter: 1.39B meters → 1.39B/150B × 896 = ~8.3px
+   * - Earth diameter: 12.7M meters → 12.7M/150B × 896 = ~0.076px (floor to 1px)
    *
    * @param {number} realDiameter - Object diameter in meters
    * @param {number} realDistance - Distance being displayed in meters
@@ -77,15 +77,17 @@ export class ScaleCalculator {
     // Guard against invalid inputs
     if (realDistance <= 0 || realDiameter <= 0) return 1;
 
-    // Use same logarithmic transformation as distance scaling
-    const logDistance = Math.log1p(realDistance);
-    const logDiameter = Math.log1p(realDiameter);
+    // Calculate screen distance using logarithmic scaling
+    const screenDistance = ScaleCalculator.realToScreen(
+      realDistance,
+      realDistance,
+      screenWidth * 0.7
+    );
 
-    // Calculate proportion ratio
-    const ratio = logDiameter / logDistance;
-
-    // Apply to screen space (70% of width, same as DistanceAnimator)
-    const screenSize = ratio * screenWidth * 0.7;
+    // Object size is LINEAR proportion of screen distance
+    // This preserves true dimensional relationships
+    const linearRatio = realDiameter / realDistance;
+    const screenSize = linearRatio * screenDistance;
 
     // Floor at 1px minimum (no upper clamp for proportional accuracy)
     return Math.max(1, screenSize);
