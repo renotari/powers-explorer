@@ -1,0 +1,20 @@
+{
+  "speedOfLight": {
+    "value": 299792458,
+    "unit": "m/s",
+    "displayName": "Speed of Light in Vacuum",
+    "symbol": "c",
+    "precision": "exact",
+    "source": "NIST CODATA 2018",
+    "description": "The speed at which light and all electromagnetic radiation travels in a vacuum"
+  },
+  "planckLength": {
+    "value": 1.616255e-35,
+    "unit": "m",
+    "displayName": "Planck Length",
+    "symbol": "lₚ",
+    "precision": "±0.000018e-35",
+    "source": "NIST CODATA 2018",
+    "description": "The smallest meaningful length in physics, below which quantum effects dominate"
+  }
+}

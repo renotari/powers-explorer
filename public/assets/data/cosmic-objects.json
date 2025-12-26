@@ -1,0 +1,79 @@
+{
+  "objects": [
+    {
+      "id": "earth",
+      "name": "Earth",
+      "category": "terrestrial",
+      "diameter": 12742000,
+      "diameterUnit": "m",
+      "mass": 5.972e24,
+      "massUnit": "kg",
+      "scaleLevel": 7,
+      "description": "Our home planet, the third planet from the Sun and the only known celestial body to harbor life",
+      "color": "#4A90E2",
+      "educationalFacts": [
+        "Earth is the only known planet with liquid water on its surface",
+        "70% of Earth's surface is covered by oceans",
+        "Earth's atmosphere protects us from harmful solar radiation"
+      ],
+      "sources": ["NASA Planetary Fact Sheet"]
+    },
+    {
+      "id": "moon",
+      "name": "The Moon",
+      "category": "terrestrial",
+      "diameter": 3474800,
+      "diameterUnit": "m",
+      "mass": 7.342e22,
+      "massUnit": "kg",
+      "scaleLevel": 6,
+      "description": "Earth's only natural satellite, the fifth-largest moon in the Solar System",
+      "color": "#C0C0C0",
+      "educationalFacts": [
+        "The Moon's gravity causes Earth's ocean tides",
+        "The same side of the Moon always faces Earth",
+        "The Moon is slowly drifting away from Earth at about 3.8 cm per year"
+      ],
+      "sources": ["NASA Moon Fact Sheet"]
+    },
+    {
+      "id": "sun",
+      "name": "The Sun",
+      "category": "star",
+      "diameter": 1392700000,
+      "diameterUnit": "m",
+      "mass": 1.989e30,
+      "massUnit": "kg",
+      "scaleLevel": 9,
+      "description": "Our solar system's star, containing 99.86% of the system's mass",
+      "color": "#FDB813",
+      "educationalFacts": [
+        "The Sun is approximately 4.6 billion years old",
+        "Light from the Sun takes about 8 minutes to reach Earth",
+        "The Sun's core temperature is about 15 million degrees Celsius",
+        "The Sun converts 4 million tons of matter into energy every second"
+      ],
+      "sources": ["NASA Solar System Exploration", "International Astronomical Union"]
+    }
+  ],
+  "distances": [
+    {
+      "from": "earth",
+      "to": "moon",
+      "distance": 384400000,
+      "unit": "m",
+      "lightTravelTime": 1.282,
+      "lightTravelTimeUnit": "s",
+      "description": "Average distance from Earth to the Moon"
+    },
+    {
+      "from": "earth",
+      "to": "sun",
+      "distance": 149600000000,
+      "unit": "m",
+      "lightTravelTime": 499.0,
+      "lightTravelTimeUnit": "s",
+      "description": "Average distance from Earth to the Sun (1 Astronomical Unit)"
+    }
+  ]
+}
