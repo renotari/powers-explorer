@@ -156,11 +156,14 @@ export class CosmicComparisonScene extends Phaser.Scene {
     this.distanceAnimator = new DistanceAnimator(this);
     this.distanceAnimator.on('separationComplete', this.onDistanceComplete, this);
 
-    // Animate separation
+    // Animate separation with proportional sizing
+    // Pass object data for size calculation and overlay creation
     this.distanceAnimator.animateSeparation(
       sprites.obj1Sprite,
       sprites.obj2Sprite,
-      distanceData.distance
+      distanceData.distance,
+      this.scaleDisplay.obj1Data,  // Object 1 data (diameter, color, name)
+      this.scaleDisplay.obj2Data   // Object 2 data (diameter, color, name)
     );
   }
 

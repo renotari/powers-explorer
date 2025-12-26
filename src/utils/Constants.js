@@ -35,3 +35,12 @@ export const SCALE_DISPLAY = {
   MIN_SIZE: 10,        // Minimum visible size in pixels
   MAX_SCREEN_RATIO: 0.4 // Maximum size as fraction of screen width (40%)
 };
+
+// Proportional sizing settings for distance display
+export const PROPORTIONAL_SIZING = {
+  MIN_SIZE: 1,              // Absolute minimum size in pixels
+  OVERLAY_THRESHOLD: 5,     // Show overlay if object < 5px
+  OVERLAY_SIZE: 60,         // Fixed display size for overlay objects (pixels)
+  OVERLAY_OFFSET_Y: 120,    // Vertical distance above actual object (pixels)
+  CONNECTOR_COLOR: 0xaaaaaa // Arrow connector color (gray)
+};

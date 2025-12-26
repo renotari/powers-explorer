@@ -11,7 +11,8 @@
 
 import { ComponentBase } from '@/components/ComponentBase.js';
 import { ScaleCalculator } from '@/utils/ScaleCalculator.js';
-import { ANIMATION_DURATION, COLORS } from '@/utils/Constants.js';
+import { ANIMATION_DURATION, COLORS, PROPORTIONAL_SIZING } from '@/utils/Constants.js';
+import { ObjectOverlay } from './ObjectOverlay.js';
 
 export class DistanceAnimator extends ComponentBase {
   /**
@@ -25,18 +26,25 @@ export class DistanceAnimator extends ComponentBase {
 
     this.connectionLine = null;
     this.distanceText = null;
+    this.overlay1 = null;  // Overlay for object 1 (if needed)
+    this.overlay2 = null;  // Overlay for object 2 (if needed)
+    this.obj1Size = null;  // Calculated proportional size for object 1
+    this.obj2Size = null;  // Calculated proportional size for object 2
   }
 
   /**
    * Animate separation of two objects
    *
    * CRITICAL: Uses logarithmic scaling via ScaleCalculator.realToScreen()
+   * NEW: Also resizes objects proportionally to distance
    *
    * @param {Phaser.GameObjects.Sprite} obj1Sprite - First object sprite
    * @param {Phaser.GameObjects.Sprite} obj2Sprite - Second object sprite
    * @param {number} realDistance - Real distance in meters
+   * @param {Object} obj1Data - First object data (diameter, color, name)
+   * @param {Object} obj2Data - Second object data (diameter, color, name)
    */
-  animateSeparation(obj1Sprite, obj2Sprite, realDistance) {
+  animateSeparation(obj1Sprite, obj2Sprite, realDistance, obj1Data, obj2Data) {
     console.log(`[DistanceAnimator] Animating separation: ${realDistance} meters`);
 
     const screenWidth = this.scene.cameras.main.width;
@@ -51,6 +59,20 @@ export class DistanceAnimator extends ComponentBase {
     );
 
     console.log(`[DistanceAnimator] Screen distance: ${screenDistance.toFixed(2)}px`);
+
+    // Calculate proportional sizes for objects
+    this.obj1Size = ScaleCalculator.calculateProportionalSize(
+      obj1Data.diameter,
+      realDistance,
+      screenWidth
+    );
+    this.obj2Size = ScaleCalculator.calculateProportionalSize(
+      obj2Data.diameter,
+      realDistance,
+      screenWidth
+    );
+
+    console.log(`[DistanceAnimator] Proportional sizes: obj1=${this.obj1Size.toFixed(2)}px, obj2=${this.obj2Size.toFixed(2)}px`);
 
     // Calculate target positions (center ± half distance)
     const centerX = screenWidth / 2;
@@ -88,19 +110,58 @@ export class DistanceAnimator extends ComponentBase {
 
     this.container.add(this.distanceText);
 
-    // Animate objects moving apart
+    // Create overlays if objects are too small (< 5px)
+    if (this.obj1Size < PROPORTIONAL_SIZING.OVERLAY_THRESHOLD) {
+      console.log(`[DistanceAnimator] Creating overlay for ${obj1Data.name} (${this.obj1Size.toFixed(2)}px)`);
+      this.overlay1 = new ObjectOverlay(this.scene);
+      this.overlay1.create(
+        this.obj1Size,
+        { x: targetX1, y: centerY },
+        obj1Data.color,
+        obj1Data.name
+      );
+      this.container.add(this.overlay1.container);
+    }
+
+    if (this.obj2Size < PROPORTIONAL_SIZING.OVERLAY_THRESHOLD) {
+      console.log(`[DistanceAnimator] Creating overlay for ${obj2Data.name} (${this.obj2Size.toFixed(2)}px)`);
+      this.overlay2 = new ObjectOverlay(this.scene);
+      this.overlay2.create(
+        this.obj2Size,
+        { x: targetX2, y: centerY },
+        obj2Data.color,
+        obj2Data.name
+      );
+      this.container.add(this.overlay2.container);
+    }
+
+    // Animate objects moving apart AND resizing proportionally
     this.scene.tweens.add({
       targets: obj1Sprite,
       x: targetX1,
+      radius: this.obj1Size / 2,  // Resize to proportional size
       duration: ANIMATION_DURATION.DISTANCE,
-      ease: 'Quad.easeInOut'
+      ease: 'Quad.easeInOut',
+      onUpdate: (tween, target) => {
+        // Update overlay position during animation
+        if (this.overlay1) {
+          this.overlay1.updatePosition(target.x, target.y);
+        }
+      }
     });
 
     this.scene.tweens.add({
       targets: obj2Sprite,
       x: targetX2,
+      radius: this.obj2Size / 2,  // Resize to proportional size
       duration: ANIMATION_DURATION.DISTANCE,
       ease: 'Quad.easeInOut',
+      onUpdate: (tween, target) => {
+        // Update overlay position during animation
+        if (this.overlay2) {
+          this.overlay2.updatePosition(target.x, target.y);
+        }
+      },
       onComplete: () => {
         this.onSeparationComplete();
       }
@@ -114,6 +175,14 @@ export class DistanceAnimator extends ComponentBase {
       delay: ANIMATION_DURATION.DISTANCE / 2,
       ease: 'Linear'
     });
+
+    // Fade in overlays if they exist
+    if (this.overlay1) {
+      this.overlay1.fadeIn(ANIMATION_DURATION.DISTANCE / 2, ANIMATION_DURATION.DISTANCE / 2);
+    }
+    if (this.overlay2) {
+      this.overlay2.fadeIn(ANIMATION_DURATION.DISTANCE / 2, ANIMATION_DURATION.DISTANCE / 2);
+    }
   }
 
   /**
@@ -147,9 +216,21 @@ export class DistanceAnimator extends ComponentBase {
    * Destroy component and clean up
    */
   destroy() {
+    // Destroy overlays
+    if (this.overlay1) {
+      this.overlay1.destroy();
+      this.overlay1 = null;
+    }
+    if (this.overlay2) {
+      this.overlay2.destroy();
+      this.overlay2 = null;
+    }
+
     // Clear references
     this.connectionLine = null;
     this.distanceText = null;
+    this.obj1Size = null;
+    this.obj2Size = null;
 
     // Call parent destroy
     super.destroy();

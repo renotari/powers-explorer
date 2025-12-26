@@ -59,6 +59,39 @@ export class ScaleCalculator {
   }
 
   /**
+   * Calculate object size proportional to displayed distance using logarithmic scaling
+   *
+   * CRITICAL: Uses same logarithmic scale as realToScreen() for consistency
+   * This ensures objects appear at their true proportional size relative to distance
+   *
+   * Example: Earth-Sun distance at 800px screen width
+   * - Sun diameter: 1.39B meters → ~7.4px
+   * - Earth diameter: 12.7M meters → ~0.07px (floor to 1px)
+   *
+   * @param {number} realDiameter - Object diameter in meters
+   * @param {number} realDistance - Distance being displayed in meters
+   * @param {number} screenWidth - Available screen width in pixels
+   * @returns {number} Screen diameter in pixels (minimum 1px)
+   */
+  static calculateProportionalSize(realDiameter, realDistance, screenWidth) {
+    // Guard against invalid inputs
+    if (realDistance <= 0 || realDiameter <= 0) return 1;
+
+    // Use same logarithmic transformation as distance scaling
+    const logDistance = Math.log1p(realDistance);
+    const logDiameter = Math.log1p(realDiameter);
+
+    // Calculate proportion ratio
+    const ratio = logDiameter / logDistance;
+
+    // Apply to screen space (70% of width, same as DistanceAnimator)
+    const screenSize = ratio * screenWidth * 0.7;
+
+    // Floor at 1px minimum (no upper clamp for proportional accuracy)
+    return Math.max(1, screenSize);
+  }
+
+  /**
    * Calculate zoom factor between two scale exponents
    *
    * @param {number} fromExponent - Starting exponent
