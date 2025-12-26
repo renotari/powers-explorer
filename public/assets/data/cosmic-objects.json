@@ -54,6 +54,195 @@
         "The Sun converts 4 million tons of matter into energy every second"
       ],
       "sources": ["NASA Solar System Exploration", "International Astronomical Union"]
+    },
+    {
+      "id": "mercury",
+      "name": "Mercury",
+      "category": "terrestrial",
+      "diameter": 4880000,
+      "diameterUnit": "m",
+      "mass": 3.285e23,
+      "massUnit": "kg",
+      "scaleLevel": 6,
+      "description": "The smallest planet and closest to the Sun, with extreme temperature variations",
+      "color": "#8C7853",
+      "educationalFacts": [
+        "Mercury has no atmosphere to retain heat",
+        "A day on Mercury lasts 59 Earth days",
+        "Mercury's surface is covered with craters like the Moon",
+        "Temperature swings from -173°C to 427°C"
+      ],
+      "sources": ["NASA Mercury Facts", "NASA Planetary Fact Sheet"]
+    },
+    {
+      "id": "venus",
+      "name": "Venus",
+      "category": "terrestrial",
+      "diameter": 12104000,
+      "diameterUnit": "m",
+      "mass": 4.867e24,
+      "massUnit": "kg",
+      "scaleLevel": 7,
+      "description": "Earth's 'sister planet' with a thick toxic atmosphere and extreme greenhouse effect",
+      "color": "#FFC649",
+      "educationalFacts": [
+        "Venus has the hottest surface of any planet at 462°C",
+        "Venus rotates backwards compared to most planets",
+        "A day on Venus is longer than its year",
+        "Venus is the brightest planet in Earth's night sky"
+      ],
+      "sources": ["NASA Venus Facts", "NASA Planetary Fact Sheet"]
+    },
+    {
+      "id": "mars",
+      "name": "Mars",
+      "category": "terrestrial",
+      "diameter": 6779000,
+      "diameterUnit": "m",
+      "mass": 6.39e23,
+      "massUnit": "kg",
+      "scaleLevel": 7,
+      "description": "The Red Planet, fourth from the Sun and a primary target for human exploration",
+      "color": "#CD5C5C",
+      "educationalFacts": [
+        "Mars has the largest volcano in the solar system: Olympus Mons",
+        "A day on Mars (sol) is 24 hours and 37 minutes",
+        "Mars has two small moons: Phobos and Deimos"
+      ],
+      "sources": ["NASA Mars Facts", "NASA Planetary Fact Sheet"]
+    },
+    {
+      "id": "jupiter",
+      "name": "Jupiter",
+      "category": "gas-giant",
+      "diameter": 142984000,
+      "diameterUnit": "m",
+      "mass": 1.898e27,
+      "massUnit": "kg",
+      "scaleLevel": 8,
+      "description": "The largest planet in our solar system, a gas giant with a famous Great Red Spot storm",
+      "color": "#C88B3A",
+      "educationalFacts": [
+        "Jupiter has 95 known moons, including the four large Galilean moons",
+        "The Great Red Spot is a storm larger than Earth that has raged for centuries",
+        "Jupiter's mass is 2.5 times that of all other planets combined",
+        "A day on Jupiter is only 10 hours long despite its huge size"
+      ],
+      "sources": ["NASA Jupiter Facts", "NASA Planetary Fact Sheet"]
+    },
+    {
+      "id": "saturn",
+      "name": "Saturn",
+      "category": "gas-giant",
+      "diameter": 120500000,
+      "diameterUnit": "m",
+      "mass": 5.683e26,
+      "massUnit": "kg",
+      "scaleLevel": 8,
+      "description": "The ringed planet, a gas giant famous for its spectacular ring system",
+      "color": "#FAD5A5",
+      "educationalFacts": [
+        "Saturn's rings are made of ice and rock particles",
+        "Saturn has 146 known moons, the most of any planet",
+        "Saturn is the least dense planet - it would float in water",
+        "Saturn's rings are only about 10 meters thick on average"
+      ],
+      "sources": ["NASA Saturn Facts", "NASA Planetary Fact Sheet"]
+    },
+    {
+      "id": "uranus",
+      "name": "Uranus",
+      "category": "ice-giant",
+      "diameter": 50724000,
+      "diameterUnit": "m",
+      "mass": 8.681e25,
+      "massUnit": "kg",
+      "scaleLevel": 7,
+      "description": "An ice giant that rotates on its side, giving it extreme seasonal variations",
+      "color": "#4FD0E7",
+      "educationalFacts": [
+        "Uranus rotates on its side at a 98-degree tilt",
+        "Uranus was the first planet discovered with a telescope (1781)",
+        "A year on Uranus is 84 Earth years",
+        "Uranus has 13 known rings and 27 known moons"
+      ],
+      "sources": ["NASA Uranus Facts", "NASA Planetary Fact Sheet"]
+    },
+    {
+      "id": "neptune",
+      "name": "Neptune",
+      "category": "ice-giant",
+      "diameter": 49528000,
+      "diameterUnit": "m",
+      "mass": 1.024e26,
+      "massUnit": "kg",
+      "scaleLevel": 7,
+      "description": "The farthest planet from the Sun, an ice giant with the fastest winds in the solar system",
+      "color": "#4169E1",
+      "educationalFacts": [
+        "Neptune has the strongest winds in the solar system, up to 2,100 km/h",
+        "Neptune takes 165 Earth years to orbit the Sun",
+        "Neptune was discovered mathematically before being observed",
+        "Neptune has 16 known moons, the largest being Triton"
+      ],
+      "sources": ["NASA Neptune Facts", "NASA Planetary Fact Sheet"]
+    },
+    {
+      "id": "pluto",
+      "name": "Pluto",
+      "category": "dwarf-planet",
+      "diameter": 2377000,
+      "diameterUnit": "m",
+      "mass": 1.303e22,
+      "massUnit": "kg",
+      "scaleLevel": 6,
+      "description": "A dwarf planet in the Kuiper Belt, formerly considered the ninth planet",
+      "color": "#B8A9C9",
+      "educationalFacts": [
+        "Pluto was reclassified as a dwarf planet in 2006",
+        "Pluto's largest moon, Charon, is more than half Pluto's size",
+        "It takes Pluto 248 Earth years to orbit the Sun",
+        "NASA's New Horizons spacecraft visited Pluto in 2015"
+      ],
+      "sources": ["NASA Pluto Facts", "New Horizons Mission"]
+    },
+    {
+      "id": "proxima-centauri",
+      "name": "Proxima Centauri",
+      "category": "star",
+      "diameter": 200000000,
+      "diameterUnit": "m",
+      "mass": 2.446e29,
+      "massUnit": "kg",
+      "scaleLevel": 8,
+      "description": "The closest star to our Solar System, a red dwarf in the Alpha Centauri system",
+      "color": "#FF6B6B",
+      "educationalFacts": [
+        "Proxima Centauri is only 4.24 light-years from Earth",
+        "It's about 7 times smaller than the Sun",
+        "Proxima Centauri has at least one exoplanet: Proxima b",
+        "Light from Proxima Centauri takes 4.24 years to reach Earth"
+      ],
+      "sources": ["Wikipedia Proxima Centauri", "ESO"]
+    },
+    {
+      "id": "andromeda-galaxy",
+      "name": "Andromeda Galaxy",
+      "category": "galaxy",
+      "diameter": 1.89e21,
+      "diameterUnit": "m",
+      "mass": 1.5e42,
+      "massUnit": "kg",
+      "scaleLevel": 21,
+      "description": "The nearest major galaxy to the Milky Way, on a collision course with our galaxy",
+      "color": "#9370DB",
+      "educationalFacts": [
+        "Andromeda will collide with the Milky Way in about 4.5 billion years",
+        "Contains about 1 trillion stars (compared to Milky Way's 200-400 billion)",
+        "Visible to the naked eye from Earth on clear, dark nights",
+        "Approximately 200,000 light-years in diameter"
+      ],
+      "sources": ["Wikipedia Andromeda Galaxy", "NASA", "Britannica"]
     }
   ],
   "distances": [
@@ -74,6 +263,492 @@
       "lightTravelTime": 499.0,
       "lightTravelTimeUnit": "s",
       "description": "Average distance from Earth to the Sun (1 Astronomical Unit)"
+    },
+    {
+      "from": "earth",
+      "to": "mars",
+      "distance": 225000000000,
+      "unit": "m",
+      "lightTravelTime": 750.7,
+      "lightTravelTimeUnit": "s",
+      "description": "Average distance from Earth to Mars (varies from 55M km to 401M km)"
+    },
+    {
+      "from": "earth",
+      "to": "pluto",
+      "distance": 5900000000000,
+      "unit": "m",
+      "lightTravelTime": 19677.4,
+      "lightTravelTimeUnit": "s",
+      "description": "Average distance from Earth to Pluto (varies from 4.28B km to 7.5B km)"
+    },
+    {
+      "from": "earth",
+      "to": "proxima-centauri",
+      "distance": 4.02e16,
+      "unit": "m",
+      "lightTravelTime": 1.34e8,
+      "lightTravelTimeUnit": "s",
+      "description": "Distance to the closest star to our Solar System (4.24 light-years)"
+    },
+    {
+      "from": "earth",
+      "to": "andromeda-galaxy",
+      "distance": 2.37e22,
+      "unit": "m",
+      "lightTravelTime": 7.89e13,
+      "lightTravelTimeUnit": "s",
+      "description": "Distance to the Andromeda Galaxy (2.5 million light-years)"
+    },
+    {
+      "from": "mercury",
+      "to": "sun",
+      "distance": 57900000000,
+      "unit": "m",
+      "lightTravelTime": 193.2,
+      "lightTravelTimeUnit": "s",
+      "description": "Average distance from Mercury to the Sun (0.39 AU)"
+    },
+    {
+      "from": "venus",
+      "to": "sun",
+      "distance": 108200000000,
+      "unit": "m",
+      "lightTravelTime": 360.9,
+      "lightTravelTimeUnit": "s",
+      "description": "Average distance from Venus to the Sun (0.72 AU)"
+    },
+    {
+      "from": "mars",
+      "to": "sun",
+      "distance": 227900000000,
+      "unit": "m",
+      "lightTravelTime": 760.3,
+      "lightTravelTimeUnit": "s",
+      "description": "Average distance from Mars to the Sun (1.52 AU)"
+    },
+    {
+      "from": "jupiter",
+      "to": "sun",
+      "distance": 778600000000,
+      "unit": "m",
+      "lightTravelTime": 2596.9,
+      "lightTravelTimeUnit": "s",
+      "description": "Average distance from Jupiter to the Sun (5.2 AU)"
+    },
+    {
+      "from": "saturn",
+      "to": "sun",
+      "distance": 1433500000000,
+      "unit": "m",
+      "lightTravelTime": 4781.4,
+      "lightTravelTimeUnit": "s",
+      "description": "Average distance from Saturn to the Sun (9.54 AU)"
+    },
+    {
+      "from": "uranus",
+      "to": "sun",
+      "distance": 2872500000000,
+      "unit": "m",
+      "lightTravelTime": 9581.0,
+      "lightTravelTimeUnit": "s",
+      "description": "Average distance from Uranus to the Sun (19.2 AU)"
+    },
+    {
+      "from": "neptune",
+      "to": "sun",
+      "distance": 4500000000000,
+      "unit": "m",
+      "lightTravelTime": 15009.4,
+      "lightTravelTimeUnit": "s",
+      "description": "Average distance from Neptune to the Sun (30.06 AU)"
+    },
+    {
+      "from": "pluto",
+      "to": "sun",
+      "distance": 5900000000000,
+      "unit": "m",
+      "lightTravelTime": 19677.4,
+      "lightTravelTimeUnit": "s",
+      "description": "Average distance from Pluto to the Sun (39.5 AU)"
+    },
+    {
+      "from": "mercury",
+      "to": "venus",
+      "distance": 50300000000,
+      "unit": "m",
+      "lightTravelTime": 167.8,
+      "lightTravelTimeUnit": "s",
+      "description": "Distance when aligned on same side of Sun"
+    },
+    {
+      "from": "mercury",
+      "to": "earth",
+      "distance": 91700000000,
+      "unit": "m",
+      "lightTravelTime": 305.9,
+      "lightTravelTimeUnit": "s",
+      "description": "Distance when aligned on same side of Sun"
+    },
+    {
+      "from": "mercury",
+      "to": "mars",
+      "distance": 170000000000,
+      "unit": "m",
+      "lightTravelTime": 567.0,
+      "lightTravelTimeUnit": "s",
+      "description": "Distance when aligned on same side of Sun"
+    },
+    {
+      "from": "mercury",
+      "to": "jupiter",
+      "distance": 720700000000,
+      "unit": "m",
+      "lightTravelTime": 2403.7,
+      "lightTravelTimeUnit": "s",
+      "description": "Distance when aligned on same side of Sun"
+    },
+    {
+      "from": "mercury",
+      "to": "saturn",
+      "distance": 1375600000000,
+      "unit": "m",
+      "lightTravelTime": 4588.2,
+      "lightTravelTimeUnit": "s",
+      "description": "Distance when aligned on same side of Sun"
+    },
+    {
+      "from": "mercury",
+      "to": "uranus",
+      "distance": 2814600000000,
+      "unit": "m",
+      "lightTravelTime": 9388.1,
+      "lightTravelTimeUnit": "s",
+      "description": "Distance when aligned on same side of Sun"
+    },
+    {
+      "from": "mercury",
+      "to": "neptune",
+      "distance": 4442100000000,
+      "unit": "m",
+      "lightTravelTime": 14816.2,
+      "lightTravelTimeUnit": "s",
+      "description": "Distance when aligned on same side of Sun"
+    },
+    {
+      "from": "mercury",
+      "to": "pluto",
+      "distance": 5842100000000,
+      "unit": "m",
+      "lightTravelTime": 19484.7,
+      "lightTravelTimeUnit": "s",
+      "description": "Distance when aligned on same side of Sun"
+    },
+    {
+      "from": "venus",
+      "to": "earth",
+      "distance": 41400000000,
+      "unit": "m",
+      "lightTravelTime": 138.1,
+      "lightTravelTimeUnit": "s",
+      "description": "Distance when aligned on same side of Sun"
+    },
+    {
+      "from": "venus",
+      "to": "mars",
+      "distance": 119700000000,
+      "unit": "m",
+      "lightTravelTime": 399.2,
+      "lightTravelTimeUnit": "s",
+      "description": "Distance when aligned on same side of Sun"
+    },
+    {
+      "from": "venus",
+      "to": "jupiter",
+      "distance": 670400000000,
+      "unit": "m",
+      "lightTravelTime": 2236.0,
+      "lightTravelTimeUnit": "s",
+      "description": "Distance when aligned on same side of Sun"
+    },
+    {
+      "from": "venus",
+      "to": "saturn",
+      "distance": 1325300000000,
+      "unit": "m",
+      "lightTravelTime": 4420.4,
+      "lightTravelTimeUnit": "s",
+      "description": "Distance when aligned on same side of Sun"
+    },
+    {
+      "from": "venus",
+      "to": "uranus",
+      "distance": 2764300000000,
+      "unit": "m",
+      "lightTravelTime": 9220.2,
+      "lightTravelTimeUnit": "s",
+      "description": "Distance when aligned on same side of Sun"
+    },
+    {
+      "from": "venus",
+      "to": "neptune",
+      "distance": 4391800000000,
+      "unit": "m",
+      "lightTravelTime": 14648.3,
+      "lightTravelTimeUnit": "s",
+      "description": "Distance when aligned on same side of Sun"
+    },
+    {
+      "from": "venus",
+      "to": "pluto",
+      "distance": 5791800000000,
+      "unit": "m",
+      "lightTravelTime": 19316.8,
+      "lightTravelTimeUnit": "s",
+      "description": "Distance when aligned on same side of Sun"
+    },
+    {
+      "from": "earth",
+      "to": "jupiter",
+      "distance": 629000000000,
+      "unit": "m",
+      "lightTravelTime": 2097.8,
+      "lightTravelTimeUnit": "s",
+      "description": "Distance when aligned on same side of Sun"
+    },
+    {
+      "from": "earth",
+      "to": "saturn",
+      "distance": 1283900000000,
+      "unit": "m",
+      "lightTravelTime": 4282.2,
+      "lightTravelTimeUnit": "s",
+      "description": "Distance when aligned on same side of Sun"
+    },
+    {
+      "from": "earth",
+      "to": "uranus",
+      "distance": 2722900000000,
+      "unit": "m",
+      "lightTravelTime": 9082.1,
+      "lightTravelTimeUnit": "s",
+      "description": "Distance when aligned on same side of Sun"
+    },
+    {
+      "from": "earth",
+      "to": "neptune",
+      "distance": 4350400000000,
+      "unit": "m",
+      "lightTravelTime": 14510.1,
+      "lightTravelTimeUnit": "s",
+      "description": "Distance when aligned on same side of Sun"
+    },
+    {
+      "from": "mars",
+      "to": "jupiter",
+      "distance": 550700000000,
+      "unit": "m",
+      "lightTravelTime": 1836.9,
+      "lightTravelTimeUnit": "s",
+      "description": "Distance when aligned on same side of Sun"
+    },
+    {
+      "from": "mars",
+      "to": "saturn",
+      "distance": 1205600000000,
+      "unit": "m",
+      "lightTravelTime": 4021.1,
+      "lightTravelTimeUnit": "s",
+      "description": "Distance when aligned on same side of Sun"
+    },
+    {
+      "from": "mars",
+      "to": "uranus",
+      "distance": 2644600000000,
+      "unit": "m",
+      "lightTravelTime": 8820.9,
+      "lightTravelTimeUnit": "s",
+      "description": "Distance when aligned on same side of Sun"
+    },
+    {
+      "from": "mars",
+      "to": "neptune",
+      "distance": 4272100000000,
+      "unit": "m",
+      "lightTravelTime": 14248.9,
+      "lightTravelTimeUnit": "s",
+      "description": "Distance when aligned on same side of Sun"
+    },
+    {
+      "from": "mars",
+      "to": "pluto",
+      "distance": 5672100000000,
+      "unit": "m",
+      "lightTravelTime": 18917.5,
+      "lightTravelTimeUnit": "s",
+      "description": "Distance when aligned on same side of Sun"
+    },
+    {
+      "from": "jupiter",
+      "to": "saturn",
+      "distance": 654900000000,
+      "unit": "m",
+      "lightTravelTime": 2184.2,
+      "lightTravelTimeUnit": "s",
+      "description": "Distance when aligned on same side of Sun"
+    },
+    {
+      "from": "jupiter",
+      "to": "uranus",
+      "distance": 2093900000000,
+      "unit": "m",
+      "lightTravelTime": 6984.1,
+      "lightTravelTimeUnit": "s",
+      "description": "Distance when aligned on same side of Sun"
+    },
+    {
+      "from": "jupiter",
+      "to": "neptune",
+      "distance": 3721400000000,
+      "unit": "m",
+      "lightTravelTime": 12412.5,
+      "lightTravelTimeUnit": "s",
+      "description": "Distance when aligned on same side of Sun"
+    },
+    {
+      "from": "jupiter",
+      "to": "pluto",
+      "distance": 5121400000000,
+      "unit": "m",
+      "lightTravelTime": 17081.1,
+      "lightTravelTimeUnit": "s",
+      "description": "Distance when aligned on same side of Sun"
+    },
+    {
+      "from": "saturn",
+      "to": "uranus",
+      "distance": 1439000000000,
+      "unit": "m",
+      "lightTravelTime": 4799.9,
+      "lightTravelTimeUnit": "s",
+      "description": "Distance when aligned on same side of Sun"
+    },
+    {
+      "from": "saturn",
+      "to": "neptune",
+      "distance": 3066500000000,
+      "unit": "m",
+      "lightTravelTime": 10228.3,
+      "lightTravelTimeUnit": "s",
+      "description": "Distance when aligned on same side of Sun"
+    },
+    {
+      "from": "saturn",
+      "to": "pluto",
+      "distance": 4466500000000,
+      "unit": "m",
+      "lightTravelTime": 14896.9,
+      "lightTravelTimeUnit": "s",
+      "description": "Distance when aligned on same side of Sun"
+    },
+    {
+      "from": "uranus",
+      "to": "neptune",
+      "distance": 1627500000000,
+      "unit": "m",
+      "lightTravelTime": 5428.4,
+      "lightTravelTimeUnit": "s",
+      "description": "Distance when aligned on same side of Sun"
+    },
+    {
+      "from": "uranus",
+      "to": "pluto",
+      "distance": 3027500000000,
+      "unit": "m",
+      "lightTravelTime": 10098.2,
+      "lightTravelTimeUnit": "s",
+      "description": "Distance when aligned on same side of Sun"
+    },
+    {
+      "from": "neptune",
+      "to": "pluto",
+      "distance": 1400000000000,
+      "unit": "m",
+      "lightTravelTime": 4669.8,
+      "lightTravelTimeUnit": "s",
+      "description": "Distance when aligned on same side of Sun"
+    },
+    {
+      "from": "moon",
+      "to": "mercury",
+      "distance": 91700000000,
+      "unit": "m",
+      "lightTravelTime": 305.9,
+      "lightTravelTimeUnit": "s",
+      "description": "Distance when Moon and Mercury aligned on same side of Sun"
+    },
+    {
+      "from": "moon",
+      "to": "venus",
+      "distance": 41400000000,
+      "unit": "m",
+      "lightTravelTime": 138.1,
+      "lightTravelTimeUnit": "s",
+      "description": "Distance when Moon and Venus aligned on same side of Sun"
+    },
+    {
+      "from": "moon",
+      "to": "mars",
+      "distance": 78300000000,
+      "unit": "m",
+      "lightTravelTime": 261.2,
+      "lightTravelTimeUnit": "s",
+      "description": "Distance when Moon and Mars aligned on same side of Sun"
+    },
+    {
+      "from": "moon",
+      "to": "jupiter",
+      "distance": 629000000000,
+      "unit": "m",
+      "lightTravelTime": 2097.8,
+      "lightTravelTimeUnit": "s",
+      "description": "Distance when Moon and Jupiter aligned on same side of Sun"
+    },
+    {
+      "from": "moon",
+      "to": "saturn",
+      "distance": 1283900000000,
+      "unit": "m",
+      "lightTravelTime": 4282.2,
+      "lightTravelTimeUnit": "s",
+      "description": "Distance when Moon and Saturn aligned on same side of Sun"
+    },
+    {
+      "from": "moon",
+      "to": "uranus",
+      "distance": 2722900000000,
+      "unit": "m",
+      "lightTravelTime": 9082.1,
+      "lightTravelTimeUnit": "s",
+      "description": "Distance when Moon and Uranus aligned on same side of Sun"
+    },
+    {
+      "from": "moon",
+      "to": "neptune",
+      "distance": 4350400000000,
+      "unit": "m",
+      "lightTravelTime": 14510.1,
+      "lightTravelTimeUnit": "s",
+      "description": "Distance when Moon and Neptune aligned on same side of Sun"
+    },
+    {
+      "from": "moon",
+      "to": "pluto",
+      "distance": 5750400000000,
+      "unit": "m",
+      "lightTravelTime": 19179.4,
+      "lightTravelTimeUnit": "s",
+      "description": "Distance when Moon and Pluto aligned on same side of Sun"
     }
   ]
 }
