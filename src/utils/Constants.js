@@ -44,3 +44,19 @@ export const PROPORTIONAL_SIZING = {
   OVERLAY_OFFSET_Y: 120,    // Vertical distance above actual object (pixels)
   CONNECTOR_COLOR: 0xaaaaaa // Arrow connector color (gray)
 };
+
+// Solar System visualization settings
+export const SOLAR_SYSTEM = {
+  PLANET_IDS: ['mercury', 'venus', 'earth', 'mars', 'jupiter', 'saturn', 'uranus', 'neptune'],
+  SUN_ID: 'sun',
+  MIN_PLANET_RADIUS: 3,      // Minimum planet radius in pixels for visibility
+  MAX_PLANET_RADIUS: 200,    // Maximum planet radius in size comparison mode
+  TRANSITION_DURATION: 400,  // Mode transition animation duration (ms)
+  LABEL_OFFSET_Y: 30,        // Distance below planet for label
+  ORBIT_LINE_COLOR: 0x444444,// Gray color for orbit paths
+  ORBIT_LINE_ALPHA: 0.6,     // Transparency for orbit paths
+  INFO_PANEL_WIDTH: 350,     // Info panel width in pixels
+  INFO_PANEL_SLIDE_DURATION: 300, // Info panel slide animation (ms)
+  SUN_COLOR: 0xFDB813,       // Yellow-orange for the Sun
+  DISTANCE_MARKER_COLOR: 0x666666  // Color for AU distance markers
+};

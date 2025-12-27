@@ -174,4 +174,67 @@ export class ScaleCalculator {
       return `${(seconds / 31536000).toFixed(2)} years`;
     }
   }
+
+  /**
+   * Get position on an elliptical orbit
+   *
+   * CRITICAL: Ellipses in orbital mechanics use the polar equation:
+   * r = a(1 - e²) / (1 + e·cos(θ))
+   *
+   * Where:
+   * - a = semi-major axis (average orbital radius)
+   * - e = eccentricity (0 = circle, 0-1 = ellipse)
+   * - θ = true anomaly (angle from perihelion)
+   *
+   * The Sun is at one focus of the ellipse, NOT the center.
+   *
+   * @param {number} a - Semi-major axis in meters
+   * @param {number} e - Eccentricity (0-1)
+   * @param {number} theta - True anomaly in radians (angle from perihelion)
+   * @param {number} centerX - X coordinate of ellipse center in pixels
+   * @param {number} centerY - Y coordinate of ellipse center in pixels
+   * @param {number} scaleFactor - Scale factor to convert meters to pixels
+   * @returns {Object} Position {x, y} in screen coordinates
+   */
+  static getPositionOnEllipse(a, e, theta, centerX, centerY, scaleFactor) {
+    // Polar equation of ellipse: distance from focus (Sun) to planet
+    const r = (a * (1 - e * e)) / (1 + e * Math.cos(theta));
+
+    // Scale to screen coordinates
+    const screenR = r * scaleFactor;
+
+    // Convert polar to cartesian (relative to focus/Sun position)
+    const x = centerX + screenR * Math.cos(theta);
+    const y = centerY + screenR * Math.sin(theta);
+
+    return { x, y };
+  }
+
+  /**
+   * Calculate ellipse semi-minor axis from semi-major axis and eccentricity
+   *
+   * b = a × √(1 - e²)
+   *
+   * @param {number} a - Semi-major axis
+   * @param {number} e - Eccentricity
+   * @returns {number} Semi-minor axis
+   */
+  static calculateSemiMinorAxis(a, e) {
+    return a * Math.sqrt(1 - e * e);
+  }
+
+  /**
+   * Calculate focal distance (distance from center to focus)
+   *
+   * c = a × e = √(a² - b²)
+   *
+   * For planetary orbits, the Sun is at one focus.
+   *
+   * @param {number} a - Semi-major axis
+   * @param {number} e - Eccentricity
+   * @returns {number} Focal distance
+   */
+  static calculateFocalDistance(a, e) {
+    return a * e;
+  }
 }

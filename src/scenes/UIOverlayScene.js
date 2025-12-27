@@ -115,12 +115,14 @@ export class UIOverlayScene extends Phaser.Scene {
   returnToMenu() {
     console.log('[UIOverlayScene] Returning to menu...');
 
-    // Stop the comparison scene
+    // Stop the current scene
     const currentMode = this.stateManager.getCurrentMode();
     if (currentMode === 'comparison') {
       this.scene.stop('CosmicComparisonScene');
     } else if (currentMode === 'powersOfTen') {
       this.scene.stop('PowersOfTenScene');
+    } else if (currentMode === 'solarSystem') {
+      this.scene.stop('SolarSystemScene');
     }
 
     // Stop this overlay scene

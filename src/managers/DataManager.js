@@ -28,8 +28,10 @@ export class DataManager {
 
     this.cosmicObjects = null;
     this.constants = null;
+    this.orbitalParameters = null;
     this.objectsById = new Map();
     this.distanceCache = new Map();
+    this.orbitalParamsById = new Map();
   }
 
   /**
@@ -61,6 +63,7 @@ export class DataManager {
       // Queue JSON files for loading
       scene.load.json('cosmic-objects', '/assets/data/cosmic-objects.json');
       scene.load.json('physical-constants', '/assets/data/physical-constants.json');
+      scene.load.json('orbital-parameters', '/assets/data/orbital-parameters.json');
 
       // Handle successful load
       scene.load.once('complete', () => {
@@ -68,6 +71,7 @@ export class DataManager {
           // Extract data from cache (not from scene!)
           this.cosmicObjects = scene.cache.json.get('cosmic-objects');
           this.constants = scene.cache.json.get('physical-constants');
+          this.orbitalParameters = scene.cache.json.get('orbital-parameters');
 
           // Validate data structure
           this.validateData();
@@ -77,6 +81,7 @@ export class DataManager {
 
           console.log(`[DataManager] Loaded ${this.cosmicObjects.objects.length} objects`);
           console.log(`[DataManager] Loaded ${this.cosmicObjects.distances.length} distances`);
+          console.log(`[DataManager] Loaded ${this.orbitalParameters.planets.length} orbital parameters`);
 
           resolve();
         } catch (error) {
@@ -142,8 +147,17 @@ export class DataManager {
       this.distanceCache.set(key, dist);
     });
 
+    // Build orbital parameters index
+    this.orbitalParamsById.clear();
+    if (this.orbitalParameters && this.orbitalParameters.planets) {
+      this.orbitalParameters.planets.forEach(param => {
+        this.orbitalParamsById.set(param.id, param);
+      });
+    }
+
     console.log(`[DataManager] Built ${this.objectsById.size} object indexes`);
     console.log(`[DataManager] Built ${this.distanceCache.size} distance indexes`);
+    console.log(`[DataManager] Built ${this.orbitalParamsById.size} orbital parameter indexes`);
   }
 
   /**
@@ -215,5 +229,45 @@ export class DataManager {
    */
   getSpeedOfLight() {
     return this.constants.speedOfLight.value;
+  }
+
+  /**
+   * Get all orbital parameters
+   *
+   * @returns {Array} Array of all planet orbital parameters
+   */
+  getOrbitalParameters() {
+    return this.orbitalParameters ? this.orbitalParameters.planets : [];
+  }
+
+  /**
+   * Get orbital parameters for a specific planet
+   *
+   * @param {string} planetId - Planet ID
+   * @returns {Object|undefined} Orbital parameters or undefined if not found
+   */
+  getOrbitalParametersById(planetId) {
+    return this.orbitalParamsById.get(planetId);
+  }
+
+  /**
+   * Get planet data by ID (convenience method for solar system objects)
+   * Combines cosmic object data with orbital parameters
+   *
+   * @param {string} planetId - Planet ID
+   * @returns {Object|null} Combined planet data or null if not found
+   */
+  getPlanetById(planetId) {
+    const cosmicData = this.getObjectById(planetId);
+    const orbitalData = this.getOrbitalParametersById(planetId);
+
+    if (!cosmicData) {
+      return null;
+    }
+
+    return {
+      ...cosmicData,
+      orbital: orbitalData || null
+    };
   }
 }

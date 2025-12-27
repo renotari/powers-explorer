@@ -31,7 +31,7 @@ export class StateManager extends Phaser.Events.EventEmitter {
     // Application state structure
     this.state = {
       app: {
-        currentMode: null,       // 'comparison' | 'powersOfTen' | null
+        currentMode: null,       // 'comparison' | 'powersOfTen' | 'solarSystem' | null
         isAnimating: false,      // Global animation state
         isPaused: false          // Global pause state
       },
@@ -44,6 +44,14 @@ export class StateManager extends Phaser.Events.EventEmitter {
         currentLevel: null,      // Current scale level object
         zoomVelocity: 0,        // Zoom animation velocity
         visibleObjects: []       // Objects visible at current scale
+      },
+      solarSystem: {
+        currentMode: 'sizeComparison',  // 'sizeComparison' | 'distanceView' | 'orbitalView'
+        sunVisible: true,        // For size comparison mode - Sun toggle
+        selectedPlanet: null,    // Currently selected planet for info panel
+        isAnimating: false,      // Mode transition animation state
+        orbitalPositions: null,  // Cached real-time positions from NASA API
+        useRealTimeData: false   // Whether using real-time or default positions
       },
       ui: {
         infoPanelOpen: false,    // Info panel visibility
@@ -200,6 +208,109 @@ export class StateManager extends Phaser.Events.EventEmitter {
    */
   getCurrentScale() {
     return this.state.powersOfTen.currentExponent;
+  }
+
+  // ========================================
+  // Solar System State Methods
+  // ========================================
+
+  /**
+   * Set solar system visualization mode
+   * @param {string} mode - Mode name ('sizeComparison' | 'distanceView' | 'orbitalView')
+   */
+  setSolarSystemMode(mode) {
+    const oldMode = this.state.solarSystem.currentMode;
+    this.state.solarSystem.currentMode = mode;
+    console.log(`[StateManager] Solar system mode: ${oldMode} → ${mode}`);
+    this.emit('solarSystemModeChanged', mode);
+  }
+
+  /**
+   * Get current solar system mode
+   * @returns {string} Current mode
+   */
+  getSolarSystemMode() {
+    return this.state.solarSystem.currentMode;
+  }
+
+  /**
+   * Toggle Sun visibility in size comparison mode
+   * @param {boolean} visible - Sun visibility
+   */
+  setSunVisible(visible) {
+    this.state.solarSystem.sunVisible = visible;
+    console.log(`[StateManager] Sun visibility: ${visible}`);
+    this.emit('sunVisibilityChanged', visible);
+  }
+
+  /**
+   * Get Sun visibility state
+   * @returns {boolean} Sun visibility
+   */
+  isSunVisible() {
+    return this.state.solarSystem.sunVisible;
+  }
+
+  /**
+   * Set selected planet for info panel
+   * @param {string|null} planetId - Planet ID or null
+   */
+  setSelectedPlanet(planetId) {
+    this.state.solarSystem.selectedPlanet = planetId;
+    console.log(`[StateManager] Selected planet: ${planetId}`);
+    this.emit('selectedPlanetChanged', planetId);
+  }
+
+  /**
+   * Get selected planet
+   * @returns {string|null} Selected planet ID
+   */
+  getSelectedPlanet() {
+    return this.state.solarSystem.selectedPlanet;
+  }
+
+  /**
+   * Set orbital positions (cached from NASA API)
+   * @param {Object|null} positions - Position data or null
+   */
+  setOrbitalPositions(positions) {
+    this.state.solarSystem.orbitalPositions = positions;
+    this.state.solarSystem.useRealTimeData = !!positions;
+    console.log(`[StateManager] Orbital positions updated (realtime: ${this.state.solarSystem.useRealTimeData})`);
+    this.emit('orbitalPositionsChanged', positions);
+  }
+
+  /**
+   * Get orbital positions
+   * @returns {Object|null} Orbital positions
+   */
+  getOrbitalPositions() {
+    return this.state.solarSystem.orbitalPositions;
+  }
+
+  /**
+   * Check if using real-time orbital data
+   * @returns {boolean} True if using NASA API data
+   */
+  isUsingRealTimeData() {
+    return this.state.solarSystem.useRealTimeData;
+  }
+
+  /**
+   * Set solar system animation state
+   * @param {boolean} isAnimating - Animation state
+   */
+  setSolarSystemAnimating(isAnimating) {
+    this.state.solarSystem.isAnimating = isAnimating;
+    this.emit('solarSystemAnimatingChanged', isAnimating);
+  }
+
+  /**
+   * Check if solar system is animating
+   * @returns {boolean} True if animating
+   */
+  isSolarSystemAnimating() {
+    return this.state.solarSystem.isAnimating;
   }
 
   // ========================================

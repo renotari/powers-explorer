@@ -16,12 +16,14 @@ import { BootScene } from '@/scenes/BootScene.js';
 import { MenuScene } from '@/scenes/MenuScene.js';
 import { UIOverlayScene } from '@/scenes/UIOverlayScene.js';
 import { CosmicComparisonScene } from '@/scenes/CosmicComparisonScene.js';
+import { SolarSystemScene } from '@/scenes/SolarSystemScene.js';
 
 // Register all scenes in the configuration
 phaserConfig.scene = [
   BootScene,
   MenuScene,
   CosmicComparisonScene,
+  SolarSystemScene,
   UIOverlayScene
 ];
 

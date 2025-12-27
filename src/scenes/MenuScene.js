@@ -43,6 +43,7 @@ export class MenuScene extends Phaser.Scene {
 
     // Create mode selection buttons
     this.createCosmicComparisonButton(width, height);
+    this.createSolarSystemButton(width, height);
     this.createPowersOfTenButton(width, height);
 
     // Footer text
@@ -102,10 +103,58 @@ export class MenuScene extends Phaser.Scene {
   }
 
   /**
+   * Create Solar System mode button
+   */
+  createSolarSystemButton(width, height) {
+    const buttonY = height / 2 + 80;
+
+    // Button background
+    const button = this.add.rectangle(
+      width / 2,
+      buttonY,
+      300,
+      60,
+      parseInt(COLORS.PRIMARY.replace('#', '0x'))
+    ).setInteractive();
+
+    // Button text
+    const buttonText = this.add.text(width / 2, buttonY, 'Solar System', {
+      fontSize: '24px',
+      color: COLORS.TEXT,
+      fontFamily: 'Arial',
+      fontStyle: 'bold'
+    }).setOrigin(0.5);
+
+    // Description
+    this.add.text(width / 2, buttonY + 45, 'Explore the solar system with three visualization modes', {
+      fontSize: '14px',
+      color: '#cccccc',
+      fontFamily: 'Arial'
+    }).setOrigin(0.5);
+
+    // Hover effects
+    button.on('pointerover', () => {
+      button.setFillStyle(parseInt(COLORS.PRIMARY.replace('#', '0x')), 0.8);
+      buttonText.setScale(1.05);
+    });
+
+    button.on('pointerout', () => {
+      button.setFillStyle(parseInt(COLORS.PRIMARY.replace('#', '0x')), 1);
+      buttonText.setScale(1);
+    });
+
+    // Click handler
+    button.on('pointerdown', () => {
+      console.log('[MenuScene] Solar System selected');
+      this.startSolarSystem();
+    });
+  }
+
+  /**
    * Create Powers of Ten mode button (placeholder for future)
    */
   createPowersOfTenButton(width, height) {
-    const buttonY = height / 2 + 120;
+    const buttonY = height / 2 + 160;
 
     // Button background (disabled style)
     const button = this.add.rectangle(
@@ -148,6 +197,23 @@ export class MenuScene extends Phaser.Scene {
 
     // Start comparison scene
     this.scene.start('CosmicComparisonScene');
+
+    // Launch overlay scene (runs in parallel)
+    this.scene.launch('UIOverlayScene');
+  }
+
+  /**
+   * Start Solar System mode
+   */
+  startSolarSystem() {
+    // Update state
+    StateManager.getInstance().setMode('solarSystem');
+
+    // Stop this scene
+    this.scene.stop('MenuScene');
+
+    // Start Solar System scene
+    this.scene.start('SolarSystemScene');
 
     // Launch overlay scene (runs in parallel)
     this.scene.launch('UIOverlayScene');

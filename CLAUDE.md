@@ -23,8 +23,8 @@ This document provides essential context and guidelines for AI assistants workin
 
 ### Current Implementation Status
 - **Phase 1: CosmicComparison Mode** ✅ COMPLETE
-- **Phase 2:** Not yet implemented
-- **Phase 3:** Not yet implemented
+- **Phase 2: SolarSystem Mode** ✅ COMPLETE
+- **Phase 3: Powers of Ten Mode** ⏳ NOT YET IMPLEMENTED
 
 ### Technology Stack
 - **Frontend Framework:** Phaser 3 (game/graphics engine)
@@ -69,8 +69,8 @@ Components extend `Phaser.Events.EventEmitter` for loose coupling:
 #### Core Infrastructure
 - **`src/main.js`** - Application entry point, registers all scenes
 - **`src/config/phaserConfig.js`** - Phaser game configuration
-- **`src/utils/Constants.js`** - Canvas size, animation durations, scale bounds
-- **`src/utils/ScaleCalculator.js`** - All mathematical calculations (CRITICAL)
+- **`src/utils/Constants.js`** - Canvas size, animation durations, scale bounds, solar system constants
+- **`src/utils/ScaleCalculator.js`** - All mathematical calculations including ellipse positioning (CRITICAL)
 
 #### Data Layer
 - **`src/managers/DataManager.js`** - Loads and indexes JSON data (CRITICAL)
@@ -78,21 +78,33 @@ Components extend `Phaser.Events.EventEmitter` for loose coupling:
 - **`public/assets/data/physical-constants.json`** - Physical constants
 
 #### State Management
-- **`src/managers/StateManager.js`** - Centralized state, FIFO selection logic
+- **`src/managers/StateManager.js`** - Centralized state, FIFO selection logic, solar system state
 - **`src/managers/AnimationManager.js`** - Animation coordination
+
+#### Services
+- **`src/services/NASAHorizonsService.js`** - Real-time planetary position API (NEW)
 
 #### Scenes
 - **`src/scenes/BootScene.js`** - Asset loading, initialization (CRITICAL)
-- **`src/scenes/MenuScene.js`** - Mode selection UI
+- **`src/scenes/MenuScene.js`** - Mode selection UI (3 modes)
 - **`src/scenes/UIOverlayScene.js`** - Persistent UI layer
-- **`src/scenes/CosmicComparisonScene.js`** - Main comparison orchestration (CRITICAL)
+- **`src/scenes/CosmicComparisonScene.js`** - Comparison orchestration (CRITICAL)
+- **`src/scenes/SolarSystemScene.js`** - Solar system visualization (CRITICAL, NEW)
 
-#### Components
+#### Components - Comparison
 - **`src/components/ComponentBase.js`** - Base class for all components
 - **`src/components/comparison/ObjectSelector.js`** - Object library UI (CRITICAL)
 - **`src/components/comparison/ScaleDisplay.js`** - Relative scale visualization (CRITICAL)
 - **`src/components/comparison/DistanceAnimator.js`** - Separation animation
 - **`src/components/comparison/LightSpeedTraveler.js`** - Light travel with timer
+
+#### Components - Solar System (NEW)
+- **`src/components/solarsystem/PlanetRenderer.js`** - Individual planet visual
+- **`src/components/solarsystem/SizeComparisonView.js`** - Side-by-side planet sizes
+- **`src/components/solarsystem/DistanceView.js`** - Logarithmic distance layout
+- **`src/components/solarsystem/OrbitalView.js`** - Elliptical orbits (CRITICAL)
+- **`src/components/solarsystem/PlanetInfoPanel.js`** - Planet information panel
+- **`src/components/solarsystem/ModeCycleButton.js`** - Mode switching control
 
 ## Critical Implementation Details
 
@@ -207,6 +219,214 @@ The `@` alias points to `src/`:
 import { DataManager } from '@/managers/DataManager.js';
 ```
 
+## SolarSystemScene Documentation (NEW)
+
+### Overview
+
+SolarSystemScene provides three interactive visualization modes for exploring the solar system:
+
+1. **Size Comparison** - Planets side-by-side with proportional sizes + Sun toggle
+2. **Distance View** - Planets at logarithmically-scaled orbital distances
+3. **Orbital View** - Planets on accurate elliptical orbits with real-time positions
+
+### State Machine
+
+Single cycle button rotates through modes:
+```
+SIZE_COMPARISON → DISTANCE_VIEW → ORBITAL_VIEW → (cycles back)
+```
+
+### Key Features
+
+**Mode 1: Size Comparison**
+- All 8 planets displayed horizontally
+- Proportional sizing (largest planet fills available space)
+- Sun toggle button - when enabled, recalculates all sizes to include Sun
+- Labels below each planet
+- Click on any planet shows info panel
+
+**Mode 2: Distance View**
+- Sun positioned at left edge (x=60px)
+- Planets positioned using logarithmic distance scaling
+- AU markers at 1, 5, 10, 20, 30 AU
+- Planet sizes scaled proportionally to fit visualization
+- Click on any planet/Sun shows info panel
+
+**Mode 3: Orbital View**
+- Sun at center (acts as ellipse focus)
+- Elliptical orbit paths drawn for all planets
+- Planets positioned using orbital mechanics
+- Real-time positions from NASA Horizons API (with offline fallback)
+- Data source indicator shows "Real-time data" or "Simulated positions"
+- Click on any planet/Sun shows info panel
+
+### Critical Implementation Details
+
+#### Elliptical Orbit Mathematics
+
+**CRITICAL:** Sun is at the FOCUS of the ellipse, not the center!
+
+```javascript
+// Polar equation of ellipse
+r = a(1 - e²) / (1 + e·cos(θ))
+
+// Where:
+// a = semi-major axis (meters)
+// e = eccentricity (0-1, where 0 is circle)
+// θ = true anomaly (angle from perihelion in radians)
+
+// Key relationships:
+// Semi-minor axis: b = a × √(1 - e²)
+// Focal distance: c = a × e (offset from center to Sun)
+```
+
+Implementation in `ScaleCalculator.getPositionOnEllipse()`:
+```javascript
+static getPositionOnEllipse(a, e, theta, centerX, centerY, scaleFactor) {
+  const r = (a * (1 - e * e)) / (1 + e * Math.cos(theta));
+  const screenR = r * scaleFactor;
+  const x = centerX + screenR * Math.cos(theta);
+  const y = centerY + screenR * Math.sin(theta);
+  return { x, y };
+}
+```
+
+#### NASA Horizons API Integration
+
+**Current Status:** Uses default positions from `orbital-parameters.json`
+
+**Production Requirements:**
+- NASA Horizons API has CORS restrictions
+- Requires serverless proxy (Vercel/Netlify) or backend endpoint
+- Current implementation: `NASAHorizonsService` returns defaults
+- 1-hour cache for API responses
+- Automatic fallback on API failure
+
+**Endpoint Template:**
+```javascript
+// Production: https://your-proxy.vercel.app/api/horizons
+// Query: planet code (Mercury=199, Venus=299, etc.)
+// Returns: X, Y coordinates → convert to theta = atan2(y, x)
+```
+
+#### Planet Info Panel
+
+Slide-in panel from right side showing:
+- Planet name (large, colored header)
+- Diameter (scientific notation)
+- Distance from Sun (in AU)
+- Orbital period (in Earth days)
+- Educational facts (up to 5)
+
+**Animation:** 300ms slide with Quad easing
+
+#### Component Hierarchy
+
+```
+SolarSystemScene
+├── SizeComparisonView
+│   ├── PlanetRenderer[] (8 planets)
+│   ├── PlanetRenderer (Sun, optional)
+│   └── Sun Toggle Button
+├── DistanceView
+│   ├── PlanetRenderer (Sun)
+│   ├── PlanetRenderer[] (8 planets)
+│   └── AU Markers[]
+├── OrbitalView
+│   ├── PlanetRenderer (Sun)
+│   ├── PlanetRenderer[] (8 planets)
+│   ├── Orbit Graphics[] (ellipses)
+│   └── Data Source Indicator
+├── PlanetInfoPanel (shared)
+└── ModeCycleButton (shared)
+```
+
+### Data Requirements
+
+**New Data File:** `orbital-parameters.json`
+```json
+{
+  "planets": [
+    {
+      "id": "earth",
+      "semiMajorAxis": 149598023000,      // meters
+      "semiMajorAxisAU": 1.000001018,
+      "eccentricity": 0.0167086,
+      "orbitalPeriod": 365.256,            // days
+      "inclination": 0.00005,              // degrees
+      "argumentOfPerihelion": 114.20783,
+      "defaultAngularPosition": 90         // degrees
+    }
+  ]
+}
+```
+
+**Existing Data:** All 8 planets already in `cosmic-objects.json` with diameters, colors, facts
+
+### Memory Management
+
+Following same patterns as CosmicComparisonScene:
+
+```javascript
+create() {
+  this.events.on('shutdown', this.cleanup, this);
+  // ... initialization
+}
+
+cleanup() {
+  // Destroy current view
+  if (this.currentView) {
+    this.currentView.off('planetClicked', this.onPlanetClicked, this);
+    this.currentView.destroy();
+  }
+
+  // Destroy info panel
+  this.planetInfoPanel?.destroy();
+
+  // Destroy mode cycle button
+  this.modeCycleButton.off('modeCycleRequested', this.cycleMode, this);
+  this.modeCycleButton.destroy();
+}
+```
+
+### Size Comparison Algorithm
+
+```javascript
+// Calculate scale factor to fit all bodies horizontally
+const maxDiameter = Math.max(...bodies.map(b => b.diameter));
+const availableWidth = GAME_WIDTH - (margin * 2) - (spacing * (bodies.length - 1));
+const maxWidthPerBody = availableWidth / bodies.length;
+const scaleFactor = Math.min(
+  maxWidthPerBody / maxDiameter,
+  (GAME_HEIGHT * 0.5) / maxDiameter  // Height constraint
+);
+
+// Apply with minimum radius for visibility
+radius = Math.max(
+  (diameter / 2) * scaleFactor,
+  SOLAR_SYSTEM.MIN_PLANET_RADIUS  // 3 pixels
+);
+```
+
+### Sun Toggle Challenge
+
+Sun diameter is 109× Earth's diameter. When Sun is enabled:
+- All planets become tiny (Earth ~3-4 pixels)
+- Must enforce minimum visibility (MIN_PLANET_RADIUS = 3px)
+- Recalculate ALL sizes when toggling
+
+### Navigation Flow
+
+```
+MenuScene
+   ↓ (Solar System button)
+SolarSystemScene (starts in Size Comparison mode)
+   ↓ (parallel launch)
+UIOverlayScene
+   ↓ (Back button)
+MenuScene
+```
+
 ### Testing (Not Yet Implemented)
 - Framework: Vitest
 - Commands: `npm test`, `npm run test:watch`, `npm run test:coverage`
@@ -219,14 +439,9 @@ On Windows, npm has a bug with optional dependencies. Fix:
 - Add `"@rollup/rollup-win32-x64-msvc": "^4.54.0"` to `devDependencies` in package.json
 - This is already configured in the current package.json
 
-## Next Steps (Not Yet Started)
+## Next Steps
 
-### Phase 2: Expand Object Library
-- Add 15-30 cosmic objects
-- More planets, moons, stars, galaxies
-- Extended distance relationships
-
-### Phase 3: Powers of Ten Mode
+### Phase 3: Powers of Ten Mode (Not Yet Started)
 - Smooth zooming visualization
 - Scale slider from Planck length to observable universe
 
@@ -249,13 +464,21 @@ See these files for detailed documentation:
 
 ## Version History
 
-- **v1.0.0-dev** - Phase 1 (CosmicComparison Mode) complete
+- **v1.0.0-dev** (2025-12-26) - Phase 1 (CosmicComparison Mode) complete
   - All 22 files implemented
   - Full workflow: selection → scale → distance → light → reset
   - Development server ready for testing
 
+- **v1.1.0-dev** (2025-12-27) - Phase 2 (SolarSystem Mode) complete
+  - 17 new files added
+  - Three visualization modes: Size, Distance, Orbital
+  - Elliptical orbit rendering with real orbital parameters
+  - NASA Horizons API integration (with offline fallback)
+  - Planet info panel with educational facts
+  - Sun toggle in size comparison mode
+
 ---
 
-**Last Updated:** 2025-12-26
-**Phase:** Phase 1 Complete
+**Last Updated:** 2025-12-27
+**Phase:** Phase 2 Complete (Solar System)
 **Status:** Ready for Testing
