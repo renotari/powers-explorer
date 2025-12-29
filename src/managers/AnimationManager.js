@@ -52,8 +52,8 @@ export class AnimationManager extends Phaser.Events.EventEmitter {
     console.log(`[AnimationManager] Starting animation: ${id}`);
 
     return new Promise((resolve, reject) => {
-      // Handle successful completion
-      tween.on('complete', () => {
+      // Use 'once' instead of 'on' for automatic listener removal
+      tween.once('complete', () => {
         console.log(`[AnimationManager] Animation complete: ${id}`);
         this.activeAnimations.delete(id);
         this.emit('animationComplete', id);
@@ -61,7 +61,7 @@ export class AnimationManager extends Phaser.Events.EventEmitter {
       });
 
       // Handle early termination
-      tween.on('stop', () => {
+      tween.once('stop', () => {
         console.log(`[AnimationManager] Animation stopped: ${id}`);
         this.activeAnimations.delete(id);
         this.emit('animationStopped', id);
@@ -223,6 +223,24 @@ export class AnimationManager extends Phaser.Events.EventEmitter {
    * Used for cleanup during scene shutdown
    */
   clear() {
+    // Stop all tweens before clearing
+    this.activeAnimations.forEach((tween) => {
+      if (tween && tween.isPlaying && tween.isPlaying()) {
+        tween.stop();
+      }
+    });
     this.activeAnimations.clear();
+  }
+
+  /**
+   * Reset the singleton instance (for testing)
+   * @static
+   */
+  static resetInstance() {
+    if (AnimationManager.instance) {
+      AnimationManager.instance.cancelAll();
+      AnimationManager.instance.removeAllListeners();
+      AnimationManager.instance = null;
+    }
   }
 }

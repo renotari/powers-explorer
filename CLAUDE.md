@@ -82,7 +82,7 @@ Components extend `Phaser.Events.EventEmitter` for loose coupling:
 - **`src/managers/AnimationManager.js`** - Animation coordination
 
 #### Services
-- **`src/services/NASAHorizonsService.js`** - Real-time planetary position API (NEW)
+- **`src/services/PlanetaryPositionService.js`** - Real-time planetary positions using Astronomy Engine (NEW)
 
 #### Scenes
 - **`src/scenes/BootScene.js`** - Asset loading, initialization (CRITICAL)
@@ -291,23 +291,22 @@ static getPositionOnEllipse(a, e, theta, centerX, centerY, scaleFactor) {
 }
 ```
 
-#### NASA Horizons API Integration
+#### Planetary Position Calculation
 
-**Current Status:** Uses default positions from `orbital-parameters.json`
+**Current Status:** Uses Astronomy Engine for real-time position calculations
 
-**Production Requirements:**
-- NASA Horizons API has CORS restrictions
-- Requires serverless proxy (Vercel/Netlify) or backend endpoint
-- Current implementation: `NASAHorizonsService` returns defaults
-- 1-hour cache for API responses
-- Automatic fallback on API failure
+**Implementation:**
+- Astronomy Engine library runs client-side (no CORS issues)
+- Zero dependencies, scientifically validated against NASA data
+- `PlanetaryPositionService` calculates positions using heliocentric vectors
+- 1-hour cache for calculated positions
+- Automatic fallback to defaults from `orbital-parameters.json` on failure
 
-**Endpoint Template:**
-```javascript
-// Production: https://your-proxy.vercel.app/api/horizons
-// Query: planet code (Mercury=199, Venus=299, etc.)
-// Returns: X, Y coordinates → convert to theta = atan2(y, x)
-```
+**Technical Details:**
+- Uses `HelioVector()` to get heliocentric x, y, z coordinates
+- Converts to ecliptic coordinates with `Ecliptic()`
+- Ecliptic longitude (elon) represents angular position in orbital plane
+- Returns theta (radians) for each planet
 
 #### Planet Info Panel
 

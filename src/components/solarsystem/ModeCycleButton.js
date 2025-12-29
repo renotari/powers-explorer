@@ -9,6 +9,7 @@
 
 import { ComponentBase } from '@/components/ComponentBase.js';
 import { GAME_WIDTH, GAME_HEIGHT, COLORS } from '@/utils/Constants.js';
+import { parseHexColor } from '@/utils/ColorUtils.js';
 
 export class ModeCycleButton extends ComponentBase {
   constructor(scene, config = {}) {
@@ -36,7 +37,7 @@ export class ModeCycleButton extends ComponentBase {
       buttonY,
       buttonWidth,
       buttonHeight,
-      parseInt(COLORS.PRIMARY.replace('#', '0x'))
+      parseHexColor(COLORS.PRIMARY)
     ).setInteractive({ useHandCursor: true });
     this.container.add(this.buttonBackground);
 
@@ -99,6 +100,10 @@ export class ModeCycleButton extends ComponentBase {
    */
   destroy() {
     if (this.buttonBackground) {
+      // Remove event listeners before destroying
+      this.buttonBackground.off('pointerdown');
+      this.buttonBackground.off('pointerover');
+      this.buttonBackground.off('pointerout');
       this.buttonBackground.destroy();
       this.buttonBackground = null;
     }

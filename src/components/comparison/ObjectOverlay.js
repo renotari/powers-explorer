@@ -9,8 +9,9 @@
  * This allows accurate proportional visualization while maintaining visibility.
  */
 
-import { ComponentBase } from '../ComponentBase.js';
-import { PROPORTIONAL_SIZING } from '../../utils/Constants.js';
+import { ComponentBase } from '@/components/ComponentBase.js';
+import { PROPORTIONAL_SIZING } from '@/utils/Constants.js';
+import { parseHexColor } from '@/utils/ColorUtils.js';
 
 export class ObjectOverlay extends ComponentBase {
   constructor(scene, config = {}) {

@@ -13,6 +13,7 @@ import { ComponentBase } from '@/components/ComponentBase.js';
 import { ScaleCalculator } from '@/utils/ScaleCalculator.js';
 import { DataManager } from '@/managers/DataManager.js';
 import { COLORS } from '@/utils/Constants.js';
+import { parseHexColor } from '@/utils/ColorUtils.js';
 
 export class ScaleDisplay extends ComponentBase {
   /**
@@ -87,7 +88,7 @@ export class ScaleDisplay extends ComponentBase {
       screenWidth / 3,
       screenHeight / 2,
       largerSize / 2,  // radius
-      parseInt(larger.color.replace('#', '0x'))
+      parseHexColor(larger.color)
     );
 
     // Create smaller object sprite (right side)
@@ -95,7 +96,7 @@ export class ScaleDisplay extends ComponentBase {
       2 * screenWidth / 3,
       screenHeight / 2,
       smallerSize / 2,  // radius
-      parseInt(smaller.color.replace('#', '0x'))
+      parseHexColor(smaller.color)
     );
 
     // Add to container

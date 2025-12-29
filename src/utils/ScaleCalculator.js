@@ -204,7 +204,8 @@ export class ScaleCalculator {
     const screenR = r * scaleFactor;
 
     // Convert polar to cartesian (relative to focus/Sun position)
-    const x = centerX + screenR * Math.cos(theta);
+    // Note: Using negative x because Sun is at LEFT focus, so θ=0 (perihelion) points LEFT
+    const x = centerX - screenR * Math.cos(theta);
     const y = centerY + screenR * Math.sin(theta);
 
     return { x, y };

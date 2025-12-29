@@ -13,6 +13,7 @@ import { PlanetRenderer } from './PlanetRenderer.js';
 import { StateManager } from '@/managers/StateManager.js';
 import { DataManager } from '@/managers/DataManager.js';
 import { GAME_WIDTH, GAME_HEIGHT, SOLAR_SYSTEM, COLORS } from '@/utils/Constants.js';
+import { parseHexColor } from '@/utils/ColorUtils.js';
 
 export class SizeComparisonView extends ComponentBase {
   constructor(scene, config = {}) {
@@ -200,7 +201,11 @@ export class SizeComparisonView extends ComponentBase {
    * Clear all planet renderers
    */
   clearRenderers() {
-    this.planetRenderers.forEach(renderer => renderer.destroy());
+    // Remove forward listeners before destroying
+    this.planetRenderers.forEach(renderer => {
+      renderer.off('planetClicked');
+      renderer.destroy();
+    });
     this.planetRenderers = [];
   }
 
@@ -210,7 +215,11 @@ export class SizeComparisonView extends ComponentBase {
   destroy() {
     this.clearRenderers();
 
+    // Remove sun toggle button listeners
     if (this.sunToggleButton) {
+      this.sunToggleButton.off('pointerdown');
+      this.sunToggleButton.off('pointerover');
+      this.sunToggleButton.off('pointerout');
       this.sunToggleButton.destroy();
       this.sunToggleButton = null;
     }

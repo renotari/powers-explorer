@@ -13,6 +13,7 @@ import { PlanetRenderer } from './PlanetRenderer.js';
 import { DataManager } from '@/managers/DataManager.js';
 import { ScaleCalculator } from '@/utils/ScaleCalculator.js';
 import { GAME_WIDTH, GAME_HEIGHT, SOLAR_SYSTEM, COLORS } from '@/utils/Constants.js';
+import { parseHexColor } from '@/utils/ColorUtils.js';
 
 export class DistanceView extends ComponentBase {
   constructor(scene, config = {}) {
@@ -89,6 +90,10 @@ export class DistanceView extends ComponentBase {
 
     // Find maximum distance (Neptune)
     const orbitalParams = this.dataManager.getOrbitalParameters();
+    if (!orbitalParams || orbitalParams.length === 0) {
+      console.warn('[DistanceView] No orbital parameters available');
+      return [];
+    }
     const maxDistance = Math.max(...orbitalParams.map(p => p.semiMajorAxis));
 
     // Find maximum planet diameter for sizing
@@ -132,10 +137,13 @@ export class DistanceView extends ComponentBase {
   drawDistanceMarkers(sunX, centerY) {
     const availableWidth = GAME_WIDTH - sunX - 60;
     const orbitalParams = this.dataManager.getOrbitalParameters();
+    if (!orbitalParams || orbitalParams.length === 0) return;
+
     const maxDistance = Math.max(...orbitalParams.map(p => p.semiMajorAxis));
 
-    // AU in meters
-    const AU = 149597870700;
+    // Get AU from physical constants
+    const constants = this.dataManager.getConstants();
+    const AU = constants?.astronomicalUnit?.value || 149597870700;  // Fallback if not available
 
     // Draw markers at 1, 5, 10, 20, 30 AU
     const auMarkers = [1, 5, 10, 20, 30];
@@ -180,12 +188,18 @@ export class DistanceView extends ComponentBase {
    * Clean up resources
    */
   destroy() {
+    // Remove sun renderer listeners
     if (this.sunRenderer) {
+      this.sunRenderer.off('planetClicked');
       this.sunRenderer.destroy();
       this.sunRenderer = null;
     }
 
-    this.planetRenderers.forEach(renderer => renderer.destroy());
+    // Remove planet renderer listeners
+    this.planetRenderers.forEach(renderer => {
+      renderer.off('planetClicked');
+      renderer.destroy();
+    });
     this.planetRenderers = [];
 
     this.distanceMarkers.forEach(marker => marker.destroy());

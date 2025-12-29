@@ -11,6 +11,7 @@ import { ComponentBase } from '@/components/ComponentBase.js';
 import { DataManager } from '@/managers/DataManager.js';
 import { ScaleCalculator } from '@/utils/ScaleCalculator.js';
 import { GAME_WIDTH, GAME_HEIGHT, SOLAR_SYSTEM, COLORS } from '@/utils/Constants.js';
+import { parseHexColor } from '@/utils/ColorUtils.js';
 
 export class PlanetInfoPanel extends ComponentBase {
   constructor(scene, config = {}) {
@@ -173,7 +174,10 @@ export class PlanetInfoPanel extends ComponentBase {
     if (planetData.id !== 'sun') {
       const orbitalData = this.dataManager.getOrbitalParametersById(planetData.id);
       if (orbitalData) {
-        const auDistance = (orbitalData.semiMajorAxis / 149597870700).toFixed(2);
+        // Get AU from physical constants
+        const constants = this.dataManager.getConstants();
+        const AU = constants?.astronomicalUnit?.value || 149597870700;
+        const auDistance = (orbitalData.semiMajorAxis / AU).toFixed(2);
         const distanceText = this.scene.add.text(
           margin,
           yOffset,
@@ -285,6 +289,10 @@ export class PlanetInfoPanel extends ComponentBase {
       this.panelBackground = null;
     }
     if (this.closeButton) {
+      // Remove event listeners before destroying
+      this.closeButton.off('pointerdown');
+      this.closeButton.off('pointerover');
+      this.closeButton.off('pointerout');
       this.closeButton.destroy();
       this.closeButton = null;
     }

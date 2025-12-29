@@ -14,6 +14,7 @@ import { DataManager } from '@/managers/DataManager.js';
 import { StateManager } from '@/managers/StateManager.js';
 import { ScaleCalculator } from '@/utils/ScaleCalculator.js';
 import { GAME_WIDTH, GAME_HEIGHT, SOLAR_SYSTEM, COLORS } from '@/utils/Constants.js';
+import { parseHexColor } from '@/utils/ColorUtils.js';
 
 export class OrbitalView extends ComponentBase {
   constructor(scene, config = {}) {
@@ -38,7 +39,11 @@ export class OrbitalView extends ComponentBase {
 
     // Calculate scale factor to fit Neptune's orbit
     const orbitalParams = this.dataManager.getOrbitalParameters();
-    const neptuneOrbit = orbitalParams.find(p => p.id === 'neptune');
+    const neptuneOrbit = orbitalParams?.find(p => p.id === 'neptune');
+    if (!neptuneOrbit) {
+      console.error('[OrbitalView] Neptune orbital parameters not found');
+      return;
+    }
     const maxOrbitRadius = Math.min(GAME_WIDTH, GAME_HEIGHT) / 2 - 50;
     this.scaleFactor = maxOrbitRadius / neptuneOrbit.semiMajorAxis;
 
@@ -115,7 +120,8 @@ export class OrbitalView extends ComponentBase {
 
       // Draw ellipse centered at (centerX + c, centerY)
       // Sun is at focus (centerX, centerY)
-      graphics.strokeEllipse(centerX + c, centerY, a, b);
+      // Phaser expects full width/height, not semi-axes
+      graphics.strokeEllipse(centerX + c, centerY, 2 * a, 2 * b);
 
       this.container.add(graphics);
       this.orbitGraphics.push(graphics);
@@ -199,12 +205,18 @@ export class OrbitalView extends ComponentBase {
    * Clean up resources
    */
   destroy() {
+    // Remove sun renderer listeners
     if (this.sunRenderer) {
+      this.sunRenderer.off('planetClicked');
       this.sunRenderer.destroy();
       this.sunRenderer = null;
     }
 
-    this.planetRenderers.forEach(renderer => renderer.destroy());
+    // Remove planet renderer listeners
+    this.planetRenderers.forEach(renderer => {
+      renderer.off('planetClicked');
+      renderer.destroy();
+    });
     this.planetRenderers = [];
 
     this.orbitGraphics.forEach(graphics => graphics.destroy());

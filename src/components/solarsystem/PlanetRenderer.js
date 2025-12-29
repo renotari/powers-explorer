@@ -10,6 +10,7 @@
 
 import { ComponentBase } from '@/components/ComponentBase.js';
 import { COLORS, SOLAR_SYSTEM } from '@/utils/Constants.js';
+import { parseHexColor } from '@/utils/ColorUtils.js';
 
 export class PlanetRenderer extends ComponentBase {
   /**
@@ -38,7 +39,7 @@ export class PlanetRenderer extends ComponentBase {
   create() {
     // Parse color from hex string to integer
     const color = this.planetData.color
-      ? parseInt(this.planetData.color.replace('#', '0x'))
+      ? parseHexColor(this.planetData.color)
       : 0xFFFFFF;
 
     // Create planet circle
@@ -76,24 +77,28 @@ export class PlanetRenderer extends ComponentBase {
    * Setup click and hover interactions
    */
   setupInteractions() {
-    // Click handler
-    this.circle.on('pointerdown', () => {
+    // Store bound handlers for later removal
+    this.onPointerDown = () => {
       this.emit('planetClicked', {
         planetId: this.planetData.id,
         planetData: this.planetData,
         x: this.circle.x,
         y: this.circle.y
       });
-    });
+    };
 
-    // Hover effects
-    this.circle.on('pointerover', () => {
+    this.onPointerOver = () => {
       this.highlight();
-    });
+    };
 
-    this.circle.on('pointerout', () => {
+    this.onPointerOut = () => {
       this.unhighlight();
-    });
+    };
+
+    // Add event listeners
+    this.circle.on('pointerdown', this.onPointerDown);
+    this.circle.on('pointerover', this.onPointerOver);
+    this.circle.on('pointerout', this.onPointerOut);
   }
 
   /**
@@ -200,9 +205,18 @@ export class PlanetRenderer extends ComponentBase {
     if (enabled) {
       if (!this.circle.input) {
         this.circle.setInteractive({ useHandCursor: true });
+      }
+      // Only setup interactions if handlers don't exist yet
+      if (!this.onPointerDown) {
         this.setupInteractions();
       }
     } else {
+      // Remove listeners before disabling
+      if (this.onPointerDown) {
+        this.circle.off('pointerdown', this.onPointerDown);
+        this.circle.off('pointerover', this.onPointerOver);
+        this.circle.off('pointerout', this.onPointerOut);
+      }
       this.circle.disableInteractive();
     }
   }
@@ -227,6 +241,16 @@ export class PlanetRenderer extends ComponentBase {
    * Clean up resources
    */
   destroy() {
+    // Remove event listeners before destroying
+    if (this.circle && this.onPointerDown) {
+      this.circle.off('pointerdown', this.onPointerDown);
+      this.circle.off('pointerover', this.onPointerOver);
+      this.circle.off('pointerout', this.onPointerOut);
+      this.onPointerDown = null;
+      this.onPointerOver = null;
+      this.onPointerOut = null;
+    }
+
     if (this.circle) {
       this.circle.destroy();
       this.circle = null;

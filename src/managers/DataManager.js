@@ -270,4 +270,20 @@ export class DataManager {
       orbital: orbitalData || null
     };
   }
+
+  /**
+   * Reset the singleton instance (for testing)
+   * @static
+   */
+  static resetInstance() {
+    if (DataManager.instance) {
+      DataManager.instance.objects = [];
+      DataManager.instance.distances = [];
+      DataManager.instance.physicalConstants = {};
+      DataManager.instance.orbitalParameters = [];
+      DataManager.instance.objectCache.clear();
+      DataManager.instance.distanceCache.clear();
+      DataManager.instance = null;
+    }
+  }
 }

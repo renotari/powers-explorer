@@ -34,7 +34,12 @@ export class LightSpeedTraveler extends ComponentBase {
 
     // Get speed of light from constants
     const constants = DataManager.getInstance().getConstants();
-    this.speedOfLight = constants.speedOfLight.value;  // 299,792,458 m/s
+    if (!constants || !constants.speedOfLight) {
+      console.error('[LightSpeedTraveler] Speed of light constant not found');
+      this.speedOfLight = 299792458; // Fallback to standard value
+    } else {
+      this.speedOfLight = constants.speedOfLight.value;  // 299,792,458 m/s
+    }
 
     // Calculate real travel time
     this.travelTime = realDistance / this.speedOfLight;  // seconds

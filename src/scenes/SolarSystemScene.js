@@ -16,7 +16,7 @@ import { DistanceView } from '@/components/solarsystem/DistanceView.js';
 import { OrbitalView } from '@/components/solarsystem/OrbitalView.js';
 import { PlanetInfoPanel } from '@/components/solarsystem/PlanetInfoPanel.js';
 import { ModeCycleButton } from '@/components/solarsystem/ModeCycleButton.js';
-import { NASAHorizonsService } from '@/services/NASAHorizonsService.js';
+import { PlanetaryPositionService } from '@/services/PlanetaryPositionService.js';
 
 export class SolarSystemScene extends Phaser.Scene {
   constructor() {
@@ -60,11 +60,11 @@ export class SolarSystemScene extends Phaser.Scene {
   }
 
   /**
-   * Fetch real-time orbital data from NASA API
+   * Fetch real-time orbital data using Astronomy Engine
    */
   async fetchOrbitalData() {
     try {
-      const service = NASAHorizonsService.getInstance();
+      const service = PlanetaryPositionService.getInstance();
       const positions = await service.fetchPlanetaryPositions();
 
       if (positions) {

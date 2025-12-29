@@ -12,6 +12,7 @@
 import { ComponentBase } from '@/components/ComponentBase.js';
 import { DataManager } from '@/managers/DataManager.js';
 import { MAX_SELECTIONS, COLORS } from '@/utils/Constants.js';
+import { parseHexColor } from '@/utils/ColorUtils.js';
 
 export class ObjectSelector extends ComponentBase {
   /**
@@ -86,7 +87,7 @@ export class ObjectSelector extends ComponentBase {
       y,
       220,
       60,
-      parseInt(obj.color.replace('#', '0x')),
+      parseHexColor(obj.color),
       0.3
     ).setInteractive();
 
@@ -97,7 +98,7 @@ export class ObjectSelector extends ComponentBase {
       220,
       60
     );
-    border.setStrokeStyle(2, parseInt(obj.color.replace('#', '0x')), 0.8);
+    border.setStrokeStyle(2, parseHexColor(obj.color), 0.8);
 
     // Object name
     const nameText = this.scene.add.text(x, y - 10, obj.name, {
@@ -132,14 +133,14 @@ export class ObjectSelector extends ComponentBase {
     // Hover effects
     card.on('pointerover', () => {
       if (!cardData.isSelected) {
-        card.setFillStyle(parseInt(obj.color.replace('#', '0x')), 0.5);
+        card.setFillStyle(parseHexColor(obj.color), 0.5);
         nameText.setScale(1.05);
       }
     });
 
     card.on('pointerout', () => {
       if (!cardData.isSelected) {
-        card.setFillStyle(parseInt(obj.color.replace('#', '0x')), 0.3);
+        card.setFillStyle(parseHexColor(obj.color), 0.3);
         nameText.setScale(1);
       }
     });
@@ -202,8 +203,8 @@ export class ObjectSelector extends ComponentBase {
     if (!obj) return;
 
     // Update visual state
-    card.background.setFillStyle(parseInt(obj.color.replace('#', '0x')), 0.9);
-    card.border.setStrokeStyle(3, parseInt(obj.color.replace('#', '0x')), 1);
+    card.background.setFillStyle(parseHexColor(obj.color), 0.9);
+    card.border.setStrokeStyle(3, parseHexColor(obj.color), 1);
     card.nameText.setScale(1.1);
     card.isSelected = true;
   }
@@ -221,8 +222,8 @@ export class ObjectSelector extends ComponentBase {
     if (!obj) return;
 
     // Reset visual state
-    card.background.setFillStyle(parseInt(obj.color.replace('#', '0x')), 0.3);
-    card.border.setStrokeStyle(2, parseInt(obj.color.replace('#', '0x')), 0.8);
+    card.background.setFillStyle(parseHexColor(obj.color), 0.3);
+    card.border.setStrokeStyle(2, parseHexColor(obj.color), 0.8);
     card.nameText.setScale(1);
     card.isSelected = false;
   }
@@ -249,5 +250,32 @@ export class ObjectSelector extends ComponentBase {
    */
   getSelectedIds() {
     return [...this.selectedIds];  // Return copy
+  }
+
+  /**
+   * Clean up component
+   *
+   * CRITICAL: Remove event listeners from all cards to prevent memory leaks
+   */
+  destroy() {
+    console.log('[ObjectSelector] Destroying component');
+
+    // Remove event listeners from all cards
+    this.objectCards.forEach((card) => {
+      if (card.background) {
+        card.background.off('pointerover');
+        card.background.off('pointerout');
+        card.background.off('pointerdown');
+      }
+    });
+
+    // Clear the Map
+    this.objectCards.clear();
+
+    // Clear selection array
+    this.selectedIds = [];
+
+    // Call parent destroy
+    super.destroy();
   }
 }

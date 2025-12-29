@@ -12,6 +12,7 @@
     "test:coverage": "vitest --coverage"
   },
   "dependencies": {
+    "astronomy-engine": "^2.1.19",
     "phaser": "^3.70.0"
   },
   "devDependencies": {

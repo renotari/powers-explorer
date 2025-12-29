@@ -68,12 +68,33 @@ export class StateManager extends Phaser.Events.EventEmitter {
    * Called once during app boot
    */
   init() {
+    // Reset app state
     this.state.app.currentMode = null;
     this.state.app.isAnimating = false;
     this.state.app.isPaused = false;
 
+    // Reset comparison state
     this.state.comparison.selectedObjects = [];
     this.state.comparison.animationPhase = 'selection';
+
+    // Reset powers of ten state
+    this.state.powersOfTen.currentExponent = 0;
+    this.state.powersOfTen.currentLevel = null;
+    this.state.powersOfTen.zoomVelocity = 0;
+    this.state.powersOfTen.visibleObjects = [];
+
+    // Reset solar system state
+    this.state.solarSystem.currentMode = 'sizeComparison';
+    this.state.solarSystem.sunVisible = true;
+    this.state.solarSystem.selectedPlanet = null;
+    this.state.solarSystem.isAnimating = false;
+    this.state.solarSystem.orbitalPositions = null;
+    this.state.solarSystem.useRealTimeData = false;
+
+    // Reset UI state
+    this.state.ui.infoPanelOpen = false;
+    this.state.ui.selectedInfoObject = null;
+    this.state.ui.helpVisible = false;
 
     console.log('[StateManager] State initialized');
     this.emit('stateManagerReady');
@@ -360,5 +381,17 @@ export class StateManager extends Phaser.Events.EventEmitter {
    */
   logState() {
     console.log('[StateManager] Current State:', this.getState());
+  }
+
+  /**
+   * Reset the singleton instance (for testing)
+   * @static
+   */
+  static resetInstance() {
+    if (StateManager.instance) {
+      StateManager.instance.init();
+      StateManager.instance.removeAllListeners();
+      StateManager.instance = null;
+    }
   }
 }

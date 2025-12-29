@@ -551,24 +551,27 @@ destroy() {
 
 ## Services Layer (NEW)
 
-### NASAHorizonsService
+### PlanetaryPositionService
 
-Fetches real-time planetary positions:
+Calculates real-time planetary positions using Astronomy Engine:
 
 **Features:**
 - Singleton pattern
-- 1-hour cache
-- Timeout protection (5s)
-- Fallback to default positions
+- 1-hour cache for calculations
+- Client-side computation (no CORS issues)
+- Fallback to default positions on error
 
-**Production Setup:**
-Due to CORS restrictions, production requires a proxy:
-1. Serverless function (Vercel/Netlify)
-2. Backend endpoint
-3. Or pre-computed daily positions
+**Implementation:**
+Uses Astronomy Engine library to calculate positions:
+1. `HelioVector()` - Get heliocentric x, y, z coordinates
+2. `Ecliptic()` - Convert to ecliptic coordinates
+3. Extract ecliptic longitude (elon) as theta
+4. Return positions map: `{planetId: theta (radians)}`
 
-**Current Implementation:**
-Returns default positions from `orbital-parameters.json`
+**Benefits:**
+- Zero dependencies, scientifically validated
+- Works offline, no API rate limits
+- No server/proxy required
 
 ---
 
