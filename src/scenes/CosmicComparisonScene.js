@@ -328,6 +328,10 @@ export class CosmicComparisonScene extends Phaser.Scene {
       fontStyle: 'bold'
     }).setOrigin(0.5);
 
+    // Store references for cleanup
+    this.newComparisonButton = button;
+    this.newComparisonButtonText = buttonText;
+
     // Hover effects
     button.on('pointerover', () => {
       button.setFillStyle(parseInt(COLORS.PRIMARY.replace('#', '0x')), 0.8);
@@ -341,6 +345,10 @@ export class CosmicComparisonScene extends Phaser.Scene {
 
     // Click handler
     button.on('pointerdown', () => {
+      // Clear references
+      this.newComparisonButton = null;
+      this.newComparisonButtonText = null;
+
       // Destroy button
       button.destroy();
       buttonText.destroy();
@@ -433,6 +441,24 @@ export class CosmicComparisonScene extends Phaser.Scene {
 
     if (this.lightTraveler) {
       this.lightTraveler.off('travelComplete', this.onLightTravelComplete, this);
+    }
+
+    // Destroy buttons
+    if (this.distanceButton) {
+      this.distanceButton.destroy();
+      this.distanceButton = null;
+    }
+    if (this.distanceButtonText) {
+      this.distanceButtonText.destroy();
+      this.distanceButtonText = null;
+    }
+    if (this.newComparisonButton) {
+      this.newComparisonButton.destroy();
+      this.newComparisonButton = null;
+    }
+    if (this.newComparisonButtonText) {
+      this.newComparisonButtonText.destroy();
+      this.newComparisonButtonText = null;
     }
 
     // Destroy components

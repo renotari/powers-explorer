@@ -389,8 +389,9 @@ export class StateManager extends Phaser.Events.EventEmitter {
    */
   static resetInstance() {
     if (StateManager.instance) {
-      StateManager.instance.init();
+      // Remove listeners BEFORE reinitializing to prevent spurious events
       StateManager.instance.removeAllListeners();
+      StateManager.instance.init();
       StateManager.instance = null;
     }
   }

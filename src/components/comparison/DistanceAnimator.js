@@ -216,6 +216,16 @@ export class DistanceAnimator extends ComponentBase {
    * Destroy component and clean up
    */
   destroy() {
+    // Kill any active tweens on overlays
+    if (this.scene && this.scene.tweens) {
+      if (this.overlay1) {
+        this.scene.tweens.killTweensOf(this.overlay1);
+      }
+      if (this.overlay2) {
+        this.scene.tweens.killTweensOf(this.overlay2);
+      }
+    }
+
     // Destroy overlays
     if (this.overlay1) {
       this.overlay1.destroy();

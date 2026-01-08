@@ -241,6 +241,11 @@ export class PlanetRenderer extends ComponentBase {
    * Clean up resources
    */
   destroy() {
+    // Kill any active tweens on the circle
+    if (this.circle && this.scene && this.scene.tweens) {
+      this.scene.tweens.killTweensOf(this.circle);
+    }
+
     // Remove event listeners before destroying
     if (this.circle && this.onPointerDown) {
       this.circle.off('pointerdown', this.onPointerDown);

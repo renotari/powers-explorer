@@ -302,6 +302,11 @@ export class PlanetInfoPanel extends ComponentBase {
    * Clean up resources
    */
   destroy() {
+    // Kill any active tweens on the container
+    if (this.container && this.scene && this.scene.tweens) {
+      this.scene.tweens.killTweensOf(this.container);
+    }
+
     this.clearContent();
     super.destroy();
   }

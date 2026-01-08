@@ -85,14 +85,32 @@ export class SizeComparisonView extends ComponentBase {
     const targetWidthRatio = 0.9;
     const targetWidth = GAME_WIDTH * targetWidthRatio;  // 1152px
 
+    // Guard against empty array or invalid data
+    if (bodies.length === 0) {
+      console.warn('[SizeComparisonView] No bodies to display');
+      return [];
+    }
+
     // Find largest diameter for proportional sizing
     const maxDiameter = Math.max(...bodies.map(b => b.diameter));
+
+    // Guard against invalid data (all diameters zero or negative)
+    if (maxDiameter <= 0) {
+      console.error('[SizeComparisonView] Invalid body data: all diameters <= 0');
+      return [];
+    }
 
     // Calculate total proportional width needed
     // Sum of (each diameter / max diameter) - e.g., Jupiter=1, Earth=0.089, Mercury=0.034
     const totalProportionalSize = bodies.reduce(
       (sum, b) => sum + b.diameter / maxDiameter, 0
     );
+
+    // Guard against division by zero
+    if (totalProportionalSize <= 0) {
+      console.error('[SizeComparisonView] Invalid proportional size calculation');
+      return [];
+    }
 
     // Spacing between planets
     const spacing = 15;

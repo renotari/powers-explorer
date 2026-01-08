@@ -33,7 +33,7 @@ export class OrbitalView extends ComponentBase {
   /**
    * Create the orbital view
    */
-  async create() {
+  create() {
     const centerX = GAME_WIDTH / 2;
     const centerY = GAME_HEIGHT / 2;
 

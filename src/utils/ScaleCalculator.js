@@ -24,6 +24,11 @@ export class ScaleCalculator {
     const maxScreenSize = screenWidth * SCALE_DISPLAY.MAX_SCREEN_RATIO;
     const minScreenSize = SCALE_DISPLAY.MIN_SIZE;
 
+    // Guard against division by zero
+    if (referenceSize <= 0 || realDiameter <= 0) {
+      return minScreenSize;
+    }
+
     // Calculate size relative to reference, preserving relative sizes
     const ratio = realDiameter / referenceSize;
     const screenSize = maxScreenSize * ratio;
@@ -197,8 +202,22 @@ export class ScaleCalculator {
    * @returns {Object} Position {x, y} in screen coordinates
    */
   static getPositionOnEllipse(a, e, theta, centerX, centerY, scaleFactor) {
+    // Validate eccentricity (must be 0 <= e < 1 for ellipses)
+    if (e < 0 || e >= 1) {
+      console.error(`[ScaleCalculator] Invalid eccentricity: ${e}. Must be 0 <= e < 1`);
+      e = Math.max(0, Math.min(0.99, e)); // Clamp to valid range
+    }
+
     // Polar equation of ellipse: distance from focus (Sun) to planet
-    const r = (a * (1 - e * e)) / (1 + e * Math.cos(theta));
+    const denominator = 1 + e * Math.cos(theta);
+
+    // Guard against division by zero (shouldn't happen with e < 1, but be safe)
+    if (Math.abs(denominator) < 0.0001) {
+      console.warn(`[ScaleCalculator] Near-zero denominator in ellipse calculation`);
+      return { x: centerX, y: centerY };
+    }
+
+    const r = (a * (1 - e * e)) / denominator;
 
     // Scale to screen coordinates
     const screenR = r * scaleFactor;
@@ -221,6 +240,12 @@ export class ScaleCalculator {
    * @returns {number} Semi-minor axis
    */
   static calculateSemiMinorAxis(a, e) {
+    // Validate eccentricity (must be 0 <= e < 1 for ellipses)
+    if (e < 0 || e >= 1) {
+      console.error(`[ScaleCalculator] Invalid eccentricity: ${e}. Must be 0 <= e < 1`);
+      e = Math.max(0, Math.min(0.99, e)); // Clamp to valid range
+    }
+
     return a * Math.sqrt(1 - e * e);
   }
 

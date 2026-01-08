@@ -62,10 +62,14 @@ export class AnimationManager extends Phaser.Events.EventEmitter {
 
       // Handle early termination
       tween.once('stop', () => {
-        console.log(`[AnimationManager] Animation stopped: ${id}`);
-        this.activeAnimations.delete(id);
-        this.emit('animationStopped', id);
-        reject(new Error(`Animation ${id} was stopped`));
+        // Only handle stop if animation wasn't explicitly cancelled
+        // (cancelAnimation removes from map before calling stop)
+        if (this.activeAnimations.has(id)) {
+          console.log(`[AnimationManager] Animation stopped: ${id}`);
+          this.activeAnimations.delete(id);
+          this.emit('animationStopped', id);
+          reject(new Error(`Animation ${id} was stopped`));
+        }
       });
 
       // Register and play
@@ -85,8 +89,9 @@ export class AnimationManager extends Phaser.Events.EventEmitter {
     const tween = this.activeAnimations.get(id);
     if (tween) {
       console.log(`[AnimationManager] Cancelling animation: ${id}`);
-      tween.stop();
+      // Remove from map BEFORE calling stop() to prevent double event emission
       this.activeAnimations.delete(id);
+      tween.stop();
       this.emit('animationCancelled', id);
       return true;
     }

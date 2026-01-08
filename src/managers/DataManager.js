@@ -277,12 +277,12 @@ export class DataManager {
    */
   static resetInstance() {
     if (DataManager.instance) {
-      DataManager.instance.objects = [];
-      DataManager.instance.distances = [];
-      DataManager.instance.physicalConstants = {};
-      DataManager.instance.orbitalParameters = [];
-      DataManager.instance.objectCache.clear();
+      DataManager.instance.cosmicObjects = null;
+      DataManager.instance.constants = null;
+      DataManager.instance.orbitalParameters = null;
+      DataManager.instance.objectsById.clear();
       DataManager.instance.distanceCache.clear();
+      DataManager.instance.orbitalParamsById.clear();
       DataManager.instance = null;
     }
   }

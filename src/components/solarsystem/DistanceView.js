@@ -94,11 +94,31 @@ export class DistanceView extends ComponentBase {
       console.warn('[DistanceView] No orbital parameters available');
       return [];
     }
+
     const maxDistance = Math.max(...orbitalParams.map(p => p.semiMajorAxis));
+
+    // Guard against invalid data
+    if (maxDistance <= 0) {
+      console.error('[DistanceView] Invalid orbital data: maxDistance <= 0');
+      return [];
+    }
 
     // Find maximum planet diameter for sizing
     const planets = planetIds.map(id => this.dataManager.getPlanetById(id)).filter(Boolean);
+
+    // Guard against empty planets array
+    if (planets.length === 0) {
+      console.warn('[DistanceView] No valid planets found');
+      return [];
+    }
+
     const maxPlanetDiameter = Math.max(...planets.map(p => p.diameter));
+
+    // Guard against invalid diameter data
+    if (maxPlanetDiameter <= 0) {
+      console.error('[DistanceView] Invalid planet data: maxPlanetDiameter <= 0');
+      return [];
+    }
 
     // Size scale factor - largest planet gets 15px radius
     const planetSizeScale = 15 / maxPlanetDiameter;
@@ -140,6 +160,12 @@ export class DistanceView extends ComponentBase {
     if (!orbitalParams || orbitalParams.length === 0) return;
 
     const maxDistance = Math.max(...orbitalParams.map(p => p.semiMajorAxis));
+
+    // Guard against invalid data
+    if (maxDistance <= 0) {
+      console.error('[DistanceView] Invalid orbital data for AU markers');
+      return;
+    }
 
     // Get AU from physical constants
     const constants = this.dataManager.getConstants();

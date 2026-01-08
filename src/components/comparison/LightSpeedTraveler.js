@@ -221,6 +221,16 @@ export class LightSpeedTraveler extends ComponentBase {
    * Destroy component and clean up
    */
   destroy() {
+    // Kill any active tweens
+    if (this.scene && this.scene.tweens) {
+      if (this.traveler) {
+        this.scene.tweens.killTweensOf(this.traveler);
+      }
+      if (this.timeLapseIndicator) {
+        this.scene.tweens.killTweensOf(this.timeLapseIndicator);
+      }
+    }
+
     // Clear references
     this.traveler = null;
     this.timeText = null;

@@ -67,6 +67,12 @@ export class SolarSystemScene extends Phaser.Scene {
       const service = PlanetaryPositionService.getInstance();
       const positions = await service.fetchPlanetaryPositions();
 
+      // Check if scene is still active after async operation
+      if (!this.scene.isActive()) {
+        console.log('[SolarSystemScene] Scene destroyed during orbital data fetch, aborting');
+        return;
+      }
+
       if (positions) {
         this.stateManager.setOrbitalPositions(positions);
         console.log('[SolarSystemScene] Real-time orbital data loaded');
@@ -75,7 +81,10 @@ export class SolarSystemScene extends Phaser.Scene {
       }
     } catch (error) {
       console.warn('[SolarSystemScene] Failed to fetch orbital data:', error);
-      this.stateManager.setOrbitalPositions(null);
+      // Only update state if scene is still active
+      if (this.scene.isActive()) {
+        this.stateManager.setOrbitalPositions(null);
+      }
     }
   }
 
@@ -106,21 +115,38 @@ export class SolarSystemScene extends Phaser.Scene {
     // Hide info panel if open
     if (this.planetInfoPanel && this.planetInfoPanel.currentPlanetId) {
       await this.planetInfoPanel.hide();
+      // Check if scene is still active after await
+      if (!this.scene.isActive()) {
+        console.log('[SolarSystemScene] Scene destroyed during transition, aborting');
+        return;
+      }
     }
 
     // Fade out current view
     if (this.currentView) {
       await this.fadeOut(this.currentView);
+      // Check if scene is still active after await
+      if (!this.scene.isActive()) {
+        console.log('[SolarSystemScene] Scene destroyed during transition, aborting');
+        return;
+      }
       this.currentView.destroy();
       this.currentView = null;
     }
 
     // Enter new mode
     await this.enterMode(mode);
+    // Check if scene is still active after await
+    if (!this.scene.isActive()) {
+      console.log('[SolarSystemScene] Scene destroyed during transition, aborting');
+      return;
+    }
 
-    // Update state
+    // Update state - add null checks for components
     this.stateManager.setSolarSystemMode(mode);
-    this.modeCycleButton.setMode(mode);
+    if (this.modeCycleButton) {
+      this.modeCycleButton.setMode(mode);
+    }
 
     this.stateManager.setSolarSystemAnimating(false);
   }
