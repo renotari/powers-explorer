@@ -71,6 +71,7 @@ Components extend `Phaser.Events.EventEmitter` for loose coupling:
 - **`src/config/phaserConfig.js`** - Phaser game configuration
 - **`src/utils/Constants.js`** - Canvas size, animation durations, scale bounds, solar system constants
 - **`src/utils/ScaleCalculator.js`** - All mathematical calculations including ellipse positioning (CRITICAL)
+- **`src/utils/ColorUtils.js`** - Color parsing and validation utilities (parseHexColor, isValidHexColor)
 
 #### Data Layer
 - **`src/managers/DataManager.js`** - Loads and indexes JSON data (CRITICAL)
@@ -96,6 +97,7 @@ Components extend `Phaser.Events.EventEmitter` for loose coupling:
 - **`src/components/comparison/ObjectSelector.js`** - Object library UI (CRITICAL)
 - **`src/components/comparison/ScaleDisplay.js`** - Relative scale visualization (CRITICAL)
 - **`src/components/comparison/DistanceAnimator.js`** - Separation animation
+- **`src/components/comparison/ObjectOverlay.js`** - Overlay rendering for sub-pixel objects
 - **`src/components/comparison/LightSpeedTraveler.js`** - Light travel with timer
 
 #### Components - Solar System (NEW)
@@ -256,7 +258,8 @@ SIZE_COMPARISON → DISTANCE_VIEW → ORBITAL_VIEW → (cycles back)
 - Sun at center (acts as ellipse focus)
 - Elliptical orbit paths drawn for all planets
 - Planets positioned using orbital mechanics
-- Real-time positions from NASA Horizons API (with offline fallback)
+- Real-time positions calculated using Astronomy Engine (client-side, no API)
+- Fallback to default positions from `orbital-parameters.json` on calculation failure
 - Data source indicator shows "Real-time data" or "Simulated positions"
 - Click on any planet/Sun shows info panel
 
@@ -417,13 +420,23 @@ Sun diameter is 109× Earth's diameter. When Sun is enabled:
 ### Navigation Flow
 
 ```
-MenuScene
-   ↓ (Solar System button)
-SolarSystemScene (starts in Size Comparison mode)
-   ↓ (parallel launch)
-UIOverlayScene
-   ↓ (Back button)
-MenuScene
+MenuScene (3 mode buttons)
+   │
+   ├─ (Cosmic Comparison button)
+   │  ↓
+   │  CosmicComparisonScene + UIOverlayScene
+   │  ↓ (Back button)
+   │  MenuScene
+   │
+   ├─ (Solar System button)
+   │  ↓
+   │  SolarSystemScene (starts in Size Comparison mode) + UIOverlayScene
+   │  ↓ (Back button)
+   │  MenuScene
+   │
+   └─ (Powers of Ten button - NOT YET IMPLEMENTED)
+      ↓
+      [Future: PowersOfTenScene]
 ```
 
 ### Testing (Not Yet Implemented)
@@ -463,21 +476,21 @@ See these files for detailed documentation:
 
 ## Version History
 
-- **v1.0.0-dev** (2025-12-26) - Phase 1 (CosmicComparison Mode) complete
+- **v1.0.0-dev** (2024-12-26) - Phase 1 (CosmicComparison Mode) complete
   - All 22 files implemented
   - Full workflow: selection → scale → distance → light → reset
   - Development server ready for testing
 
-- **v1.1.0-dev** (2025-12-27) - Phase 2 (SolarSystem Mode) complete
+- **v1.1.0-dev** (2024-12-27) - Phase 2 (SolarSystem Mode) complete
   - 17 new files added
   - Three visualization modes: Size, Distance, Orbital
   - Elliptical orbit rendering with real orbital parameters
-  - NASA Horizons API integration (with offline fallback)
+  - Astronomy Engine integration for real-time planetary positions (client-side calculations)
   - Planet info panel with educational facts
   - Sun toggle in size comparison mode
 
 ---
 
-**Last Updated:** 2025-12-27
+**Last Updated:** 2024-12-27
 **Phase:** Phase 2 Complete (Solar System)
 **Status:** Ready for Testing

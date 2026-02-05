@@ -30,7 +30,7 @@ phaserConfig.scene = [
 // Log application start
 console.log('='.repeat(60));
 console.log('Powers Explorer - Cosmic Scale Visualization');
-console.log('Version: 1.0.0-dev');
+console.log('Version: 1.1.0-dev');
 console.log('='.repeat(60));
 console.log('Registered scenes:', phaserConfig.scene.map(s => s.name).join(', '));
 console.log('Starting Phaser game...');

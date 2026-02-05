@@ -2,7 +2,7 @@
 
 > An interactive web-based educational tool for exploring the magnitude of large and small numbers through cosmic scale visualization.
 
-![Version](https://img.shields.io/badge/version-1.0.0--dev-blue)
+![Version](https://img.shields.io/badge/version-1.1.0--dev-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Platform](https://img.shields.io/badge/platform-web-orange)
 
@@ -26,7 +26,20 @@
 - Visualize light traveling between objects at true speed
 - Display educational facts and scientific measurements
 
-#### 🔬 Powers of Ten Explorer Mode
+#### 🪐 Solar System Visualization Mode
+- **Size Comparison View**: All planets side-by-side with proportional sizes
+  - Optional Sun inclusion with dynamic rescaling
+  - Minimum visibility threshold ensures all planets are visible
+- **Distance View**: Planets positioned at logarithmically-scaled orbital distances
+  - AU distance markers for reference
+  - Sun positioned at origin
+- **Orbital View**: Real-time elliptical orbits with accurate positioning
+  - Uses Astronomy Engine for current planetary positions
+  - Scientifically accurate orbital mechanics (Sun at focus)
+  - Fallback to simulated positions if calculation fails
+- Interactive info panels with planetary data and educational facts
+
+#### 🔬 Powers of Ten Explorer Mode *(Coming Soon)*
 - Zoom through 61 scale levels using mouse wheel
 - Seamless transitions from subatomic to cosmic scales
 - Dynamic object rendering based on current scale
@@ -142,9 +155,10 @@ The production files will be in the `dist/` directory, ready for deployment.
 1. **Launch the application** in your web browser
 2. **Choose a mode** from the main menu:
    - **Cosmic Comparison**: Compare sizes and distances of cosmic objects
-   - **Powers of Ten**: Zoom through scales from quantum to cosmic
-3. **Interact** using mouse clicks and scroll wheel
-4. **Explore** educational facts by clicking on objects
+   - **Solar System**: Explore our solar system with three visualization modes
+   - **Powers of Ten**: *(Coming soon)* Zoom through scales from quantum to cosmic
+3. **Interact** using mouse clicks to select objects and cycle through modes
+4. **Explore** educational facts by clicking on planets and cosmic objects
 
 ### For Educators
 
@@ -282,15 +296,25 @@ Powers Explorer is designed with accessibility in mind:
 
 ## Roadmap
 
-### Version 1.0 (Current)
-- 🔲 Cosmic Object Comparison Mode
-- 🔲 15-30 preset cosmic objects
-- 🔲 Educational facts and descriptions
+### Version 1.0 ✅ Complete
+- ✅ Cosmic Object Comparison Mode
+- ✅ 30+ preset cosmic objects
+- ✅ Educational facts and descriptions
+- ✅ Light speed visualization
+- ✅ Logarithmic distance scaling
 
-### Version 1.1 (Planned)
+### Version 1.1 ✅ Complete
+- ✅ Solar System Visualization Mode
+- ✅ Three visualization modes (Size, Distance, Orbital)
+- ✅ Real-time planetary positions using Astronomy Engine
+- ✅ Elliptical orbit rendering
+- ✅ Interactive planet info panels
+- ✅ Sun toggle in size comparison
+
+### Version 1.2 (Planned)
 - 🔲 Powers of Ten Explorer Mode
 - 🔲 61 scale levels (10^-35 to 10^26)
-- 🔲 Geometric Growth Visualizer
+- 🔲 Smooth zoom transitions
 - 🔲 Enhanced accessibility features
 - 🔲 Mobile/tablet support
 - 🔲 Multi-language support
