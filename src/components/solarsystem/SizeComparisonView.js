@@ -80,67 +80,74 @@ export class SizeComparisonView extends ComponentBase {
    */
   calculateLayout(bodies) {
     const centerY = GAME_HEIGHT / 2;
-
-    // Target: use SIZE_WIDTH_FACTOR of width, centered
     const targetWidth = GAME_WIDTH * SOLAR_SYSTEM.SIZE_WIDTH_FACTOR;
+    const minSlot = SOLAR_SYSTEM.SIZE_MIN_SLOT_WIDTH;
+    const spacing = 15;
 
-    // Guard against empty array or invalid data
     if (bodies.length === 0) {
       console.warn('[SizeComparisonView] No bodies to display');
       return [];
     }
 
-    // Find largest diameter for proportional sizing
     const maxDiameter = Math.max(...bodies.map(b => b.diameter));
-
-    // Guard against invalid data (all diameters zero or negative)
     if (maxDiameter <= 0) {
       console.error('[SizeComparisonView] Invalid body data: all diameters <= 0');
       return [];
     }
 
-    // Calculate total proportional width needed
-    // Sum of (each diameter / max diameter) - e.g., Jupiter=1, Earth=0.089, Mercury=0.034
-    const totalProportionalSize = bodies.reduce(
-      (sum, b) => sum + b.diameter / maxDiameter, 0
-    );
-
-    // Guard against division by zero
-    if (totalProportionalSize <= 0) {
-      console.error('[SizeComparisonView] Invalid proportional size calculation');
-      return [];
-    }
-
-    // Spacing between planets
-    const spacing = 15;
     const totalSpacing = spacing * (bodies.length - 1);
 
-    // Scale: how many pixels per "unit" (where largest planet = 1 unit)?
-    // targetWidth = totalProportionalSize * scale + totalSpacing
-    const scale = (targetWidth - totalSpacing) / totalProportionalSize;
-
     // Height constraint: largest planet shouldn't exceed SIZE_HEIGHT_FACTOR of screen height
-    const maxAllowedSize = GAME_HEIGHT * SOLAR_SYSTEM.SIZE_HEIGHT_FACTOR;
-    const finalScale = Math.min(scale, maxAllowedSize);
+    const maxAllowedHeight = GAME_HEIGHT * SOLAR_SYSTEM.SIZE_HEIGHT_FACTOR;
 
-    // Calculate actual total width and center horizontally
-    const actualTotalWidth = totalProportionalSize * finalScale + totalSpacing;
-    const startX = (GAME_WIDTH - actualTotalWidth) / 2;
+    // Step 1: Compute radii from a height-constrained scale, then assign slots
+    const sizeScale = Math.min(
+      (targetWidth - totalSpacing) / bodies.reduce((sum, b) => sum + b.diameter / maxDiameter, 0),
+      maxAllowedHeight
+    );
 
-    // Calculate positions
-    let currentX = startX;
-    return bodies.map(body => {
-      const size = (body.diameter / maxDiameter) * finalScale;
-      const radius = Math.max(size / 2, SOLAR_SYSTEM.MIN_PLANET_RADIUS);
+    // Step 2: Compute each body's visual diameter and slot width
+    const items = bodies.map(body => {
+      const visualDiameter = (body.diameter / maxDiameter) * sizeScale;
+      const radius = Math.max(visualDiameter / 2, SOLAR_SYSTEM.MIN_PLANET_RADIUS);
+      const slotWidth = Math.max(visualDiameter, minSlot);
+      return { data: body, radius, slotWidth, visualDiameter };
+    });
 
-      const x = currentX + radius;
-      currentX += size + spacing;
+    // Step 3: If total exceeds targetWidth, scale down only the oversized slots
+    const totalSlotWidth = items.reduce((sum, item) => sum + item.slotWidth, 0) + totalSpacing;
+    if (totalSlotWidth > targetWidth) {
+      const excess = totalSlotWidth - targetWidth;
+      // Only shrink slots that are larger than minSlot
+      const shrinkableTotal = items.reduce(
+        (sum, item) => sum + Math.max(0, item.slotWidth - minSlot), 0
+      );
+      if (shrinkableTotal > 0) {
+        const shrinkRatio = Math.min(1, excess / shrinkableTotal);
+        items.forEach(item => {
+          const shrinkable = Math.max(0, item.slotWidth - minSlot);
+          item.slotWidth -= shrinkable * shrinkRatio;
+          // Also constrain the visual radius to fit within the slot
+          item.radius = Math.max(
+            Math.min(item.radius, item.slotWidth / 2),
+            SOLAR_SYSTEM.MIN_PLANET_RADIUS
+          );
+        });
+      }
+    }
 
+    // Step 4: Center horizontally and position each body in the center of its slot
+    const finalTotalWidth = items.reduce((sum, item) => sum + item.slotWidth, 0) + totalSpacing;
+    let currentX = (GAME_WIDTH - finalTotalWidth) / 2;
+
+    return items.map(item => {
+      const x = currentX + item.slotWidth / 2;
+      currentX += item.slotWidth + spacing;
       return {
-        data: body,
+        data: item.data,
         x,
         y: centerY,
-        radius
+        radius: item.radius
       };
     });
   }

@@ -9,7 +9,7 @@
  */
 
 import { ComponentBase } from '@/components/ComponentBase.js';
-import { COLORS, SOLAR_SYSTEM } from '@/utils/Constants.js';
+import { COLORS, SOLAR_SYSTEM, GAME_WIDTH, GAME_HEIGHT } from '@/utils/Constants.js';
 import { parseHexColor } from '@/utils/ColorUtils.js';
 
 export class PlanetRenderer extends ComponentBase {
@@ -66,6 +66,10 @@ export class PlanetRenderer extends ComponentBase {
     this.container.add(this.label);
     this.label.setVisible(false);
 
+    // Tooltip references (created on hover)
+    this.tooltip = null;
+    this.tooltipBg = null;
+
     // Make interactive if enabled
     if (this.isInteractive) {
       this.circle.setInteractive({ useHandCursor: true });
@@ -112,6 +116,7 @@ export class PlanetRenderer extends ComponentBase {
       duration: 150,
       ease: 'Quad.easeOut'
     });
+    this.showTooltip();
   }
 
   /**
@@ -125,6 +130,78 @@ export class PlanetRenderer extends ComponentBase {
       duration: 150,
       ease: 'Quad.easeOut'
     });
+    this.hideTooltip();
+  }
+
+  /**
+   * Show tooltip above planet (only when label is hidden)
+   */
+  showTooltip() {
+    // Skip if label is already visible (avoids redundant info)
+    if (this.label && this.label.visible) return;
+    // Clean up any existing tooltip first
+    this.hideTooltip();
+
+    const padding = SOLAR_SYSTEM.TOOLTIP_PADDING;
+
+    // Create tooltip text
+    this.tooltip = this.scene.add.text(
+      this.x,
+      0, // positioned below
+      this.planetData.name,
+      {
+        fontSize: SOLAR_SYSTEM.TOOLTIP_FONT_SIZE,
+        color: COLORS.TEXT,
+        fontFamily: 'Arial',
+        align: 'center'
+      }
+    ).setOrigin(0.5);
+
+    // Determine position: above the planet by default
+    let tooltipY = this.y - this.radius - SOLAR_SYSTEM.TOOLTIP_OFFSET_Y;
+    const textHeight = this.tooltip.height;
+    // Flip below planet if too close to top
+    if (tooltipY - textHeight / 2 - padding < 5) {
+      tooltipY = this.y + this.radius + SOLAR_SYSTEM.TOOLTIP_OFFSET_Y;
+    }
+    this.tooltip.setY(tooltipY);
+
+    // Clamp X to stay within screen bounds
+    const textWidth = this.tooltip.width;
+    const halfW = textWidth / 2 + padding;
+    if (this.tooltip.x - halfW < 0) {
+      this.tooltip.setX(halfW);
+    } else if (this.tooltip.x + halfW > GAME_WIDTH) {
+      this.tooltip.setX(GAME_WIDTH - halfW);
+    }
+
+    // Create background rectangle behind the text
+    this.tooltipBg = this.scene.add.rectangle(
+      this.tooltip.x,
+      this.tooltip.y,
+      textWidth + padding * 2,
+      textHeight + padding * 2,
+      SOLAR_SYSTEM.TOOLTIP_BG_COLOR,
+      SOLAR_SYSTEM.TOOLTIP_BG_ALPHA
+    ).setOrigin(0.5);
+
+    // Add bg first (behind text), then text on top
+    this.container.add(this.tooltipBg);
+    this.container.add(this.tooltip);
+  }
+
+  /**
+   * Hide and destroy tooltip
+   */
+  hideTooltip() {
+    if (this.tooltip) {
+      this.tooltip.destroy();
+      this.tooltip = null;
+    }
+    if (this.tooltipBg) {
+      this.tooltipBg.destroy();
+      this.tooltipBg = null;
+    }
   }
 
   /**
@@ -137,6 +214,7 @@ export class PlanetRenderer extends ComponentBase {
     this.y = y;
     this.circle.setPosition(x, y);
     this.label.setPosition(x, y + this.radius + SOLAR_SYSTEM.LABEL_OFFSET_Y);
+    this.hideTooltip();
   }
 
   /**
@@ -241,6 +319,8 @@ export class PlanetRenderer extends ComponentBase {
    * Clean up resources
    */
   destroy() {
+    this.hideTooltip();
+
     // Kill any active tweens on the circle
     if (this.circle && this.scene && this.scene.tweens) {
       this.scene.tweens.killTweensOf(this.circle);

@@ -98,5 +98,13 @@ export const SOLAR_SYSTEM = {
 
   // Size Comparison View constants
   SIZE_HEIGHT_FACTOR: 0.7,       // Max height as fraction of screen (70%)
-  SIZE_WIDTH_FACTOR: 0.9         // Target width as fraction of screen (90%)
+  SIZE_WIDTH_FACTOR: 0.9,        // Target width as fraction of screen (90%)
+  SIZE_MIN_SLOT_WIDTH: 90,       // Minimum horizontal space per planet in size comparison (px)
+
+  // Tooltip constants
+  TOOLTIP_OFFSET_Y: 15,         // Distance above planet for tooltip (px)
+  TOOLTIP_FONT_SIZE: '13px',
+  TOOLTIP_PADDING: 6,           // Padding around tooltip text (px)
+  TOOLTIP_BG_COLOR: 0x000000,
+  TOOLTIP_BG_ALPHA: 0.8
 };
