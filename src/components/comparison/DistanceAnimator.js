@@ -12,6 +12,7 @@
 import { ComponentBase } from '@/components/ComponentBase.js';
 import { ScaleCalculator } from '@/utils/ScaleCalculator.js';
 import { ANIMATION_DURATION, COLORS, PROPORTIONAL_SIZING } from '@/utils/Constants.js';
+import { parseHexColor } from '@/utils/ColorUtils.js';
 import { ObjectOverlay } from './ObjectOverlay.js';
 
 export class DistanceAnimator extends ComponentBase {
@@ -28,8 +29,12 @@ export class DistanceAnimator extends ComponentBase {
     this.distanceText = null;
     this.overlay1 = null;  // Overlay for object 1 (if needed)
     this.overlay2 = null;  // Overlay for object 2 (if needed)
+    this.overlayData = null;  // Stored overlay parameters for delayed creation
     this.obj1Size = null;  // Calculated proportional size for object 1
     this.obj2Size = null;  // Calculated proportional size for object 2
+    this.targetX1 = null;  // Target position for object 1
+    this.targetX2 = null;  // Target position for object 2
+    this.targetY = null;   // Vertical center position
   }
 
   /**
@@ -81,15 +86,16 @@ export class DistanceAnimator extends ComponentBase {
     const targetX1 = centerX - screenDistance / 2;
     const targetX2 = centerX + screenDistance / 2;
 
-    // Create connection line (initially invisible)
-    this.connectionLine = this.scene.add.line(
-      0, 0,
-      targetX1, centerY,
-      targetX2, centerY,
-      parseInt(COLORS.TEXT.replace('#', '0x')),
-      0.5
-    );
-    this.connectionLine.setLineWidth(2);
+    // Store target positions for getConnectionEndpoints()
+    this.targetX1 = targetX1;
+    this.targetX2 = targetX2;
+    this.targetY = centerY;
+
+    // Create connection line using Graphics with absolute world coordinates
+    // This uses the SAME coordinate system as the light animation (proven to work)
+    this.connectionLine = this.scene.add.graphics();
+    this.connectionLine.lineStyle(2, parseHexColor(COLORS.TEXT), 0.5);
+    this.connectionLine.lineBetween(targetX1, centerY, targetX2, centerY);
     this.connectionLine.setAlpha(0);  // Start invisible
 
     this.container.add(this.connectionLine);
@@ -110,59 +116,43 @@ export class DistanceAnimator extends ComponentBase {
 
     this.container.add(this.distanceText);
 
-    // Create overlays if objects are too small (< 5px)
-    if (this.obj1Size < PROPORTIONAL_SIZING.OVERLAY_THRESHOLD) {
-      console.log(`[DistanceAnimator] Creating overlay for ${obj1Data.name} (${this.obj1Size.toFixed(2)}px)`);
-      this.overlay1 = new ObjectOverlay(this.scene);
-      this.overlay1.create(
-        this.obj1Size,
-        { x: targetX1, y: centerY },
-        obj1Data.color,
-        obj1Data.name
-      );
-      this.container.add(this.overlay1.container);
-    }
+    // Store overlay creation data for after animation completes
+    // Overlays will be created AFTER sprites finish animating
+    this.overlayData = {
+      obj1: { size: this.obj1Size, position: { x: targetX1, y: centerY }, color: obj1Data.color, name: obj1Data.name },
+      obj2: { size: this.obj2Size, position: { x: targetX2, y: centerY }, color: obj2Data.color, name: obj2Data.name }
+    };
 
-    if (this.obj2Size < PROPORTIONAL_SIZING.OVERLAY_THRESHOLD) {
-      console.log(`[DistanceAnimator] Creating overlay for ${obj2Data.name} (${this.obj2Size.toFixed(2)}px)`);
-      this.overlay2 = new ObjectOverlay(this.scene);
-      this.overlay2.create(
-        this.obj2Size,
-        { x: targetX2, y: centerY },
-        obj2Data.color,
-        obj2Data.name
-      );
-      this.container.add(this.overlay2.container);
-    }
+    console.log(`[DistanceAnimator] Animating visible sprites, overlays will appear after animation`);
 
     // Animate objects moving apart AND resizing proportionally
+    // CRITICAL: Sprites remain VISIBLE during animation so users see the resize
+    // Calculate scale factors for smooth resize (radius is read-only, must use scale)
+    const obj1CurrentRadius = obj1Sprite.radius;
+    const obj1TargetRadius = this.obj1Size / 2;
+    const obj1ScaleFactor = obj1TargetRadius / obj1CurrentRadius;
+
     this.scene.tweens.add({
       targets: obj1Sprite,
       x: targetX1,
-      radius: this.obj1Size / 2,  // Resize to proportional size
+      scale: obj1ScaleFactor,  // Animate resize on VISIBLE sprite
       duration: ANIMATION_DURATION.DISTANCE,
-      ease: 'Quad.easeInOut',
-      onUpdate: (tween, target) => {
-        // Update overlay position during animation
-        if (this.overlay1) {
-          this.overlay1.updatePosition(target.x, target.y);
-        }
-      }
+      ease: 'Quad.easeInOut'
     });
+
+    const obj2CurrentRadius = obj2Sprite.radius;
+    const obj2TargetRadius = this.obj2Size / 2;
+    const obj2ScaleFactor = obj2TargetRadius / obj2CurrentRadius;
 
     this.scene.tweens.add({
       targets: obj2Sprite,
       x: targetX2,
-      radius: this.obj2Size / 2,  // Resize to proportional size
+      scale: obj2ScaleFactor,  // Animate resize on VISIBLE sprite
       duration: ANIMATION_DURATION.DISTANCE,
       ease: 'Quad.easeInOut',
-      onUpdate: (tween, target) => {
-        // Update overlay position during animation
-        if (this.overlay2) {
-          this.overlay2.updatePosition(target.x, target.y);
-        }
-      },
       onComplete: () => {
+        // After animation completes, swap to overlay system
+        this.swapToOverlays(obj1Sprite, obj2Sprite);
         this.onSeparationComplete();
       }
     });
@@ -175,14 +165,6 @@ export class DistanceAnimator extends ComponentBase {
       delay: ANIMATION_DURATION.DISTANCE / 2,
       ease: 'Linear'
     });
-
-    // Fade in overlays if they exist
-    if (this.overlay1) {
-      this.overlay1.fadeIn(ANIMATION_DURATION.DISTANCE / 2, ANIMATION_DURATION.DISTANCE / 2);
-    }
-    if (this.overlay2) {
-      this.overlay2.fadeIn(ANIMATION_DURATION.DISTANCE / 2, ANIMATION_DURATION.DISTANCE / 2);
-    }
   }
 
   /**
@@ -194,21 +176,62 @@ export class DistanceAnimator extends ComponentBase {
   }
 
   /**
+   * Swap from animated sprites to overlay system
+   * Called after distance animation completes
+   *
+   * @param {Phaser.GameObjects.Arc} obj1Sprite - First object sprite
+   * @param {Phaser.GameObjects.Arc} obj2Sprite - Second object sprite
+   */
+  swapToOverlays(obj1Sprite, obj2Sprite) {
+    console.log('[DistanceAnimator] Swapping to overlay system');
+
+    // Hide the original sprites
+    obj1Sprite.setAlpha(0);
+    obj2Sprite.setAlpha(0);
+
+    // Create overlays at final positions/sizes
+    console.log(`[DistanceAnimator] Creating overlay for ${this.overlayData.obj1.name} (${this.overlayData.obj1.size.toFixed(2)}px)`);
+    this.overlay1 = new ObjectOverlay(this.scene);
+    this.overlay1.create(
+      this.overlayData.obj1.size,
+      this.overlayData.obj1.position,
+      this.overlayData.obj1.color,
+      this.overlayData.obj1.name
+    );
+    this.container.add(this.overlay1.container);
+
+    console.log(`[DistanceAnimator] Creating overlay for ${this.overlayData.obj2.name} (${this.overlayData.obj2.size.toFixed(2)}px)`);
+    this.overlay2 = new ObjectOverlay(this.scene);
+    this.overlay2.create(
+      this.overlayData.obj2.size,
+      this.overlayData.obj2.position,
+      this.overlayData.obj2.color,
+      this.overlayData.obj2.name
+    );
+    this.container.add(this.overlay2.container);
+
+    // Fade in overlays immediately (300ms fade, no delay)
+    this.overlay1.fadeIn(300, 0);
+    this.overlay2.fadeIn(300, 0);
+  }
+
+  /**
    * Get connection line endpoints
    * Used for light travel animation
    *
    * @returns {Object|null} Line endpoints {x1, y1, x2, y2}
    */
   getConnectionEndpoints() {
-    if (!this.connectionLine) {
+    if (!this.connectionLine || this.targetX1 === undefined) {
       return null;
     }
 
+    // Return stored target positions (world coordinates)
     return {
-      x1: this.connectionLine.geom.x1,
-      y1: this.connectionLine.geom.y1,
-      x2: this.connectionLine.geom.x2,
-      y2: this.connectionLine.geom.y2
+      x1: this.targetX1,
+      y1: this.targetY,
+      x2: this.targetX2,
+      y2: this.targetY
     };
   }
 
@@ -239,8 +262,12 @@ export class DistanceAnimator extends ComponentBase {
     // Clear references
     this.connectionLine = null;
     this.distanceText = null;
+    this.overlayData = null;
     this.obj1Size = null;
     this.obj2Size = null;
+    this.targetX1 = null;
+    this.targetX2 = null;
+    this.targetY = null;
 
     // Call parent destroy
     super.destroy();
