@@ -91,6 +91,7 @@ export const SOLAR_SYSTEM = {
   DISTANCE_SUN_X: 60,            // Sun X position in distance view (pixels)
   DISTANCE_MARGIN: 60,           // Right margin in distance view (pixels)
   DISTANCE_MAX_PLANET_RADIUS: 15,// Maximum planet radius in distance view (pixels)
+  DISTANCE_REAL_MIN_RADIUS: 1,   // 1px minimum in real proportions mode
 
   // Orbital View constants
   ORBITAL_SUN_RADIUS: 12,        // Fixed Sun radius in orbital view (pixels)
