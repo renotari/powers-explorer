@@ -5,7 +5,7 @@
  * - Draw elliptical orbit paths
  * - Position Sun at center (focus of ellipses)
  * - Position planets using real-time or default angular positions
- * - Handle NASA API data or offline fallback
+ * - Handle Astronomy Engine data or offline fallback
  */
 
 import { ComponentBase } from '@/components/ComponentBase.js';
@@ -44,7 +44,7 @@ export class OrbitalView extends ComponentBase {
       console.error('[OrbitalView] Neptune orbital parameters not found');
       return;
     }
-    const maxOrbitRadius = Math.min(GAME_WIDTH, GAME_HEIGHT) / 2 - 50;
+    const maxOrbitRadius = Math.min(GAME_WIDTH, GAME_HEIGHT) / 2 - SOLAR_SYSTEM.ORBITAL_MARGIN;
     this.scaleFactor = maxOrbitRadius / neptuneOrbit.semiMajorAxis;
 
     // Create Sun at center
@@ -55,7 +55,7 @@ export class OrbitalView extends ComponentBase {
         sunData,
         centerX,
         centerY,
-        12, // Fixed size for Sun
+        SOLAR_SYSTEM.ORBITAL_SUN_RADIUS, // Fixed size for Sun
         { interactive: true }
       );
       this.sunRenderer.setLabelVisible(false);
@@ -86,7 +86,7 @@ export class OrbitalView extends ComponentBase {
     const orbitalPositions = this.stateManager.getOrbitalPositions();
 
     if (orbitalPositions) {
-      // Use real-time data from NASA
+      // Use real-time data from Astronomy Engine
       return orbitalPositions;
     } else {
       // Use default positions from orbital-parameters.json

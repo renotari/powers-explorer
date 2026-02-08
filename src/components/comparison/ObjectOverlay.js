@@ -1,10 +1,10 @@
 /**
- * ObjectOverlay - Renders proportionally-sized objects with visible overlays
+ * ObjectOverlay - Renders proportionally-sized objects with labels below
  *
- * When objects become too small (< 5px) during distance display, this component:
+ * This component:
  * - Renders the tiny proportional object at its actual position
- * - Creates a larger visible overlay directly above it
- * - Connects them with a vertical arrow
+ * - Creates an upward-pointing arrow below the object
+ * - Displays the object name below the arrow
  *
  * This allows accurate proportional visualization while maintaining visibility.
  */
@@ -18,21 +18,22 @@ export class ObjectOverlay extends ComponentBase {
     super(scene, config);
 
     // Configuration (can be overridden via config parameter)
-    this.overlaySize = config.overlaySize || PROPORTIONAL_SIZING.OVERLAY_SIZE;
     this.overlayOffsetY = config.overlayOffsetY || PROPORTIONAL_SIZING.OVERLAY_OFFSET_Y;
     this.connectorColor = config.connectorColor || PROPORTIONAL_SIZING.CONNECTOR_COLOR;
+    this.arrowSize = config.arrowSize || PROPORTIONAL_SIZING.ARROW_SIZE;
+    this.arrowGap = config.arrowGap || PROPORTIONAL_SIZING.ARROW_GAP;
+    this.labelOffsetY = config.labelOffsetY || PROPORTIONAL_SIZING.LABEL_OFFSET_Y;
 
     // Visual elements (created by create() method)
     this.actualSprite = null;      // Tiny proportional object
-    this.overlaySprite = null;     // Large visible object
-    this.connectorLine = null;     // Vertical line connecting them
-    this.connectorArrow = null;    // Arrowhead pointing down
-    this.actualLabel = null;       // Size indicator text
-    this.overlayLabel = null;      // Object name text
+    this.connectorLine1 = null;    // First line segment (object → arrow tip)
+    this.connectorLine2 = null;    // Second line segment (arrow base → label)
+    this.connectorArrow = null;    // Arrowhead pointing upward
+    this.nameLabel = null;         // Object name text
   }
 
   /**
-   * Create the overlay system
+   * Create the overlay system with label below
    *
    * @param {number} actualSize - Proportional size in pixels (typically 1-4px)
    * @param {Object} actualPosition - {x, y} position of the actual object
@@ -40,93 +41,86 @@ export class ObjectOverlay extends ComponentBase {
    * @param {string} objectName - Name for label display
    */
   create(actualSize, actualPosition, objectColor, objectName) {
-    // Calculate overlay position (directly above actual object)
-    const overlayX = actualPosition.x;
-    const overlayY = actualPosition.y - this.overlayOffsetY;
+    const actualRadius = actualSize / 2;
+    const x = actualPosition.x;
+    const y = actualPosition.y;
+
+    // Calculate vertical positions working downward from actual object
+    const objectBottomY = y + actualRadius;
+    const line1EndY = objectBottomY + this.arrowGap;      // 5px gap, then arrow tip
+    const arrowTipY = line1EndY;
+    const arrowBaseY = arrowTipY + this.arrowSize;        // 8px arrow height
+    const line2StartY = arrowBaseY;
+    const line2EndY = line2StartY + 10;                   // 10px second segment
+    const labelY = line2EndY + this.labelOffsetY;         // 15px to label
 
     // Create tiny actual-size object
     this.actualSprite = this.scene.add.circle(
-      actualPosition.x,
-      actualPosition.y,
-      actualSize / 2,
-      parseInt(objectColor.replace('#', '0x'))
+      x,
+      y,
+      actualRadius,
+      parseHexColor(objectColor)
     );
     this.actualSprite.setAlpha(0);  // Start invisible, will fade in
 
-    // Create large overlay object
-    this.overlaySprite = this.scene.add.circle(
-      overlayX,
-      overlayY,
-      this.overlaySize / 2,
-      parseInt(objectColor.replace('#', '0x'))
-    );
-    this.overlaySprite.setAlpha(0);  // Start invisible, will fade in
-
-    // Create connector line (vertical)
-    this.connectorLine = this.scene.add.line(
+    // Create first line segment (object bottom → arrow tip)
+    this.connectorLine1 = this.scene.add.line(
       0, 0,
-      actualPosition.x,
-      actualPosition.y - actualSize / 2 - 5,  // Start just above actual object
-      overlayX,
-      overlayY + this.overlaySize / 2 + 5,    // End just below overlay
+      x,
+      objectBottomY,     // Start at object bottom
+      x,
+      line1EndY,         // End at arrow tip
       this.connectorColor
     );
-    this.connectorLine.setLineWidth(1);
-    this.connectorLine.setAlpha(0);  // Start invisible
+    this.connectorLine1.setLineWidth(2);
+    this.connectorLine1.setAlpha(0);  // Start invisible
 
-    // Create arrowhead (small triangle pointing down)
-    const arrowSize = 6;
-    const arrowX = overlayX;
-    const arrowY = overlayY + this.overlaySize / 2 + 5;
-
+    // Create arrowhead (upward-pointing triangle with tip at arrowTipY)
     this.connectorArrow = this.scene.add.triangle(
-      arrowX,
-      arrowY + arrowSize,
-      0, 0,                    // Top vertex
-      -arrowSize, arrowSize,   // Bottom-left vertex
-      arrowSize, arrowSize,    // Bottom-right vertex
+      x,
+      arrowTipY,
+      0, 0,                              // Apex at top (points toward object)
+      -this.arrowSize / 2, this.arrowSize,   // Bottom-left vertex
+      this.arrowSize / 2, this.arrowSize,    // Bottom-right vertex
       this.connectorColor
     );
+    this.connectorArrow.setOrigin(0, 0);  // Center horizontally, align to top (apex)
     this.connectorArrow.setAlpha(0);  // Start invisible
 
-    // Create label for actual size
-    this.actualLabel = this.scene.add.text(
-      actualPosition.x,
-      actualPosition.y + actualSize / 2 + 20,
-      `(${actualSize.toFixed(2)}px)`,
-      {
-        fontSize: '10px',
-        color: '#cccccc',
-        fontFamily: 'Arial',
-        align: 'center'
-      }
+    // Create second line segment (arrow base → label area)
+    this.connectorLine2 = this.scene.add.line(
+      0, 0,
+      x,
+      line2StartY,       // Start at arrow base
+      x,
+      line2EndY,         // End before label
+      this.connectorColor
     );
-    this.actualLabel.setOrigin(0.5);
-    this.actualLabel.setAlpha(0);  // Start invisible
+    this.connectorLine2.setLineWidth(2);
+    this.connectorLine2.setAlpha(0);  // Start invisible
 
     // Create label for object name
-    this.overlayLabel = this.scene.add.text(
-      overlayX,
-      overlayY - this.overlaySize / 2 - 15,
+    this.nameLabel = this.scene.add.text(
+      x,
+      labelY,
       objectName,
       {
-        fontSize: '14px',
+        fontSize: '16px',
         color: '#ffffff',
         fontFamily: 'Arial',
         fontStyle: 'bold'
       }
     );
-    this.overlayLabel.setOrigin(0.5);
-    this.overlayLabel.setAlpha(0);  // Start invisible
+    this.nameLabel.setOrigin(0.5);
+    this.nameLabel.setAlpha(0);  // Start invisible
 
     // Add all elements to the container
     this.container.add([
-      this.connectorLine,
+      this.connectorLine1,
+      this.connectorLine2,
       this.connectorArrow,
       this.actualSprite,
-      this.overlaySprite,
-      this.actualLabel,
-      this.overlayLabel
+      this.nameLabel
     ]);
   }
 
@@ -137,15 +131,14 @@ export class ObjectOverlay extends ComponentBase {
    * @param {number} delay - Delay before starting fade in milliseconds
    */
   fadeIn(duration = 1000, delay = 0) {
-    if (!this.overlaySprite) return;
+    if (!this.actualSprite) return;
 
     const targets = [
       this.actualSprite,
-      this.overlaySprite,
-      this.connectorLine,
+      this.connectorLine1,
+      this.connectorLine2,
       this.connectorArrow,
-      this.actualLabel,
-      this.overlayLabel
+      this.nameLabel
     ];
 
     this.scene.tweens.add({
@@ -167,40 +160,44 @@ export class ObjectOverlay extends ComponentBase {
   updatePosition(x, y) {
     if (!this.actualSprite) return;
 
+    const actualRadius = this.actualSprite.radius;
+
     // Update actual sprite position
     this.actualSprite.x = x;
     this.actualSprite.y = y;
 
-    // Update actual label position
-    const actualSize = this.actualSprite.radius * 2;
-    this.actualLabel.x = x;
-    this.actualLabel.y = y + actualSize / 2 + 20;
+    // Calculate vertical positions working downward from actual object
+    const objectBottomY = y + actualRadius;
+    const line1EndY = objectBottomY + this.arrowGap;      // 5px gap, then arrow tip
+    const arrowTipY = line1EndY;
+    const arrowBaseY = arrowTipY + this.arrowSize;        // 8px arrow height
+    const line2StartY = arrowBaseY;
+    const line2EndY = line2StartY + 10;                   // 10px second segment
+    const labelY = line2EndY + this.labelOffsetY;         // 15px to label
 
-    // Update overlay position (keep it above, but follow horizontal movement)
-    const overlayX = x;
-    const overlayY = y - this.overlayOffsetY;
-
-    this.overlaySprite.x = overlayX;
-    this.overlaySprite.y = overlayY;
-
-    this.overlayLabel.x = overlayX;
-    this.overlayLabel.y = overlayY - this.overlaySize / 2 - 15;
-
-    // Update connector line
-    this.connectorLine.setTo(
+    // Update first line segment (object bottom → arrow tip)
+    this.connectorLine1.setTo(
       x,
-      y - actualSize / 2 - 5,
-      overlayX,
-      overlayY + this.overlaySize / 2 + 5
+      objectBottomY,     // Start at object bottom
+      x,
+      line1EndY          // End at arrow tip
     );
 
     // Update arrowhead position
-    const arrowSize = 6;
-    const arrowX = overlayX;
-    const arrowY = overlayY + this.overlaySize / 2 + 5;
+    this.connectorArrow.x = x;
+    this.connectorArrow.y = arrowTipY;
 
-    this.connectorArrow.x = arrowX;
-    this.connectorArrow.y = arrowY + arrowSize;
+    // Update second line segment (arrow base → label area)
+    this.connectorLine2.setTo(
+      x,
+      line2StartY,       // Start at arrow base
+      x,
+      line2EndY          // End before label
+    );
+
+    // Update label position
+    this.nameLabel.x = x;
+    this.nameLabel.y = labelY;
   }
 
   /**
@@ -211,25 +208,21 @@ export class ObjectOverlay extends ComponentBase {
       this.actualSprite.destroy();
       this.actualSprite = null;
     }
-    if (this.overlaySprite) {
-      this.overlaySprite.destroy();
-      this.overlaySprite = null;
+    if (this.connectorLine1) {
+      this.connectorLine1.destroy();
+      this.connectorLine1 = null;
     }
-    if (this.connectorLine) {
-      this.connectorLine.destroy();
-      this.connectorLine = null;
+    if (this.connectorLine2) {
+      this.connectorLine2.destroy();
+      this.connectorLine2 = null;
     }
     if (this.connectorArrow) {
       this.connectorArrow.destroy();
       this.connectorArrow = null;
     }
-    if (this.actualLabel) {
-      this.actualLabel.destroy();
-      this.actualLabel = null;
-    }
-    if (this.overlayLabel) {
-      this.overlayLabel.destroy();
-      this.overlayLabel = null;
+    if (this.nameLabel) {
+      this.nameLabel.destroy();
+      this.nameLabel = null;
     }
 
     super.destroy();

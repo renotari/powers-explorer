@@ -18,7 +18,9 @@ import { ObjectSelector } from '@/components/comparison/ObjectSelector.js';
 import { ScaleDisplay } from '@/components/comparison/ScaleDisplay.js';
 import { DistanceAnimator } from '@/components/comparison/DistanceAnimator.js';
 import { LightSpeedTraveler } from '@/components/comparison/LightSpeedTraveler.js';
-import { COLORS } from '@/utils/Constants.js';
+import { SpeedupControl } from '@/components/comparison/SpeedupControl.js';
+import { COLORS, GAME_WIDTH, GAME_HEIGHT } from '@/utils/Constants.js';
+import { Button } from '@/components/ui/Button.js';
 
 export class CosmicComparisonScene extends Phaser.Scene {
   constructor() {
@@ -57,6 +59,14 @@ export class CosmicComparisonScene extends Phaser.Scene {
     // Scale display (hidden initially)
     this.scaleDisplay = new ScaleDisplay(this);
     this.scaleDisplay.hide();
+
+    // Speedup control (always visible)
+    this.speedupControl = new SpeedupControl(
+      this,
+      GAME_WIDTH / 2,
+      GAME_HEIGHT - 100
+    );
+    this.speedupControl.on('speedupChanged', this.onSpeedupChanged, this);
 
     // Distance animator and light traveler will be created on-demand
     this.distanceAnimator = null;
@@ -152,6 +162,13 @@ export class CosmicComparisonScene extends Phaser.Scene {
     // Get object sprites from scale display
     const sprites = this.scaleDisplay.getSprites();
 
+    // Null guard: ensure sprites are available
+    if (!sprites || !sprites.obj1Sprite || !sprites.obj2Sprite) {
+      console.error('[CosmicComparisonScene] Scale display sprites not available');
+      this.showNoDistanceMessage();
+      return;
+    }
+
     // Create distance animator
     this.distanceAnimator = new DistanceAnimator(this);
     this.distanceAnimator.on('separationComplete', this.onDistanceComplete, this);
@@ -203,10 +220,13 @@ export class CosmicComparisonScene extends Phaser.Scene {
       distanceData.distance
     );
 
+    // Calculate animation duration with current speedup
+    this.lightTraveler.calculateAnimationDuration(this.speedupControl.getExponent());
+
     this.lightTraveler.on('travelComplete', this.onLightTravelComplete, this);
 
-    // Start animation
-    this.lightTraveler.animate();
+    // Create Start button instead of auto-starting
+    this.createStartRestartButton('Start');
   }
 
   // ========================================
@@ -222,8 +242,12 @@ export class CosmicComparisonScene extends Phaser.Scene {
 
     this.selectedIds = selectedIds;
 
-    // Transition to scale display phase
-    this.enterScaleDisplayPhase();
+    try {
+      // Transition to scale display phase
+      this.enterScaleDisplayPhase();
+    } catch (error) {
+      console.error('[CosmicComparisonScene] Failed to enter scale display phase:', error);
+    }
   }
 
   /**
@@ -232,8 +256,12 @@ export class CosmicComparisonScene extends Phaser.Scene {
   onDistanceComplete() {
     console.log('[CosmicComparisonScene] Distance animation complete');
 
-    // Transition to light travel phase
-    this.enterLightTravelPhase();
+    try {
+      // Transition to light travel phase
+      this.enterLightTravelPhase();
+    } catch (error) {
+      console.error('[CosmicComparisonScene] Failed to enter light travel phase:', error);
+    }
   }
 
   /**
@@ -242,8 +270,24 @@ export class CosmicComparisonScene extends Phaser.Scene {
   onLightTravelComplete() {
     console.log('[CosmicComparisonScene] Light travel complete');
 
+    // Show "Restart" button
+    this.createStartRestartButton('Restart');
+
     // Show "New Comparison" button
     this.createNewComparisonButton();
+  }
+
+  /**
+   * Handle speedup change from control
+   * @param {number} exponent - New speedup exponent
+   */
+  onSpeedupChanged(exponent) {
+    // If animation is active, adjust it dynamically
+    if (this.lightTraveler && this.lightTraveler.currentTween) {
+      this.lightTraveler.adjustSpeed(exponent);
+    }
+
+    console.log(`[CosmicComparisonScene] Speedup changed to 10^${exponent}×`);
   }
 
   // ========================================
@@ -256,50 +300,28 @@ export class CosmicComparisonScene extends Phaser.Scene {
   createDistanceButton() {
     const width = this.cameras.main.width;
     const height = this.cameras.main.height;
-
     const buttonY = height - 80;
 
-    // Button background
-    const button = this.add.rectangle(
-      width / 2,
-      buttonY,
-      200,
-      50,
-      parseInt(COLORS.PRIMARY.replace('#', '0x'))
-    ).setInteractive();
-
-    // Button text
-    const buttonText = this.add.text(width / 2, buttonY, 'Show Distance', {
+    // Create Show Distance button
+    this.distanceButton = new Button(this, width / 2, buttonY, {
+      text: 'Show Distance',
+      width: 200,
+      height: 50,
       fontSize: '20px',
-      color: COLORS.TEXT,
-      fontFamily: 'Arial',
-      fontStyle: 'bold'
-    }).setOrigin(0.5);
-
-    // Hover effects
-    button.on('pointerover', () => {
-      button.setFillStyle(parseInt(COLORS.PRIMARY.replace('#', '0x')), 0.8);
-      buttonText.setScale(1.1);
+      backgroundColor: COLORS.PRIMARY,
+      textColor: COLORS.TEXT,
+      hoverScale: 1.1
     });
 
-    button.on('pointerout', () => {
-      button.setFillStyle(parseInt(COLORS.PRIMARY.replace('#', '0x')), 1);
-      buttonText.setScale(1);
-    });
-
-    // Click handler
-    button.on('pointerdown', () => {
+    this.distanceButton.on('clicked', () => {
       // Destroy button
-      button.destroy();
-      buttonText.destroy();
+      this.distanceButton.off('clicked');
+      this.distanceButton.destroy();
+      this.distanceButton = null;
 
       // Enter distance animation phase
       this.enterDistanceAnimationPhase();
     });
-
-    // Store references for potential cleanup
-    this.distanceButton = button;
-    this.distanceButtonText = buttonText;
   }
 
   /**
@@ -308,54 +330,124 @@ export class CosmicComparisonScene extends Phaser.Scene {
   createNewComparisonButton() {
     const width = this.cameras.main.width;
     const height = this.cameras.main.height;
-
     const buttonY = height - 150;
 
-    // Button background
-    const button = this.add.rectangle(
-      width / 2,
-      buttonY,
-      200,
-      50,
-      parseInt(COLORS.PRIMARY.replace('#', '0x'))
-    ).setInteractive();
-
-    // Button text
-    const buttonText = this.add.text(width / 2, buttonY, 'New Comparison', {
+    // Create New Comparison button
+    this.newComparisonButton = new Button(this, width / 2, buttonY, {
+      text: 'New Comparison',
+      width: 200,
+      height: 50,
       fontSize: '20px',
-      color: COLORS.TEXT,
-      fontFamily: 'Arial',
-      fontStyle: 'bold'
-    }).setOrigin(0.5);
-
-    // Store references for cleanup
-    this.newComparisonButton = button;
-    this.newComparisonButtonText = buttonText;
-
-    // Hover effects
-    button.on('pointerover', () => {
-      button.setFillStyle(parseInt(COLORS.PRIMARY.replace('#', '0x')), 0.8);
-      buttonText.setScale(1.1);
+      backgroundColor: COLORS.PRIMARY,
+      textColor: COLORS.TEXT,
+      hoverScale: 1.1
     });
 
-    button.on('pointerout', () => {
-      button.setFillStyle(parseInt(COLORS.PRIMARY.replace('#', '0x')), 1);
-      buttonText.setScale(1);
-    });
-
-    // Click handler
-    button.on('pointerdown', () => {
-      // Clear references
-      this.newComparisonButton = null;
-      this.newComparisonButtonText = null;
-
+    this.newComparisonButton.on('clicked', () => {
       // Destroy button
-      button.destroy();
-      buttonText.destroy();
+      this.newComparisonButton.off('clicked');
+      this.newComparisonButton.destroy();
+      this.newComparisonButton = null;
 
       // Reset and start over
       this.reset();
     });
+  }
+
+  /**
+   * Create Start/Restart button for light travel animation
+   * @param {string} label - Button text ('Start' or 'Restart')
+   */
+  createStartRestartButton(label) {
+    const width = this.cameras.main.width;
+    const height = this.cameras.main.height;
+
+    // Position above speedup control (which is at height - 100)
+    const buttonY = height - 200;
+
+    // Create Start/Restart button
+    this.startRestartButton = new Button(this, width / 2, buttonY, {
+      text: label,
+      width: 200,
+      height: 50,
+      fontSize: '20px',
+      backgroundColor: COLORS.PRIMARY,
+      textColor: COLORS.TEXT,
+      hoverScale: 1.1
+    });
+
+    this.startRestartButton.on('clicked', () => {
+      if (label === 'Start') {
+        // Hide button and start animation
+        this.hideStartRestartButton();
+        this.lightTraveler.animate();
+      } else {
+        // Restart: reset speedup and replay animation
+        this.restartLightAnimation();
+      }
+    });
+  }
+
+  /**
+   * Hide Start/Restart button
+   */
+  hideStartRestartButton() {
+    if (this.startRestartButton) {
+      this.startRestartButton.container.setVisible(false);
+    }
+  }
+
+  /**
+   * Restart light animation from beginning with speedup reset to 1×
+   */
+  restartLightAnimation() {
+    console.log('[CosmicComparisonScene] Restarting light animation...');
+
+    // Hide button during animation
+    this.hideStartRestartButton();
+
+    // Reset speedup control to 10^0 (1× Real Time)
+    this.speedupControl.setExponent(0);
+
+    // Destroy existing light traveler
+    if (this.lightTraveler) {
+      this.lightTraveler.off('travelComplete', this.onLightTravelComplete, this);
+      this.lightTraveler.destroy();
+    }
+
+    // Get distance data
+    const distanceData = this.dataManager.getDistance(
+      this.selectedIds[0],
+      this.selectedIds[1]
+    );
+
+    // Get object sprite positions
+    const sprites = this.scaleDisplay.getSprites();
+    const startPoint = {
+      x: sprites.obj1Sprite.x,
+      y: sprites.obj1Sprite.y
+    };
+    const endPoint = {
+      x: sprites.obj2Sprite.x,
+      y: sprites.obj2Sprite.y
+    };
+
+    // Recreate light traveler
+    this.lightTraveler = new LightSpeedTraveler(
+      this,
+      startPoint,
+      endPoint,
+      distanceData.distance
+    );
+
+    // Calculate duration with reset speedup (0)
+    this.lightTraveler.calculateAnimationDuration(0);
+
+    // Register event listener
+    this.lightTraveler.on('travelComplete', this.onLightTravelComplete, this);
+
+    // Start animation
+    this.lightTraveler.animate();
   }
 
   /**
@@ -414,6 +506,17 @@ export class CosmicComparisonScene extends Phaser.Scene {
     this.scaleDisplay = new ScaleDisplay(this);
     this.scaleDisplay.hide();
 
+    // Reset speedup control to default (1× real time)
+    this.speedupControl.setExponent(0);
+    this.speedupControl.setEnabled(true);
+
+    // Destroy start/restart button
+    if (this.startRestartButton) {
+      this.startRestartButton.off('clicked');
+      this.startRestartButton.destroy();
+      this.startRestartButton = null;
+    }
+
     // Clear selection
     this.selectedIds = null;
     this.objectSelector.clearSelection();
@@ -443,22 +546,25 @@ export class CosmicComparisonScene extends Phaser.Scene {
       this.lightTraveler.off('travelComplete', this.onLightTravelComplete, this);
     }
 
+    if (this.speedupControl) {
+      this.speedupControl.off('speedupChanged', this.onSpeedupChanged, this);
+    }
+
     // Destroy buttons
     if (this.distanceButton) {
+      this.distanceButton.off('clicked');
       this.distanceButton.destroy();
       this.distanceButton = null;
     }
-    if (this.distanceButtonText) {
-      this.distanceButtonText.destroy();
-      this.distanceButtonText = null;
-    }
     if (this.newComparisonButton) {
+      this.newComparisonButton.off('clicked');
       this.newComparisonButton.destroy();
       this.newComparisonButton = null;
     }
-    if (this.newComparisonButtonText) {
-      this.newComparisonButtonText.destroy();
-      this.newComparisonButtonText = null;
+    if (this.startRestartButton) {
+      this.startRestartButton.off('clicked');
+      this.startRestartButton.destroy();
+      this.startRestartButton = null;
     }
 
     // Destroy components
@@ -466,6 +572,7 @@ export class CosmicComparisonScene extends Phaser.Scene {
     this.scaleDisplay?.destroy();
     this.distanceAnimator?.destroy();
     this.lightTraveler?.destroy();
+    this.speedupControl?.destroy();
 
     console.log('[CosmicComparisonScene] Cleanup complete');
   }

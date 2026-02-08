@@ -14,6 +14,7 @@ import Phaser from 'phaser';
 import { DataManager } from '@/managers/DataManager.js';
 import { StateManager } from '@/managers/StateManager.js';
 import { COLORS } from '@/utils/Constants.js';
+import { parseHexColor } from '@/utils/ColorUtils.js';
 
 export class BootScene extends Phaser.Scene {
   constructor() {
@@ -52,7 +53,7 @@ export class BootScene extends Phaser.Scene {
 
     // Progress bar background
     const progressBox = this.add.graphics();
-    progressBox.fillStyle(parseInt(COLORS.LOADING_BG.replace('#', '0x')), 0.8);
+    progressBox.fillStyle(parseHexColor(COLORS.LOADING_BG), 0.8);
     progressBox.fillRect(width / 2 - 160, height / 2 - 25, 320, 50);
 
     // Progress bar fill
@@ -61,7 +62,7 @@ export class BootScene extends Phaser.Scene {
     // Update progress bar as files load
     this.load.on('progress', (value) => {
       progressBar.clear();
-      progressBar.fillStyle(parseInt(COLORS.LOADING_BAR.replace('#', '0x')), 1);
+      progressBar.fillStyle(parseHexColor(COLORS.LOADING_BAR), 1);
       progressBar.fillRect(width / 2 - 150, height / 2 - 15, 300 * value, 30);
 
       // Update loading text with percentage
@@ -130,11 +131,25 @@ export class BootScene extends Phaser.Scene {
       wordWrap: { width: width - 100 }
     }).setOrigin(0.5);
 
-    this.add.text(width / 2, height / 2 + 50, 'Please refresh the page', {
-      fontSize: '16px',
+    // Retry button
+    const retryBtn = this.add.rectangle(
+      width / 2, height / 2 + 60, 140, 40,
+      parseHexColor(COLORS.PRIMARY)
+    ).setInteractive({ useHandCursor: true });
+
+    const retryText = this.add.text(width / 2, height / 2 + 60, 'Retry', {
+      fontSize: '18px',
       color: COLORS.TEXT,
       fontFamily: 'Arial'
     }).setOrigin(0.5);
+
+    retryBtn.on('pointerover', () => retryBtn.setAlpha(0.8));
+    retryBtn.on('pointerout', () => retryBtn.setAlpha(1));
+    retryBtn.on('pointerdown', () => {
+      retryBtn.destroy();
+      retryText.destroy();
+      this.scene.restart();
+    });
   }
 
   /**

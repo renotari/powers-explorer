@@ -46,58 +46,127 @@ export class LightSpeedTraveler extends ComponentBase {
 
     console.log(`[LightSpeedTraveler] Real light travel time: ${this.travelTime.toFixed(3)} seconds`);
 
-    // Calculate animation duration with time-lapse
-    this.calculateAnimationDuration();
-
     // References to visual elements
     this.traveler = null;
     this.timeText = null;
     this.timeLapseIndicator = null;
+
+    // CRITICAL: Track overall progress across speed changes
+    // When speed changes, we restart the tween but need to remember overall progress
+    this.overallProgress = 0.0;
   }
 
   /**
-   * Calculate animation duration with UX optimization
-   *
-   * CRITICAL: Cap at 10s for optimal user experience
-   * Real travel time for distant objects can be years!
+   * Draw arrow from start point to current position
+   * 
+   * @param {number} startX - Arrow start X
+   * @param {number} startY - Arrow start Y
+   * @param {number} endX - Arrow tip X
+   * @param {number} endY - Arrow tip Y
    */
-  calculateAnimationDuration() {
+  drawArrow(startX, startY, endX, endY) {
+    if (!this.traveler) return;
+
+    // Clear previous drawing
+    this.traveler.clear();
+
+    // Calculate arrow angle and length
+    const dx = endX - startX;
+    const dy = endY - startY;
+    const length = Math.sqrt(dx * dx + dy * dy);
+
+    // Don't draw if length is too short
+    if (length < 1) return;
+
+    const angle = Math.atan2(dy, dx);
+
+    // Arrow styling
+    const arrowColor = 0xFFFF00;  // Yellow
+    const lineWidth = 3;
+    const headLength = 12;
+    const headWidth = 8;
+
+    // Draw arrow line
+    this.traveler.lineStyle(lineWidth, arrowColor, 1);
+    this.traveler.beginPath();
+    this.traveler.moveTo(startX, startY);
+    this.traveler.lineTo(endX, endY);
+    this.traveler.strokePath();
+
+    // Draw arrowhead (triangle at tip)
+    if (length >= headLength) {
+      this.traveler.fillStyle(arrowColor, 1);
+      this.traveler.beginPath();
+      
+      // Arrowhead tip is at (endX, endY)
+      this.traveler.moveTo(endX, endY);
+      
+      // Left point of arrowhead
+      const leftX = endX - headLength * Math.cos(angle) - headWidth * Math.sin(angle);
+      const leftY = endY - headLength * Math.sin(angle) + headWidth * Math.cos(angle);
+      this.traveler.lineTo(leftX, leftY);
+      
+      // Right point of arrowhead
+      const rightX = endX - headLength * Math.cos(angle) + headWidth * Math.sin(angle);
+      const rightY = endY - headLength * Math.sin(angle) - headWidth * Math.cos(angle);
+      this.traveler.lineTo(rightX, rightY);
+      
+      this.traveler.closePath();
+      this.traveler.fillPath();
+    }
+  }
+
+  /**
+   * Calculate animation duration with manual speedup
+   *
+   * @param {number} speedupExponent - Speedup exponent (0-20) for 10^exponent multiplier
+   */
+  calculateAnimationDuration(speedupExponent) {
+    console.log('[LightSpeedTraveler] calculateAnimationDuration called with exponent:', speedupExponent);
+
+    const speedupMultiplier = Math.pow(10, speedupExponent);
     const realTimeMs = this.travelTime * 1000;
 
-    // Cap animation duration at 10 seconds for UX
-    this.animationDuration = Math.min(realTimeMs, ANIMATION_DURATION.LIGHT_MAX);
+    // Calculate animation duration with speedup applied
+    // Enforce minimum duration of 100ms for visibility
+    this.animationDuration = Math.max(
+      realTimeMs / speedupMultiplier,
+      ANIMATION_DURATION.LIGHT_MIN
+    );
 
-    if (realTimeMs > ANIMATION_DURATION.LIGHT_MAX) {
-      // Animation is time-lapsed
-      this.isTimeLapsed = true;
-      this.speedMultiplier = realTimeMs / ANIMATION_DURATION.LIGHT_MAX;
+    console.log('[LightSpeedTraveler] Calculated values:', {
+      speedupExponent,
+      speedupMultiplier,
+      realTimeMs,
+      animationDuration: this.animationDuration
+    });
 
-      console.log(`[LightSpeedTraveler] Time-lapsed ${this.speedMultiplier.toFixed(1)}× for UX`);
-    } else {
-      // Animation plays at real speed
-      this.isTimeLapsed = false;
-      this.speedMultiplier = 1;
+    // Track whether animation is sped up
+    this.isTimeLapsed = (speedupMultiplier > 1);
+    this.speedMultiplier = speedupMultiplier;
 
-      console.log('[LightSpeedTraveler] Playing at real speed');
-    }
+    console.log(`[LightSpeedTraveler] Animation: ${this.animationDuration.toFixed(0)}ms at 10^${speedupExponent}× speedup`);
   }
 
   /**
    * Start light travel animation
    */
   animate() {
-    console.log('[LightSpeedTraveler] Starting animation...');
+    console.log('[LightSpeedTraveler] animate() called');
+    console.log('[LightSpeedTraveler] Using animationDuration:', this.animationDuration);
 
-    // Create light traveler sprite (bright white circle)
-    this.traveler = this.scene.add.circle(
-      this.startPoint.x,
-      this.startPoint.y,
-      6,  // radius
-      0xFFFFFF  // white
-    );
+    // Record start time for measurement
+    this.animationStartTime = performance.now();
+    console.log('[LightSpeedTraveler] Animation START timestamp:', this.animationStartTime.toFixed(2));
 
-    // Add glow effect
-    this.traveler.setBlendMode(Phaser.BlendModes.ADD);
+    // Initialize overall progress tracking
+    this.overallProgress = 0.0;
+
+    // Create light traveler as a yellow arrow (Graphics object)
+    this.traveler = this.scene.add.graphics();
+    
+    // Initial arrow at start point (zero length)
+    this.drawArrow(this.startPoint.x, this.startPoint.y, this.startPoint.x, this.startPoint.y);
 
     this.container.add(this.traveler);
 
@@ -109,16 +178,28 @@ export class LightSpeedTraveler extends ComponentBase {
       this.createTimeLapseIndicator();
     }
 
-    // Animate light particle moving from start to end
-    this.scene.tweens.add({
-      targets: this.traveler,
+    // Create a dummy object to tween (for arrow tip position)
+    this.arrowTipPosition = { x: this.startPoint.x, y: this.startPoint.y };
+
+    // Animate arrow tip moving from start to end
+    this.currentTween = this.scene.tweens.add({
+      targets: this.arrowTipPosition,
       x: this.endPoint.x,
       y: this.endPoint.y,
       duration: this.animationDuration,
       ease: 'Linear',
       onUpdate: (tween) => {
+        // Redraw arrow from start to current tip position
+        this.drawArrow(
+          this.startPoint.x,
+          this.startPoint.y,
+          this.arrowTipPosition.x,
+          this.arrowTipPosition.y
+        );
+
         // Update timer based on real travel time (not animation time)
         const progress = tween.progress;
+        this.overallProgress = progress;  // Track overall progress
         const elapsedRealTime = this.travelTime * progress;
         this.updateTimeDisplay(elapsedRealTime);
       },
@@ -172,10 +253,13 @@ export class LightSpeedTraveler extends ComponentBase {
     const screenWidth = this.scene.cameras.main.width;
     const screenHeight = this.scene.cameras.main.height;
 
+    // Extract exponent from speed multiplier
+    const exponent = Math.round(Math.log10(this.speedMultiplier));
+
     this.timeLapseIndicator = this.scene.add.text(
       screenWidth / 2,
       screenHeight - 40,
-      `(Time-lapsed ${this.speedMultiplier.toFixed(1)}× for viewing)`,
+      `(Sped up 10^${exponent}× for viewing)`,
       {
         fontSize: '12px',
         color: '#ffaa00',
@@ -198,19 +282,145 @@ export class LightSpeedTraveler extends ComponentBase {
   }
 
   /**
+   * Adjust animation speed dynamically
+   * Stops current tween and restarts from current position with new speed
+   *
+   * @param {number} speedupExponent - New speedup exponent (0-20)
+   */
+  adjustSpeed(speedupExponent) {
+    if (!this.currentTween || !this.traveler) {
+      console.warn('[LightSpeedTraveler] No active animation to adjust');
+      return;
+    }
+
+    // Get current progress (0.0 to 1.0)
+    // CRITICAL: Use overall progress since animation start, not just current tween progress
+    const tweenProgress = this.currentTween.progress;
+    const currentProgress = this.overallProgress;
+
+    // Stop current tween
+    this.currentTween.stop();
+
+    // Calculate new animation parameters
+    const speedupMultiplier = Math.pow(10, speedupExponent);
+    const realTimeMs = this.travelTime * 1000;
+
+    // Calculate remaining animation time
+    const remainingProgress = 1.0 - currentProgress;
+    const remainingRealTimeMs = realTimeMs * remainingProgress;
+    const remainingAnimationDuration = Math.max(
+      remainingRealTimeMs / speedupMultiplier,
+      ANIMATION_DURATION.LIGHT_MIN
+    );
+
+    // Update stored multiplier
+    this.isTimeLapsed = (speedupMultiplier > 1);
+    this.speedMultiplier = speedupMultiplier;
+
+    // Update time-lapse indicator if needed
+    if (this.timeLapseIndicator) {
+      const exponent = Math.round(Math.log10(speedupMultiplier));
+      if (speedupMultiplier > 1) {
+        this.timeLapseIndicator.setText(`(Sped up 10^${exponent}× for viewing)`);
+        this.timeLapseIndicator.setVisible(true);
+      } else {
+        this.timeLapseIndicator.setVisible(false);
+      }
+    }
+
+    console.log(`[LightSpeedTraveler] Speed adjusted to 10^${speedupExponent}×, remaining: ${remainingAnimationDuration.toFixed(0)}ms`);
+
+    // Calculate and store the progress at the moment of speed change
+    const progressAtSpeedChange = currentProgress;
+
+    // Start new tween from current position
+    this.currentTween = this.scene.tweens.add({
+      targets: this.arrowTipPosition,
+      x: this.endPoint.x,
+      y: this.endPoint.y,
+      duration: remainingAnimationDuration,
+      ease: 'Linear',
+      onUpdate: (tween) => {
+        // Redraw arrow from start to current tip position
+        this.drawArrow(
+          this.startPoint.x,
+          this.startPoint.y,
+          this.arrowTipPosition.x,
+          this.arrowTipPosition.y
+        );
+
+        // Calculate overall progress including progress before speed change
+        const newProgress = progressAtSpeedChange + (remainingProgress * tween.progress);
+        this.overallProgress = newProgress;  // Store for next speed change
+        const elapsedRealTime = this.travelTime * newProgress;
+        this.updateTimeDisplay(elapsedRealTime);
+      },
+      onComplete: () => {
+        this.onTravelComplete();
+      }
+    });
+  }
+
+  /**
    * Called when travel animation completes
    */
   onTravelComplete() {
+    // Measure actual elapsed time
+    const animationEndTime = performance.now();
+    const actualDuration = animationEndTime - this.animationStartTime;
+
+    console.log('[LightSpeedTraveler] Animation END timestamp:', animationEndTime.toFixed(2));
+    console.log('[LightSpeedTraveler] ACTUAL animation duration:', actualDuration.toFixed(2), 'ms');
+    console.log('[LightSpeedTraveler] EXPECTED animation duration:', this.animationDuration, 'ms');
+    console.log('[LightSpeedTraveler] DIFFERENCE:', (actualDuration - this.animationDuration).toFixed(2), 'ms');
+
+    this.currentTween = null;  // Clear reference
+
     console.log('[LightSpeedTraveler] Travel complete');
 
-    // Make light traveler pulse
-    this.scene.tweens.add({
-      targets: this.traveler,
-      scale: 1.5,
-      alpha: 0.5,
-      duration: 500,
-      yoyo: true,
-      repeat: 2
+    // Make arrow flash/pulse by redrawing with alpha changes
+    let flashCount = 0;
+    const flashInterval = this.scene.time.addEvent({
+      delay: 200,
+      callback: () => {
+        if (this.traveler) {
+          // Alternate between full opacity and reduced opacity
+          const alpha = (flashCount % 2 === 0) ? 0.3 : 1.0;
+          this.traveler.clear();
+          
+          // Redraw arrow with current alpha
+          this.traveler.lineStyle(3, 0xFFFF00, alpha);
+          this.traveler.beginPath();
+          this.traveler.moveTo(this.startPoint.x, this.startPoint.y);
+          this.traveler.lineTo(this.endPoint.x, this.endPoint.y);
+          this.traveler.strokePath();
+          
+          // Redraw arrowhead
+          const dx = this.endPoint.x - this.startPoint.x;
+          const dy = this.endPoint.y - this.startPoint.y;
+          const angle = Math.atan2(dy, dx);
+          const headLength = 12;
+          const headWidth = 8;
+          
+          this.traveler.fillStyle(0xFFFF00, alpha);
+          this.traveler.beginPath();
+          this.traveler.moveTo(this.endPoint.x, this.endPoint.y);
+          const leftX = this.endPoint.x - headLength * Math.cos(angle) - headWidth * Math.sin(angle);
+          const leftY = this.endPoint.y - headLength * Math.sin(angle) + headWidth * Math.cos(angle);
+          this.traveler.lineTo(leftX, leftY);
+          const rightX = this.endPoint.x - headLength * Math.cos(angle) + headWidth * Math.sin(angle);
+          const rightY = this.endPoint.y - headLength * Math.sin(angle) - headWidth * Math.cos(angle);
+          this.traveler.lineTo(rightX, rightY);
+          this.traveler.closePath();
+          this.traveler.fillPath();
+        }
+        
+        flashCount++;
+        if (flashCount >= 6) {
+          flashInterval.remove();
+        }
+      },
+      repeat: 5
     });
 
     // Emit completion event
@@ -221,10 +431,16 @@ export class LightSpeedTraveler extends ComponentBase {
    * Destroy component and clean up
    */
   destroy() {
+    // Stop current tween if active
+    if (this.currentTween) {
+      this.currentTween.stop();
+      this.currentTween = null;
+    }
+
     // Kill any active tweens
     if (this.scene && this.scene.tweens) {
-      if (this.traveler) {
-        this.scene.tweens.killTweensOf(this.traveler);
+      if (this.arrowTipPosition) {
+        this.scene.tweens.killTweensOf(this.arrowTipPosition);
       }
       if (this.timeLapseIndicator) {
         this.scene.tweens.killTweensOf(this.timeLapseIndicator);
@@ -233,6 +449,7 @@ export class LightSpeedTraveler extends ComponentBase {
 
     // Clear references
     this.traveler = null;
+    this.arrowTipPosition = null;
     this.timeText = null;
     this.timeLapseIndicator = null;
 

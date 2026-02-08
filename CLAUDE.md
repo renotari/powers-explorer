@@ -87,7 +87,7 @@ Components extend `Phaser.Events.EventEmitter` for loose coupling:
 
 #### Scenes
 - **`src/scenes/BootScene.js`** - Asset loading, initialization (CRITICAL)
-- **`src/scenes/MenuScene.js`** - Mode selection UI (3 modes)
+- **`src/scenes/MenuScene.js`** - Mode selection UI (2 active modes, Powers of Ten disabled)
 - **`src/scenes/UIOverlayScene.js`** - Persistent UI layer
 - **`src/scenes/CosmicComparisonScene.js`** - Comparison orchestration (CRITICAL)
 - **`src/scenes/SolarSystemScene.js`** - Solar system visualization (CRITICAL, NEW)
@@ -99,6 +99,10 @@ Components extend `Phaser.Events.EventEmitter` for loose coupling:
 - **`src/components/comparison/DistanceAnimator.js`** - Separation animation
 - **`src/components/comparison/ObjectOverlay.js`** - Overlay rendering for sub-pixel objects
 - **`src/components/comparison/LightSpeedTraveler.js`** - Light travel with timer
+- **`src/components/comparison/SpeedupControl.js`** - Light travel speed adjustment UI
+
+#### Components - UI
+- **`src/components/ui/Button.js`** - Reusable button component with hover effects
 
 #### Components - Solar System (NEW)
 - **`src/components/solarsystem/PlanetRenderer.js`** - Individual planet visual
@@ -150,17 +154,19 @@ selectObject(objectId) {
 }
 ```
 
-### 4. Light Travel Time-Lapse
-**Why:** Real light travel can be years; cap animation at 10s for UX.
+### 4. Light Travel Speed Control
+**Why:** Real light travel can be years; user controls speedup via SpeedupControl.
 
-**Implementation:** Calculate speed multiplier if real time > 10s:
+**Implementation:** SpeedupControl lets users select a speedup exponent (10^0 to 10^20):
 ```javascript
+const speedupMultiplier = Math.pow(10, speedupExponent);
 const realTimeMs = this.travelTime * 1000;
-this.animationDuration = Math.min(realTimeMs, ANIMATION_DURATION.LIGHT_MAX);
-if (realTimeMs > ANIMATION_DURATION.LIGHT_MAX) {
-  this.isTimeLapsed = true;
-  this.speedMultiplier = realTimeMs / ANIMATION_DURATION.LIGHT_MAX;
-}
+this.animationDuration = Math.max(
+  realTimeMs / speedupMultiplier,
+  ANIMATION_DURATION.LIGHT_MIN  // 100ms minimum for visibility
+);
+this.isTimeLapsed = (speedupMultiplier > 1);
+this.speedMultiplier = speedupMultiplier;
 ```
 
 ## Common Tasks

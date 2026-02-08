@@ -161,22 +161,59 @@ export class ScaleCalculator {
   }
 
   /**
-   * Format time duration into human-readable string
+   * Format time duration into human-readable string in hh:mm:ss format
    *
    * @param {number} seconds - Duration in seconds
-   * @returns {string} Formatted duration (e.g., "1.28 seconds", "8.30 minutes")
+   * @returns {string} Formatted duration (e.g., "00:00:05.280", "00:08:20", "02:19:00")
    */
   static formatTime(seconds) {
-    if (seconds < 60) {
-      return `${seconds.toFixed(3)} seconds`;
-    } else if (seconds < 3600) {
-      return `${(seconds / 60).toFixed(2)} minutes`;
-    } else if (seconds < 86400) {
-      return `${(seconds / 3600).toFixed(2)} hours`;
-    } else if (seconds < 31536000) {
-      return `${(seconds / 86400).toFixed(2)} days`;
-    } else {
+    // Handle edge cases
+    if (seconds < 0) return "00:00:00.000";
+    if (seconds === 0) return "00:00:00.000";
+
+    // For very short durations (under 1 second), show milliseconds only
+    if (seconds < 1) {
+      return `${seconds.toFixed(3)} s`;
+    }
+
+    // For very long durations (1+ years), keep decimal format
+    if (seconds >= 31536000) {
       return `${(seconds / 31536000).toFixed(2)} years`;
+    }
+
+    // Calculate time components
+    const totalSeconds = Math.floor(seconds);
+    const milliseconds = Math.floor((seconds - totalSeconds) * 1000);
+
+    const days = Math.floor(totalSeconds / 86400);
+    const hours = Math.floor((totalSeconds % 86400) / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const secs = totalSeconds % 60;
+
+    // Format based on duration
+    if (seconds < 60) {
+      // Under 1 minute: show "00:00:SS.MMM"
+      const secStr = String(secs).padStart(2, '0');
+      const msStr = String(milliseconds).padStart(3, '0');
+      return `00:00:${secStr}.${msStr}`;
+    } else if (seconds < 3600) {
+      // 1 minute to 1 hour: show "00:MM:SS"
+      const minStr = String(minutes).padStart(2, '0');
+      const secStr = String(secs).padStart(2, '0');
+      return `00:${minStr}:${secStr}`;
+    } else if (seconds < 86400) {
+      // 1 hour to 1 day: show "HH:MM:SS"
+      const hrStr = String(hours).padStart(2, '0');
+      const minStr = String(minutes).padStart(2, '0');
+      const secStr = String(secs).padStart(2, '0');
+      return `${hrStr}:${minStr}:${secStr}`;
+    } else {
+      // 1+ days: show "X day(s), HH:MM:SS"
+      const dayStr = days === 1 ? '1 day' : `${days} days`;
+      const hrStr = String(hours).padStart(2, '0');
+      const minStr = String(minutes).padStart(2, '0');
+      const secStr = String(secs).padStart(2, '0');
+      return `${dayStr}, ${hrStr}:${minStr}:${secStr}`;
     }
   }
 

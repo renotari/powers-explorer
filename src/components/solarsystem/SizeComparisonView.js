@@ -81,9 +81,8 @@ export class SizeComparisonView extends ComponentBase {
   calculateLayout(bodies) {
     const centerY = GAME_HEIGHT / 2;
 
-    // Target: use 90% of width, centered
-    const targetWidthRatio = 0.9;
-    const targetWidth = GAME_WIDTH * targetWidthRatio;  // 1152px
+    // Target: use SIZE_WIDTH_FACTOR of width, centered
+    const targetWidth = GAME_WIDTH * SOLAR_SYSTEM.SIZE_WIDTH_FACTOR;
 
     // Guard against empty array or invalid data
     if (bodies.length === 0) {
@@ -120,8 +119,8 @@ export class SizeComparisonView extends ComponentBase {
     // targetWidth = totalProportionalSize * scale + totalSpacing
     const scale = (targetWidth - totalSpacing) / totalProportionalSize;
 
-    // Height constraint: largest planet shouldn't exceed 70% of screen height
-    const maxAllowedSize = GAME_HEIGHT * 0.7;  // 504px
+    // Height constraint: largest planet shouldn't exceed SIZE_HEIGHT_FACTOR of screen height
+    const maxAllowedSize = GAME_HEIGHT * SOLAR_SYSTEM.SIZE_HEIGHT_FACTOR;
     const finalScale = Math.min(scale, maxAllowedSize);
 
     // Calculate actual total width and center horizontally
@@ -159,7 +158,7 @@ export class SizeComparisonView extends ComponentBase {
       buttonY,
       100,
       35,
-      parseInt(COLORS.PRIMARY.replace('#', '0x'))
+      parseHexColor(COLORS.PRIMARY)
     ).setInteractive({ useHandCursor: true });
     this.container.add(this.sunToggleButton);
 

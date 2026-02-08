@@ -14,6 +14,7 @@
 import Phaser from 'phaser';
 import { StateManager } from '@/managers/StateManager.js';
 import { COLORS } from '@/utils/Constants.js';
+import { Button } from '@/components/ui/Button.js';
 
 export class UIOverlayScene extends Phaser.Scene {
   constructor() {
@@ -43,38 +44,18 @@ export class UIOverlayScene extends Phaser.Scene {
    * Create back button
    */
   createBackButton() {
-    const buttonX = 60;
-    const buttonY = 30;
-
-    // Button background
-    this.backButton = this.add.rectangle(
-      buttonX,
-      buttonY,
-      80,
-      40,
-      parseInt(COLORS.SECONDARY.replace('#', '0x'))
-    ).setInteractive();
-
-    // Button text
-    this.backButtonText = this.add.text(buttonX, buttonY, 'Back', {
+    // Create Back button
+    this.backButton = new Button(this, 60, 30, {
+      text: 'Back',
+      width: 80,
+      height: 40,
       fontSize: '18px',
-      color: COLORS.TEXT,
-      fontFamily: 'Arial'
-    }).setOrigin(0.5);
-
-    // Hover effects
-    this.backButton.on('pointerover', () => {
-      this.backButton.setFillStyle(parseInt(COLORS.SECONDARY.replace('#', '0x')), 0.8);
-      this.backButtonText.setScale(1.1);
+      backgroundColor: COLORS.SECONDARY,
+      textColor: COLORS.TEXT,
+      hoverScale: 1.1
     });
 
-    this.backButton.on('pointerout', () => {
-      this.backButton.setFillStyle(parseInt(COLORS.SECONDARY.replace('#', '0x')), 1);
-      this.backButtonText.setScale(1);
-    });
-
-    // Click handler
-    this.backButton.on('pointerdown', () => {
+    this.backButton.on('clicked', () => {
       this.returnToMenu();
     });
   }
@@ -102,6 +83,8 @@ export class UIOverlayScene extends Phaser.Scene {
   updateMode(mode) {
     if (mode === 'comparison') {
       this.modeIndicator.setText('Cosmic Comparison Mode');
+    } else if (mode === 'solarSystem') {
+      this.modeIndicator.setText('Solar System Mode');
     } else if (mode === 'powersOfTen') {
       this.modeIndicator.setText('Powers of Ten Mode');
     } else {
@@ -115,14 +98,14 @@ export class UIOverlayScene extends Phaser.Scene {
   returnToMenu() {
     console.log('[UIOverlayScene] Returning to menu...');
 
-    // Stop the current scene
+    // Stop the current scene (with existence checks)
     const currentMode = this.stateManager.getCurrentMode();
-    if (currentMode === 'comparison') {
+    if (currentMode === 'comparison' && this.scene.isActive('CosmicComparisonScene')) {
       this.scene.stop('CosmicComparisonScene');
-    } else if (currentMode === 'powersOfTen') {
-      this.scene.stop('PowersOfTenScene');
-    } else if (currentMode === 'solarSystem') {
+    } else if (currentMode === 'solarSystem' && this.scene.isActive('SolarSystemScene')) {
       this.scene.stop('SolarSystemScene');
+    } else if (currentMode === 'powersOfTen' && this.scene.isActive('PowersOfTenScene')) {
+      this.scene.stop('PowersOfTenScene');
     }
 
     // Stop this overlay scene
@@ -146,6 +129,12 @@ export class UIOverlayScene extends Phaser.Scene {
 
     // Remove StateManager event listeners
     this.stateManager.off('modeChanged', this.updateMode, this);
+
+    // Destroy button
+    if (this.backButton) {
+      this.backButton.off('clicked');
+      this.backButton.destroy();
+    }
 
     // Phaser automatically cleans up scene-specific events
     // But we must manually remove external event listeners

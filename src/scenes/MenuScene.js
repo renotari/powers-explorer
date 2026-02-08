@@ -14,6 +14,7 @@
 import Phaser from 'phaser';
 import { StateManager } from '@/managers/StateManager.js';
 import { COLORS } from '@/utils/Constants.js';
+import { Button } from '@/components/ui/Button.js';
 
 export class MenuScene extends Phaser.Scene {
   constructor() {
@@ -22,6 +23,9 @@ export class MenuScene extends Phaser.Scene {
 
   create() {
     console.log('[MenuScene] Creating menu...');
+
+    // Register cleanup
+    this.events.on('shutdown', this.cleanup, this);
 
     const width = this.cameras.main.width;
     const height = this.cameras.main.height;
@@ -42,9 +46,7 @@ export class MenuScene extends Phaser.Scene {
     }).setOrigin(0.5);
 
     // Create mode selection buttons
-    this.createCosmicComparisonButton(width, height);
-    this.createSolarSystemButton(width, height);
-    this.createPowersOfTenButton(width, height);
+    this.createButtons(width, height);
 
     // Footer text
     this.add.text(width / 2, height - 40, 'Educational Tool for Scale Visualization', {
@@ -55,27 +57,24 @@ export class MenuScene extends Phaser.Scene {
   }
 
   /**
-   * Create Cosmic Comparison mode button
+   * Create mode selection buttons
    */
-  createCosmicComparisonButton(width, height) {
+  createButtons(width, height) {
     const buttonY = height / 2;
 
-    // Button background
-    const button = this.add.rectangle(
-      width / 2,
-      buttonY,
-      300,
-      60,
-      parseInt(COLORS.PRIMARY.replace('#', '0x'))
-    ).setInteractive();
-
-    // Button text
-    const buttonText = this.add.text(width / 2, buttonY, 'Cosmic Comparison', {
+    // Cosmic Comparison button
+    this.cosmicComparisonBtn = new Button(this, width / 2, buttonY, {
+      text: 'Cosmic Comparison',
+      width: 300,
+      height: 60,
       fontSize: '24px',
-      color: COLORS.TEXT,
-      fontFamily: 'Arial',
-      fontStyle: 'bold'
-    }).setOrigin(0.5);
+      backgroundColor: COLORS.PRIMARY,
+      textColor: COLORS.TEXT
+    });
+    this.cosmicComparisonBtn.on('clicked', () => {
+      console.log('[MenuScene] Cosmic Comparison selected');
+      this.startCosmicComparison();
+    });
 
     // Description
     this.add.text(width / 2, buttonY + 45, 'Compare sizes and distances of cosmic objects', {
@@ -84,105 +83,44 @@ export class MenuScene extends Phaser.Scene {
       fontFamily: 'Arial'
     }).setOrigin(0.5);
 
-    // Hover effects
-    button.on('pointerover', () => {
-      button.setFillStyle(parseInt(COLORS.PRIMARY.replace('#', '0x')), 0.8);
-      buttonText.setScale(1.05);
-    });
-
-    button.on('pointerout', () => {
-      button.setFillStyle(parseInt(COLORS.PRIMARY.replace('#', '0x')), 1);
-      buttonText.setScale(1);
-    });
-
-    // Click handler
-    button.on('pointerdown', () => {
-      console.log('[MenuScene] Cosmic Comparison selected');
-      this.startCosmicComparison();
-    });
-  }
-
-  /**
-   * Create Solar System mode button
-   */
-  createSolarSystemButton(width, height) {
-    const buttonY = height / 2 + 80;
-
-    // Button background
-    const button = this.add.rectangle(
-      width / 2,
-      buttonY,
-      300,
-      60,
-      parseInt(COLORS.PRIMARY.replace('#', '0x'))
-    ).setInteractive();
-
-    // Button text
-    const buttonText = this.add.text(width / 2, buttonY, 'Solar System', {
+    // Solar System button
+    this.solarSystemBtn = new Button(this, width / 2, buttonY + 80, {
+      text: 'Solar System',
+      width: 300,
+      height: 60,
       fontSize: '24px',
-      color: COLORS.TEXT,
-      fontFamily: 'Arial',
-      fontStyle: 'bold'
-    }).setOrigin(0.5);
+      backgroundColor: COLORS.PRIMARY,
+      textColor: COLORS.TEXT
+    });
+    this.solarSystemBtn.on('clicked', () => {
+      console.log('[MenuScene] Solar System selected');
+      this.startSolarSystem();
+    });
 
     // Description
-    this.add.text(width / 2, buttonY + 45, 'Explore the solar system with three visualization modes', {
+    this.add.text(width / 2, buttonY + 125, 'Explore the solar system with three visualization modes', {
       fontSize: '14px',
       color: '#cccccc',
       fontFamily: 'Arial'
     }).setOrigin(0.5);
 
-    // Hover effects
-    button.on('pointerover', () => {
-      button.setFillStyle(parseInt(COLORS.PRIMARY.replace('#', '0x')), 0.8);
-      buttonText.setScale(1.05);
-    });
-
-    button.on('pointerout', () => {
-      button.setFillStyle(parseInt(COLORS.PRIMARY.replace('#', '0x')), 1);
-      buttonText.setScale(1);
-    });
-
-    // Click handler
-    button.on('pointerdown', () => {
-      console.log('[MenuScene] Solar System selected');
-      this.startSolarSystem();
-    });
-  }
-
-  /**
-   * Create Powers of Ten mode button (placeholder for future)
-   */
-  createPowersOfTenButton(width, height) {
-    const buttonY = height / 2 + 160;
-
-    // Button background (disabled style)
-    const button = this.add.rectangle(
-      width / 2,
-      buttonY,
-      300,
-      60,
-      parseInt(COLORS.SECONDARY.replace('#', '0x'))
-    );
-
-    // Button text
-    this.add.text(width / 2, buttonY, 'Powers of Ten', {
+    // Powers of Ten button (disabled - coming soon)
+    this.powersOfTenBtn = new Button(this, width / 2, buttonY + 160, {
+      text: 'Powers of Ten',
+      width: 300,
+      height: 60,
       fontSize: '24px',
-      color: '#999999',
-      fontFamily: 'Arial',
-      fontStyle: 'bold'
-    }).setOrigin(0.5);
+      backgroundColor: COLORS.SECONDARY,
+      textColor: '#999999',
+      enabled: false
+    });
 
     // Description
-    this.add.text(width / 2, buttonY + 45, 'Zoom through 61 levels of scale (Coming Soon)', {
+    this.add.text(width / 2, buttonY + 205, 'Zoom through 61 levels of scale (Coming Soon)', {
       fontSize: '14px',
       color: '#777777',
       fontFamily: 'Arial'
     }).setOrigin(0.5);
-
-    // Future: Enable this button when PowersOfTenScene is implemented
-    // button.setInteractive();
-    // button.on('pointerdown', () => this.startPowersOfTen());
   }
 
   /**
@@ -220,19 +158,22 @@ export class MenuScene extends Phaser.Scene {
   }
 
   /**
-   * Start Powers of Ten mode (future implementation)
+   * Cleanup when scene shuts down
    */
-  startPowersOfTen() {
-    // Update state
-    StateManager.getInstance().setMode('powersOfTen');
+  cleanup() {
+    console.log('[MenuScene] Cleaning up...');
 
-    // Stop this scene
-    this.scene.stop('MenuScene');
-
-    // Start Powers of Ten scene (to be implemented)
-    // this.scene.start('PowersOfTenScene');
-
-    // Launch overlay scene (runs in parallel)
-    // this.scene.launch('UIOverlayScene');
+    // Destroy buttons
+    if (this.cosmicComparisonBtn) {
+      this.cosmicComparisonBtn.off('clicked');
+      this.cosmicComparisonBtn.destroy();
+    }
+    if (this.solarSystemBtn) {
+      this.solarSystemBtn.off('clicked');
+      this.solarSystemBtn.destroy();
+    }
+    if (this.powersOfTenBtn) {
+      this.powersOfTenBtn.destroy();
+    }
   }
 }

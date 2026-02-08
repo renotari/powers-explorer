@@ -112,43 +112,47 @@ export class SolarSystemScene extends Phaser.Scene {
   async transitionToMode(mode) {
     this.stateManager.setSolarSystemAnimating(true);
 
-    // Hide info panel if open
-    if (this.planetInfoPanel && this.planetInfoPanel.currentPlanetId) {
-      await this.planetInfoPanel.hide();
+    try {
+      // Hide info panel if open
+      if (this.planetInfoPanel && this.planetInfoPanel.currentPlanetId) {
+        await this.planetInfoPanel.hide();
+        // Check if scene is still active after await
+        if (!this.scene.isActive()) {
+          console.log('[SolarSystemScene] Scene destroyed during transition, aborting');
+          return;
+        }
+      }
+
+      // Fade out current view
+      if (this.currentView) {
+        await this.fadeOut(this.currentView);
+        // Check if scene is still active after await
+        if (!this.scene.isActive()) {
+          console.log('[SolarSystemScene] Scene destroyed during transition, aborting');
+          return;
+        }
+        this.currentView.destroy();
+        this.currentView = null;
+      }
+
+      // Enter new mode
+      await this.enterMode(mode);
       // Check if scene is still active after await
       if (!this.scene.isActive()) {
         console.log('[SolarSystemScene] Scene destroyed during transition, aborting');
         return;
       }
-    }
 
-    // Fade out current view
-    if (this.currentView) {
-      await this.fadeOut(this.currentView);
-      // Check if scene is still active after await
-      if (!this.scene.isActive()) {
-        console.log('[SolarSystemScene] Scene destroyed during transition, aborting');
-        return;
+      // Update state - add null checks for components
+      this.stateManager.setSolarSystemMode(mode);
+      if (this.modeCycleButton) {
+        this.modeCycleButton.setMode(mode);
       }
-      this.currentView.destroy();
-      this.currentView = null;
+    } catch (error) {
+      console.error(`[SolarSystemScene] Mode transition to '${mode}' failed:`, error);
+    } finally {
+      this.stateManager.setSolarSystemAnimating(false);
     }
-
-    // Enter new mode
-    await this.enterMode(mode);
-    // Check if scene is still active after await
-    if (!this.scene.isActive()) {
-      console.log('[SolarSystemScene] Scene destroyed during transition, aborting');
-      return;
-    }
-
-    // Update state - add null checks for components
-    this.stateManager.setSolarSystemMode(mode);
-    if (this.modeCycleButton) {
-      this.modeCycleButton.setMode(mode);
-    }
-
-    this.stateManager.setSolarSystemAnimating(false);
   }
 
   /**

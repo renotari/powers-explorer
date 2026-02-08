@@ -31,7 +31,7 @@ export class DistanceView extends ComponentBase {
    * Create the distance view
    */
   create() {
-    const sunX = 60;
+    const sunX = SOLAR_SYSTEM.DISTANCE_SUN_X;
     const centerY = GAME_HEIGHT / 2;
 
     // Create Sun
@@ -42,7 +42,7 @@ export class DistanceView extends ComponentBase {
         sunData,
         sunX,
         centerY,
-        25, // Fixed prominent size for Sun
+        SOLAR_SYSTEM.DISTANCE_SUN_RADIUS, // Fixed prominent size for Sun
         { interactive: true }
       );
       this.sunRenderer.setLabelVisible(true);
@@ -86,7 +86,7 @@ export class DistanceView extends ComponentBase {
    */
   calculateLayout(sunX, centerY) {
     const planetIds = SOLAR_SYSTEM.PLANET_IDS;
-    const availableWidth = GAME_WIDTH - sunX - 60;
+    const availableWidth = GAME_WIDTH - sunX - SOLAR_SYSTEM.DISTANCE_MARGIN;
 
     // Find maximum distance (Neptune)
     const orbitalParams = this.dataManager.getOrbitalParameters();
@@ -120,8 +120,8 @@ export class DistanceView extends ComponentBase {
       return [];
     }
 
-    // Size scale factor - largest planet gets 15px radius
-    const planetSizeScale = 15 / maxPlanetDiameter;
+    // Size scale factor - largest planet gets DISTANCE_MAX_PLANET_RADIUS
+    const planetSizeScale = SOLAR_SYSTEM.DISTANCE_MAX_PLANET_RADIUS / maxPlanetDiameter;
 
     return planets.map(planet => {
       const orbitalData = this.dataManager.getOrbitalParametersById(planet.id);
@@ -155,7 +155,7 @@ export class DistanceView extends ComponentBase {
    * @param {number} centerY - Center Y position
    */
   drawDistanceMarkers(sunX, centerY) {
-    const availableWidth = GAME_WIDTH - sunX - 60;
+    const availableWidth = GAME_WIDTH - sunX - SOLAR_SYSTEM.DISTANCE_MARGIN;
     const orbitalParams = this.dataManager.getOrbitalParameters();
     if (!orbitalParams || orbitalParams.length === 0) return;
 

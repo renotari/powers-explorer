@@ -70,7 +70,7 @@ powersExplorer/
 │       │   ├── cosmic-objects/      # Object visualizations
 │       │   └── ui/                  # UI elements
 │       ├── data/                    # JSON data files
-│       │   ├── cosmic-objects.json  # 50-100 preset objects
+│       │   ├── cosmic-objects.json  # 13 preset cosmic objects
 │       │   ├── scale-levels.json    # 61 scale definitions
 │       │   └── physical-constants.json
 │       └── fonts/                   # Web fonts
@@ -80,16 +80,18 @@ powersExplorer/
 │   │   ├── BootScene.js             # Asset loading
 │   │   ├── MenuScene.js             # Mode selection
 │   │   ├── CosmicComparisonScene.js # Comparison mode
-│   │   ├── PowersOfTenScene.js      # Powers of ten mode
+│   │   ├── SolarSystemScene.js      # Solar system mode
 │   │   └── UIOverlayScene.js        # Persistent UI
 │   ├── models/                      # Data models
 │   ├── managers/                    # Core systems
 │   │   ├── DataManager.js           # Data loading/caching
 │   │   ├── StateManager.js          # App state
 │   │   └── AnimationManager.js      # Reusable animations
+│   ├── services/                    # External integrations
+│   │   └── PlanetaryPositionService.js # Real-time planetary positions
 │   ├── components/                  # UI components
 │   │   ├── comparison/              # Comparison mode components
-│   │   ├── powers-of-ten/           # Powers mode components
+│   │   ├── solarsystem/             # Solar system mode components
 │   │   └── ui/                      # Shared UI components
 │   ├── utils/                       # Utilities
 │   │   ├── ScaleCalculator.js       # Scale mathematics
@@ -298,7 +300,7 @@ Powers Explorer is designed with accessibility in mind:
 
 ### Version 1.0 ✅ Complete
 - ✅ Cosmic Object Comparison Mode
-- ✅ 30+ preset cosmic objects
+- ✅ 13 preset cosmic objects
 - ✅ Educational facts and descriptions
 - ✅ Light speed visualization
 - ✅ Logarithmic distance scaling

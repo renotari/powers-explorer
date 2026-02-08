@@ -78,9 +78,9 @@ export class PlanetInfoPanel extends ComponentBase {
       this.panelY,
       width,
       height,
-      parseInt(COLORS.BACKGROUND.replace('#', '0x')),
+      parseHexColor(COLORS.BACKGROUND),
       0.95
-    ).setStrokeStyle(2, parseInt(COLORS.PRIMARY.replace('#', '0x')));
+    ).setStrokeStyle(2, parseHexColor(COLORS.PRIMARY));
     this.container.add(this.panelBackground);
 
     // Close button
@@ -99,7 +99,7 @@ export class PlanetInfoPanel extends ComponentBase {
       margin + buttonSize / 2,
       buttonSize,
       buttonSize,
-      parseInt(COLORS.SECONDARY.replace('#', '0x'))
+      parseHexColor(COLORS.SECONDARY)
     ).setInteractive({ useHandCursor: true });
     this.container.add(this.closeButton);
 

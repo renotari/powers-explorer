@@ -16,5 +16,14 @@
     "precision": "±0.000018e-35",
     "source": "NIST CODATA 2018",
     "description": "The smallest meaningful length in physics, below which quantum effects dominate"
+  },
+  "astronomicalUnit": {
+    "value": 149597870700,
+    "unit": "m",
+    "displayName": "Astronomical Unit",
+    "symbol": "AU",
+    "precision": "exact",
+    "source": "IAU 2012 Resolution B2",
+    "description": "The mean distance from Earth to the Sun, used as a standard unit for measuring distances within the solar system"
   }
 }
