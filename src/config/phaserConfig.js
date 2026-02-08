@@ -36,7 +36,8 @@ export const phaserConfig = {
   // Scale manager configuration
   scale: {
     mode: Phaser.Scale.FIT,                // Fit to container while maintaining aspect ratio
-    autoCenter: Phaser.Scale.CENTER_BOTH   // Center both horizontally and vertically
+    autoCenter: Phaser.Scale.CENTER_BOTH,  // Center both horizontally and vertically
+    fullscreenTarget: 'game-container'     // Target element for fullscreen API
   },
 
   // DOM element support

@@ -13,7 +13,7 @@
 
 import Phaser from 'phaser';
 import { StateManager } from '@/managers/StateManager.js';
-import { COLORS } from '@/utils/Constants.js';
+import { COLORS, FULLSCREEN_BUTTON } from '@/utils/Constants.js';
 import { Button } from '@/components/ui/Button.js';
 
 export class MenuScene extends Phaser.Scene {
@@ -47,6 +47,9 @@ export class MenuScene extends Phaser.Scene {
 
     // Create mode selection buttons
     this.createButtons(width, height);
+
+    // Create fullscreen toggle button
+    this.createFullscreenButton();
 
     // Footer text
     this.add.text(width / 2, height - 40, 'Educational Tool for Scale Visualization', {
@@ -124,6 +127,38 @@ export class MenuScene extends Phaser.Scene {
   }
 
   /**
+   * Create fullscreen toggle button
+   */
+  createFullscreenButton() {
+    const isFullscreen = this.scale.isFullscreen;
+
+    this.fullscreenButton = new Button(this, FULLSCREEN_BUTTON.X, FULLSCREEN_BUTTON.Y, {
+      text: isFullscreen ? FULLSCREEN_BUTTON.TEXT_FULLSCREEN : FULLSCREEN_BUTTON.TEXT_WINDOWED,
+      width: FULLSCREEN_BUTTON.WIDTH,
+      height: FULLSCREEN_BUTTON.HEIGHT,
+      fontSize: FULLSCREEN_BUTTON.FONT_SIZE,
+      backgroundColor: COLORS.SECONDARY,
+      textColor: COLORS.TEXT,
+      hoverScale: 1.1
+    });
+
+    this.fullscreenButton.on('clicked', () => {
+      this.scale.toggleFullscreen();
+    });
+
+    // Listen to scale events to update button text (catches Escape key exits too)
+    this.onEnterFullscreen = () => {
+      this.fullscreenButton.setText(FULLSCREEN_BUTTON.TEXT_FULLSCREEN);
+    };
+    this.onLeaveFullscreen = () => {
+      this.fullscreenButton.setText(FULLSCREEN_BUTTON.TEXT_WINDOWED);
+    };
+
+    this.scale.on('enterfullscreen', this.onEnterFullscreen);
+    this.scale.on('leavefullscreen', this.onLeaveFullscreen);
+  }
+
+  /**
    * Start Cosmic Comparison mode
    */
   startCosmicComparison() {
@@ -174,6 +209,14 @@ export class MenuScene extends Phaser.Scene {
     }
     if (this.powersOfTenBtn) {
       this.powersOfTenBtn.destroy();
+    }
+
+    // Remove scale listeners (ScaleManager persists across scenes)
+    if (this.fullscreenButton) {
+      this.scale.off('enterfullscreen', this.onEnterFullscreen);
+      this.scale.off('leavefullscreen', this.onLeaveFullscreen);
+      this.fullscreenButton.off('clicked');
+      this.fullscreenButton.destroy();
     }
   }
 }

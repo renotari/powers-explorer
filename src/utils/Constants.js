@@ -60,6 +60,17 @@ export const SPEEDUP_CONTROL = {
   MARGIN: 10              // Spacing between elements
 };
 
+// Fullscreen toggle button
+export const FULLSCREEN_BUTTON = {
+  X: GAME_WIDTH - 60,        // Mirrors Back button's 60px inset from right
+  Y: 30,                     // Same vertical as Back button
+  WIDTH: 40,
+  HEIGHT: 40,
+  FONT_SIZE: '20px',
+  TEXT_WINDOWED: '\u26F6',   // ⛶ square with corners icon
+  TEXT_FULLSCREEN: '\u2716', // ✖ exit icon
+};
+
 // Solar System visualization settings
 export const SOLAR_SYSTEM = {
   PLANET_IDS: ['mercury', 'venus', 'earth', 'mars', 'jupiter', 'saturn', 'uranus', 'neptune'],
