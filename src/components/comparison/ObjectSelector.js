@@ -62,11 +62,18 @@ export class ObjectSelector extends ComponentBase {
     }).setOrigin(0.5);
     this.container.add(instruction);
 
-    // Create object cards
-    let yOffset = 40;
+    // Create object cards in 2-column grid
+    const columns = 2;
+    const cardSpacingX = 240;  // 220px card width + 20px gap
+    const cardSpacingY = 70;
+    const startX = this.x - (cardSpacingX * (columns - 1)) / 2;
+
     this.objects.forEach((obj, index) => {
-      const card = this.createObjectCard(obj, this.x, this.y + yOffset);
-      yOffset += 70;
+      const col = index % columns;
+      const row = Math.floor(index / columns);
+      const cardX = startX + col * cardSpacingX;
+      const cardY = this.y + 40 + row * cardSpacingY;
+      const card = this.createObjectCard(obj, cardX, cardY);
     });
 
     console.log(`[ObjectSelector] Created ${this.objectCards.size} object cards`);

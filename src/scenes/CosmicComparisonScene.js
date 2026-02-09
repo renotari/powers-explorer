@@ -54,7 +54,7 @@ export class CosmicComparisonScene extends Phaser.Scene {
    */
   initializeComponents() {
     // Object selector (shown at start)
-    this.objectSelector = new ObjectSelector(this, 150, 150);
+    this.objectSelector = new ObjectSelector(this, 250, 150);
 
     // Scale display (hidden initially)
     this.scaleDisplay = new ScaleDisplay(this);

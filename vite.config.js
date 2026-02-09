@@ -2,7 +2,7 @@ import { defineConfig } from 'vite';
 import { fileURLToPath, URL } from 'node:url';
 
 export default defineConfig({
-  base: './',
+  base: '/tools/powers-explorer/',
   build: {
     outDir: 'dist',
     assetsDir: 'assets',

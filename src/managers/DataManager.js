@@ -61,9 +61,9 @@ export class DataManager {
   async loadAllData(scene) {
     return new Promise((resolve, reject) => {
       // Queue JSON files for loading
-      scene.load.json('cosmic-objects', '/assets/data/cosmic-objects.json');
-      scene.load.json('physical-constants', '/assets/data/physical-constants.json');
-      scene.load.json('orbital-parameters', '/assets/data/orbital-parameters.json');
+      scene.load.json('cosmic-objects', './assets/data/cosmic-objects.json');
+      scene.load.json('physical-constants', './assets/data/physical-constants.json');
+      scene.load.json('orbital-parameters', './assets/data/orbital-parameters.json');
 
       // Handle successful load
       scene.load.once('complete', () => {
