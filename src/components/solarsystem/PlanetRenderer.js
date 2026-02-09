@@ -57,7 +57,7 @@ export class PlanetRenderer extends ComponentBase {
       this.y + this.radius + SOLAR_SYSTEM.LABEL_OFFSET_Y,
       this.planetData.name,
       {
-        fontSize: '14px',
+        fontSize: '21px',
         color: COLORS.TEXT,
         fontFamily: 'Arial',
         align: 'center'

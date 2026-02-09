@@ -82,7 +82,7 @@ export class SizeComparisonView extends ComponentBase {
     const centerY = GAME_HEIGHT / 2;
     const targetWidth = GAME_WIDTH * SOLAR_SYSTEM.SIZE_WIDTH_FACTOR;
     const minSlot = SOLAR_SYSTEM.SIZE_MIN_SLOT_WIDTH;
-    const spacing = 15;
+    const spacing = 23;
 
     if (bodies.length === 0) {
       console.warn('[SizeComparisonView] No bodies to display');
@@ -156,15 +156,15 @@ export class SizeComparisonView extends ComponentBase {
    * Create Sun toggle button
    */
   createSunToggleButton() {
-    const buttonX = GAME_WIDTH - 120;
-    const buttonY = 40;
+    const buttonX = GAME_WIDTH - 180;
+    const buttonY = 60;
 
     // Button background
     this.sunToggleButton = this.scene.add.rectangle(
       buttonX,
       buttonY,
-      100,
-      35,
+      150,
+      53,
       parseHexColor(COLORS.PRIMARY)
     ).setInteractive({ useHandCursor: true });
     this.container.add(this.sunToggleButton);
@@ -176,7 +176,7 @@ export class SizeComparisonView extends ComponentBase {
       buttonY,
       includeSun ? 'Hide Sun' : 'Show Sun',
       {
-        fontSize: '14px',
+        fontSize: '21px',
         color: COLORS.TEXT,
         fontFamily: 'Arial'
       }

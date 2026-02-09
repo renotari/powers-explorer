@@ -54,7 +54,7 @@ export class CosmicComparisonScene extends Phaser.Scene {
    */
   initializeComponents() {
     // Object selector (shown at start)
-    this.objectSelector = new ObjectSelector(this, 250, 150);
+    this.objectSelector = new ObjectSelector(this, 375, 225);
 
     // Scale display (hidden initially)
     this.scaleDisplay = new ScaleDisplay(this);
@@ -64,7 +64,7 @@ export class CosmicComparisonScene extends Phaser.Scene {
     this.speedupControl = new SpeedupControl(
       this,
       GAME_WIDTH / 2,
-      GAME_HEIGHT - 100
+      GAME_HEIGHT - 150
     );
     this.speedupControl.on('speedupChanged', this.onSpeedupChanged, this);
 
@@ -300,14 +300,14 @@ export class CosmicComparisonScene extends Phaser.Scene {
   createDistanceButton() {
     const width = this.cameras.main.width;
     const height = this.cameras.main.height;
-    const buttonY = height - 80;
+    const buttonY = height - 120;
 
     // Create Show Distance button
     this.distanceButton = new Button(this, width / 2, buttonY, {
       text: 'Show Distance',
-      width: 200,
-      height: 50,
-      fontSize: '20px',
+      width: 300,
+      height: 75,
+      fontSize: '30px',
       backgroundColor: COLORS.PRIMARY,
       textColor: COLORS.TEXT,
       hoverScale: 1.1
@@ -330,14 +330,14 @@ export class CosmicComparisonScene extends Phaser.Scene {
   createNewComparisonButton() {
     const width = this.cameras.main.width;
     const height = this.cameras.main.height;
-    const buttonY = height - 150;
+    const buttonY = height - 225;
 
     // Create New Comparison button
     this.newComparisonButton = new Button(this, width / 2, buttonY, {
       text: 'New Comparison',
-      width: 200,
-      height: 50,
-      fontSize: '20px',
+      width: 300,
+      height: 75,
+      fontSize: '30px',
       backgroundColor: COLORS.PRIMARY,
       textColor: COLORS.TEXT,
       hoverScale: 1.1
@@ -362,15 +362,15 @@ export class CosmicComparisonScene extends Phaser.Scene {
     const width = this.cameras.main.width;
     const height = this.cameras.main.height;
 
-    // Position above speedup control (which is at height - 100)
-    const buttonY = height - 200;
+    // Position above speedup control (which is at height - 150)
+    const buttonY = height - 300;
 
     // Create Start/Restart button
     this.startRestartButton = new Button(this, width / 2, buttonY, {
       text: label,
-      width: 200,
-      height: 50,
-      fontSize: '20px',
+      width: 300,
+      height: 75,
+      fontSize: '30px',
       backgroundColor: COLORS.PRIMARY,
       textColor: COLORS.TEXT,
       hoverScale: 1.1
@@ -462,12 +462,12 @@ export class CosmicComparisonScene extends Phaser.Scene {
       height / 2,
       'Distance data not available for these objects',
       {
-        fontSize: '20px',
+        fontSize: '30px',
         color: '#ffaa00',
         fontFamily: 'Arial',
         align: 'center',
         backgroundColor: '#000000',
-        padding: { x: 20, y: 10 }
+        padding: { x: 30, y: 15 }
       }
     ).setOrigin(0.5);
 

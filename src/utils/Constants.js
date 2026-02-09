@@ -4,8 +4,8 @@
  */
 
 // Canvas dimensions
-export const GAME_WIDTH = 1280;
-export const GAME_HEIGHT = 720;
+export const GAME_WIDTH = 1920;
+export const GAME_HEIGHT = 1080;
 
 // Scale bounds (exponents in powers of 10)
 export const MIN_EXPONENT = -35;  // Planck length (10^-35 m)
@@ -41,11 +41,11 @@ export const SCALE_DISPLAY = {
 export const PROPORTIONAL_SIZING = {
   MIN_SIZE: 1,              // Absolute minimum size in pixels
   OVERLAY_THRESHOLD: 5,     // Show overlay if object < 5px
-  OVERLAY_OFFSET_Y: 80,     // Vertical distance below actual object (pixels)
+  OVERLAY_OFFSET_Y: 120,    // Vertical distance below actual object (pixels)
   CONNECTOR_COLOR: 0xaaaaaa,// Arrow connector color (gray)
-  ARROW_SIZE: 12,            // Arrow triangle size (pixels)
-  ARROW_GAP: 12,             // Gap between object and arrow (pixels)
-  LABEL_OFFSET_Y: 15        // Gap between arrow and label (pixels)
+  ARROW_SIZE: 18,            // Arrow triangle size (pixels)
+  ARROW_GAP: 18,             // Gap between object and arrow (pixels)
+  LABEL_OFFSET_Y: 23        // Gap between arrow and label (pixels)
 };
 
 // Light travel speedup control settings
@@ -53,20 +53,20 @@ export const SPEEDUP_CONTROL = {
   MIN_EXPONENT: 0,        // Minimum speedup exponent (10^0 = 1× real time)
   MAX_EXPONENT: 20,       // Maximum speedup exponent (10^20×)
   DEFAULT_EXPONENT: 0,    // Default to real time
-  WIDTH: 300,             // Control width
-  HEIGHT: 60,             // Control height
-  BUTTON_WIDTH: 50,       // Button width
-  BUTTON_HEIGHT: 40,      // Button height
-  MARGIN: 10              // Spacing between elements
+  WIDTH: 450,             // Control width
+  HEIGHT: 90,             // Control height
+  BUTTON_WIDTH: 75,       // Button width
+  BUTTON_HEIGHT: 60,      // Button height
+  MARGIN: 15              // Spacing between elements
 };
 
 // Fullscreen toggle button
 export const FULLSCREEN_BUTTON = {
-  X: GAME_WIDTH - 60,        // Mirrors Back button's 60px inset from right
-  Y: 30,                     // Same vertical as Back button
-  WIDTH: 40,
-  HEIGHT: 40,
-  FONT_SIZE: '20px',
+  X: GAME_WIDTH - 90,        // Mirrors Back button's 90px inset from right
+  Y: 45,                     // Same vertical as Back button
+  WIDTH: 60,
+  HEIGHT: 60,
+  FONT_SIZE: '30px',
   TEXT_WINDOWED: '\u26F6',   // ⛶ square with corners icon
   TEXT_FULLSCREEN: '\u2716', // ✖ exit icon
 };
@@ -76,36 +76,36 @@ export const SOLAR_SYSTEM = {
   PLANET_IDS: ['mercury', 'venus', 'earth', 'mars', 'jupiter', 'saturn', 'uranus', 'neptune'],
   SUN_ID: 'sun',
   MIN_PLANET_RADIUS: 3,      // Minimum planet radius in pixels for visibility
-  MAX_PLANET_RADIUS: 200,    // Maximum planet radius in size comparison mode
+  MAX_PLANET_RADIUS: 300,    // Maximum planet radius in size comparison mode
   TRANSITION_DURATION: 400,  // Mode transition animation duration (ms)
-  LABEL_OFFSET_Y: 30,        // Distance below planet for label
+  LABEL_OFFSET_Y: 45,        // Distance below planet for label
   ORBIT_LINE_COLOR: 0x444444,// Gray color for orbit paths
   ORBIT_LINE_ALPHA: 0.6,     // Transparency for orbit paths
-  INFO_PANEL_WIDTH: 350,     // Info panel width in pixels
+  INFO_PANEL_WIDTH: 525,     // Info panel width in pixels
   INFO_PANEL_SLIDE_DURATION: 300, // Info panel slide animation (ms)
   SUN_COLOR: 0xFDB813,       // Yellow-orange for the Sun
   DISTANCE_MARKER_COLOR: 0x666666, // Color for AU distance markers
 
   // Distance View constants
-  DISTANCE_SUN_RADIUS: 25,       // Fixed Sun radius in distance view (pixels)
-  DISTANCE_SUN_X: 60,            // Sun X position in distance view (pixels)
-  DISTANCE_MARGIN: 60,           // Right margin in distance view (pixels)
-  DISTANCE_MAX_PLANET_RADIUS: 15,// Maximum planet radius in distance view (pixels)
+  DISTANCE_SUN_RADIUS: 38,       // Fixed Sun radius in distance view (pixels)
+  DISTANCE_SUN_X: 90,            // Sun X position in distance view (pixels)
+  DISTANCE_MARGIN: 90,           // Right margin in distance view (pixels)
+  DISTANCE_MAX_PLANET_RADIUS: 23,// Maximum planet radius in distance view (pixels)
   DISTANCE_REAL_MIN_RADIUS: 1,   // 1px minimum in real proportions mode
 
   // Orbital View constants
-  ORBITAL_SUN_RADIUS: 12,        // Fixed Sun radius in orbital view (pixels)
-  ORBITAL_MARGIN: 50,            // Margin from edge in orbital view (pixels)
+  ORBITAL_SUN_RADIUS: 18,        // Fixed Sun radius in orbital view (pixels)
+  ORBITAL_MARGIN: 75,            // Margin from edge in orbital view (pixels)
 
   // Size Comparison View constants
   SIZE_HEIGHT_FACTOR: 0.7,       // Max height as fraction of screen (70%)
   SIZE_WIDTH_FACTOR: 0.9,        // Target width as fraction of screen (90%)
-  SIZE_MIN_SLOT_WIDTH: 90,       // Minimum horizontal space per planet in size comparison (px)
+  SIZE_MIN_SLOT_WIDTH: 135,      // Minimum horizontal space per planet in size comparison (px)
 
   // Tooltip constants
-  TOOLTIP_OFFSET_Y: 15,         // Distance above planet for tooltip (px)
-  TOOLTIP_FONT_SIZE: '13px',
-  TOOLTIP_PADDING: 6,           // Padding around tooltip text (px)
+  TOOLTIP_OFFSET_Y: 23,         // Distance above planet for tooltip (px)
+  TOOLTIP_FONT_SIZE: '20px',
+  TOOLTIP_PADDING: 9,           // Padding around tooltip text (px)
   TOOLTIP_BG_COLOR: 0x000000,
   TOOLTIP_BG_ALPHA: 0.8
 };

@@ -46,8 +46,8 @@ export class ObjectSelector extends ComponentBase {
    */
   create() {
     // Title
-    const title = this.scene.add.text(this.x, this.y - 30, 'Select Two Objects:', {
-      fontSize: '24px',
+    const title = this.scene.add.text(this.x, this.y - 45, 'Select Two Objects:', {
+      fontSize: '36px',
       color: COLORS.TEXT,
       fontFamily: 'Arial',
       fontStyle: 'bold'
@@ -56,7 +56,7 @@ export class ObjectSelector extends ComponentBase {
 
     // Instruction text
     const instruction = this.scene.add.text(this.x, this.y, 'Click to select objects for comparison', {
-      fontSize: '14px',
+      fontSize: '21px',
       color: '#cccccc',
       fontFamily: 'Arial'
     }).setOrigin(0.5);
@@ -64,15 +64,15 @@ export class ObjectSelector extends ComponentBase {
 
     // Create object cards in 2-column grid
     const columns = 2;
-    const cardSpacingX = 240;  // 220px card width + 20px gap
-    const cardSpacingY = 70;
+    const cardSpacingX = 360;  // 330px card width + 30px gap
+    const cardSpacingY = 105;
     const startX = this.x - (cardSpacingX * (columns - 1)) / 2;
 
     this.objects.forEach((obj, index) => {
       const col = index % columns;
       const row = Math.floor(index / columns);
       const cardX = startX + col * cardSpacingX;
-      const cardY = this.y + 40 + row * cardSpacingY;
+      const cardY = this.y + 60 + row * cardSpacingY;
       const card = this.createObjectCard(obj, cardX, cardY);
     });
 
@@ -92,8 +92,8 @@ export class ObjectSelector extends ComponentBase {
     const card = this.scene.add.rectangle(
       x,
       y,
-      220,
-      60,
+      330,
+      90,
       parseHexColor(obj.color),
       0.3
     ).setInteractive();
@@ -102,22 +102,22 @@ export class ObjectSelector extends ComponentBase {
     const border = this.scene.add.rectangle(
       x,
       y,
-      220,
-      60
+      330,
+      90
     );
     border.setStrokeStyle(2, parseHexColor(obj.color), 0.8);
 
     // Object name
-    const nameText = this.scene.add.text(x, y - 10, obj.name, {
-      fontSize: '18px',
+    const nameText = this.scene.add.text(x, y - 15, obj.name, {
+      fontSize: '27px',
       color: COLORS.TEXT,
       fontFamily: 'Arial',
       fontStyle: 'bold'
     }).setOrigin(0.5);
 
     // Object category
-    const categoryText = this.scene.add.text(x, y + 12, obj.category, {
-      fontSize: '12px',
+    const categoryText = this.scene.add.text(x, y + 18, obj.category, {
+      fontSize: '18px',
       color: '#aaaaaa',
       fontFamily: 'Arial'
     }).setOrigin(0.5);

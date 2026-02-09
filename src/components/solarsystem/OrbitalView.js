@@ -139,8 +139,8 @@ export class OrbitalView extends ComponentBase {
 
     // Size scale for planets in orbital view
     const baseSizes = {
-      mercury: 4, venus: 6, earth: 6, mars: 5,
-      jupiter: 12, saturn: 11, uranus: 8, neptune: 8
+      mercury: 6, venus: 9, earth: 9, mars: 8,
+      jupiter: 18, saturn: 17, uranus: 12, neptune: 12
     };
 
     orbitalParams.forEach(param => {
@@ -161,7 +161,7 @@ export class OrbitalView extends ComponentBase {
       );
 
       // Create planet renderer
-      const radius = baseSizes[param.id] || 5;
+      const radius = baseSizes[param.id] || 8;
       const renderer = new PlanetRenderer(
         this.scene,
         planetData,
@@ -189,11 +189,11 @@ export class OrbitalView extends ComponentBase {
     const color = isRealTime ? '#4CAF50' : '#FFA726';
 
     this.dataSourceIndicator = this.scene.add.text(
-      GAME_WIDTH - 10,
-      GAME_HEIGHT - 10,
+      GAME_WIDTH - 15,
+      GAME_HEIGHT - 15,
       text,
       {
-        fontSize: '12px',
+        fontSize: '18px',
         color: color,
         fontFamily: 'Arial'
       }

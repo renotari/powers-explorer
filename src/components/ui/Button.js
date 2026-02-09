@@ -35,9 +35,9 @@ export class Button extends ComponentBase {
     // Store configuration with defaults
     this.config = {
       text: config.text || 'Button',
-      width: config.width || 200,
-      height: config.height || 50,
-      fontSize: config.fontSize || '20px',
+      width: config.width || 300,
+      height: config.height || 75,
+      fontSize: config.fontSize || '30px',
       backgroundColor: config.backgroundColor || COLORS.PRIMARY,
       textColor: config.textColor || COLORS.TEXT,
       hoverAlpha: config.hoverAlpha !== undefined ? config.hoverAlpha : 0.8,

@@ -51,7 +51,7 @@ export class ObjectOverlay extends ComponentBase {
     const arrowTipY = line1EndY;
     const arrowBaseY = arrowTipY + this.arrowSize;        // 8px arrow height
     const line2StartY = arrowBaseY;
-    const line2EndY = line2StartY + 10;                   // 10px second segment
+    const line2EndY = line2StartY + 15;                   // 15px second segment
     const labelY = line2EndY + this.labelOffsetY;         // 15px to label
 
     // Create tiny actual-size object
@@ -105,7 +105,7 @@ export class ObjectOverlay extends ComponentBase {
       labelY,
       objectName,
       {
-        fontSize: '16px',
+        fontSize: '24px',
         color: '#ffffff',
         fontFamily: 'Arial',
         fontStyle: 'bold'
@@ -172,7 +172,7 @@ export class ObjectOverlay extends ComponentBase {
     const arrowTipY = line1EndY;
     const arrowBaseY = arrowTipY + this.arrowSize;        // 8px arrow height
     const line2StartY = arrowBaseY;
-    const line2EndY = line2StartY + 10;                   // 10px second segment
+    const line2EndY = line2StartY + 15;                   // 15px second segment
     const labelY = line2EndY + this.labelOffsetY;         // 15px to label
 
     // Update first line segment (object bottom → arrow tip)

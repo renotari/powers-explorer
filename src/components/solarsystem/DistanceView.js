@@ -275,8 +275,8 @@ export class DistanceView extends ComponentBase {
       // Vertical line
       const line = this.scene.add.line(
         0, 0,
-        screenX, centerY - 15,
-        screenX, centerY + 15,
+        screenX, centerY - 23,
+        screenX, centerY + 23,
         SOLAR_SYSTEM.DISTANCE_MARKER_COLOR
       ).setOrigin(0, 0).setAlpha(0.5);
       this.container.add(line);
@@ -285,10 +285,10 @@ export class DistanceView extends ComponentBase {
       // AU label
       const label = this.scene.add.text(
         screenX,
-        centerY + 25,
+        centerY + 38,
         `${au} AU`,
         {
-          fontSize: '11px',
+          fontSize: '17px',
           color: COLORS.SECONDARY,
           fontFamily: 'Arial'
         }
@@ -325,8 +325,8 @@ export class DistanceView extends ComponentBase {
       // Vertical line
       const line = this.scene.add.line(
         0, 0,
-        screenX, centerY - 15,
-        screenX, centerY + 15,
+        screenX, centerY - 23,
+        screenX, centerY + 23,
         SOLAR_SYSTEM.DISTANCE_MARKER_COLOR
       ).setOrigin(0, 0).setAlpha(0.5);
       this.container.add(line);
@@ -335,10 +335,10 @@ export class DistanceView extends ComponentBase {
       // AU label
       const label = this.scene.add.text(
         screenX,
-        centerY + 25,
+        centerY + 38,
         `${au} AU`,
         {
-          fontSize: '11px',
+          fontSize: '17px',
           color: COLORS.SECONDARY,
           fontFamily: 'Arial'
         }
@@ -352,15 +352,15 @@ export class DistanceView extends ComponentBase {
    * Create the Real Proportions toggle button
    */
   createRealProportionsButton() {
-    const buttonX = GAME_WIDTH - 150;
-    const buttonY = 40;
+    const buttonX = GAME_WIDTH - 225;
+    const buttonY = 60;
 
     // Button background
     this.realProportionsButton = this.scene.add.rectangle(
       buttonX,
       buttonY,
-      150,
-      35,
+      225,
+      53,
       parseHexColor(COLORS.PRIMARY)
     ).setInteractive({ useHandCursor: true });
     this.container.add(this.realProportionsButton);
@@ -371,7 +371,7 @@ export class DistanceView extends ComponentBase {
       buttonY,
       'Real Proportions',
       {
-        fontSize: '14px',
+        fontSize: '21px',
         color: COLORS.TEXT,
         fontFamily: 'Arial'
       }

@@ -123,10 +123,10 @@ export class ScaleDisplay extends ComponentBase {
     // Larger object label
     const label1 = this.scene.add.text(
       screenWidth / 3,
-      screenHeight / 2 + 200,
+      screenHeight / 2 + 300,
       larger.name,
       {
-        fontSize: '20px',
+        fontSize: '30px',
         color: COLORS.TEXT,
         fontFamily: 'Arial',
         fontStyle: 'bold'
@@ -136,10 +136,10 @@ export class ScaleDisplay extends ComponentBase {
     // Smaller object label
     const label2 = this.scene.add.text(
       2 * screenWidth / 3,
-      screenHeight / 2 + 200,
+      screenHeight / 2 + 300,
       smaller.name,
       {
-        fontSize: '20px',
+        fontSize: '30px',
         color: COLORS.TEXT,
         fontFamily: 'Arial',
         fontStyle: 'bold'
@@ -149,10 +149,10 @@ export class ScaleDisplay extends ComponentBase {
     // Larger object diameter
     const diameter1 = this.scene.add.text(
       screenWidth / 3,
-      screenHeight / 2 + 225,
+      screenHeight / 2 + 338,
       ScaleCalculator.formatScale(larger.diameter),
       {
-        fontSize: '14px',
+        fontSize: '21px',
         color: '#cccccc',
         fontFamily: 'Arial'
       }
@@ -161,10 +161,10 @@ export class ScaleDisplay extends ComponentBase {
     // Smaller object diameter
     const diameter2 = this.scene.add.text(
       2 * screenWidth / 3,
-      screenHeight / 2 + 225,
+      screenHeight / 2 + 338,
       ScaleCalculator.formatScale(smaller.diameter),
       {
-        fontSize: '14px',
+        fontSize: '21px',
         color: '#cccccc',
         fontFamily: 'Arial'
       }
@@ -184,10 +184,10 @@ export class ScaleDisplay extends ComponentBase {
   displayRatio(larger, smaller, ratio, screenWidth) {
     this.ratioText = this.scene.add.text(
       screenWidth / 2,
-      60,
+      90,
       `${larger.name} is ${ratio.toFixed(2)}× larger than ${smaller.name}`,
       {
-        fontSize: '24px',
+        fontSize: '36px',
         color: COLORS.TEXT,
         fontFamily: 'Arial',
         fontStyle: 'bold',

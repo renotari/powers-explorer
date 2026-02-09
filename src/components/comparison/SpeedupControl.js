@@ -43,7 +43,7 @@ export class SpeedupControl extends ComponentBase {
       this.y,
       '[-]',
       {
-        fontSize: '24px',
+        fontSize: '36px',
         color: COLORS.TEXT,
         fontFamily: 'Arial',
         fontStyle: 'bold'
@@ -56,12 +56,12 @@ export class SpeedupControl extends ComponentBase {
       this.y,
       this.getLabelText(),
       {
-        fontSize: '18px',
+        fontSize: '27px',
         color: COLORS.TEXT,
         fontFamily: 'Arial',
         fontStyle: 'bold',
         backgroundColor: '#000000',
-        padding: { x: 15, y: 8 }
+        padding: { x: 23, y: 12 }
       }
     ).setOrigin(0.5);
 
@@ -71,7 +71,7 @@ export class SpeedupControl extends ComponentBase {
       this.y,
       '[+]',
       {
-        fontSize: '24px',
+        fontSize: '36px',
         color: COLORS.TEXT,
         fontFamily: 'Arial',
         fontStyle: 'bold'

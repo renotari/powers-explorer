@@ -31,14 +31,14 @@ export class BootScene extends Phaser.Scene {
     const width = this.cameras.main.width;
     const height = this.cameras.main.height;
 
-    this.add.text(width / 2, height / 2 - 100, 'Powers Explorer', {
-      fontSize: '48px',
+    this.add.text(width / 2, height / 2 - 150, 'Powers Explorer', {
+      fontSize: '72px',
       color: COLORS.TEXT,
       fontFamily: 'Arial'
     }).setOrigin(0.5);
 
-    this.loadingText = this.add.text(width / 2, height / 2 + 100, 'Loading...', {
-      fontSize: '20px',
+    this.loadingText = this.add.text(width / 2, height / 2 + 150, 'Loading...', {
+      fontSize: '30px',
       color: COLORS.TEXT,
       fontFamily: 'Arial'
     }).setOrigin(0.5);
@@ -54,7 +54,7 @@ export class BootScene extends Phaser.Scene {
     // Progress bar background
     const progressBox = this.add.graphics();
     progressBox.fillStyle(parseHexColor(COLORS.LOADING_BG), 0.8);
-    progressBox.fillRect(width / 2 - 160, height / 2 - 25, 320, 50);
+    progressBox.fillRect(width / 2 - 240, height / 2 - 38, 480, 75);
 
     // Progress bar fill
     const progressBar = this.add.graphics();
@@ -63,7 +63,7 @@ export class BootScene extends Phaser.Scene {
     this.load.on('progress', (value) => {
       progressBar.clear();
       progressBar.fillStyle(parseHexColor(COLORS.LOADING_BAR), 1);
-      progressBar.fillRect(width / 2 - 150, height / 2 - 15, 300 * value, 30);
+      progressBar.fillRect(width / 2 - 225, height / 2 - 23, 450 * value, 45);
 
       // Update loading text with percentage
       const percent = Math.floor(value * 100);
@@ -124,21 +124,21 @@ export class BootScene extends Phaser.Scene {
     const height = this.cameras.main.height;
 
     this.add.text(width / 2, height / 2, `Error: ${message}`, {
-      fontSize: '20px',
+      fontSize: '30px',
       color: '#ff0000',
       fontFamily: 'Arial',
       align: 'center',
-      wordWrap: { width: width - 100 }
+      wordWrap: { width: width - 150 }
     }).setOrigin(0.5);
 
     // Retry button
     const retryBtn = this.add.rectangle(
-      width / 2, height / 2 + 60, 140, 40,
+      width / 2, height / 2 + 90, 210, 60,
       parseHexColor(COLORS.PRIMARY)
     ).setInteractive({ useHandCursor: true });
 
-    const retryText = this.add.text(width / 2, height / 2 + 60, 'Retry', {
-      fontSize: '18px',
+    const retryText = this.add.text(width / 2, height / 2 + 90, 'Retry', {
+      fontSize: '27px',
       color: COLORS.TEXT,
       fontFamily: 'Arial'
     }).setOrigin(0.5);

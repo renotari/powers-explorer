@@ -26,10 +26,10 @@ export class ModeCycleButton extends ComponentBase {
    * Create the button
    */
   create() {
-    const buttonWidth = 180;
-    const buttonHeight = 45;
+    const buttonWidth = 270;
+    const buttonHeight = 68;
     const buttonX = GAME_WIDTH / 2;
-    const buttonY = GAME_HEIGHT - 40;
+    const buttonY = GAME_HEIGHT - 60;
 
     // Button background
     this.buttonBackground = this.scene.add.rectangle(
@@ -47,7 +47,7 @@ export class ModeCycleButton extends ComponentBase {
       buttonY,
       this.getModeText(this.currentMode),
       {
-        fontSize: '18px',
+        fontSize: '27px',
         color: COLORS.TEXT,
         fontFamily: 'Arial',
         fontStyle: 'bold'

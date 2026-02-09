@@ -103,14 +103,14 @@ export class DistanceAnimator extends ComponentBase {
     // Create distance text
     this.distanceText = this.scene.add.text(
       centerX,
-      centerY + 80,
+      centerY + 120,
       `Distance: ${ScaleCalculator.formatScale(realDistance)}`,
       {
-        fontSize: '18px',
+        fontSize: '27px',
         color: COLORS.TEXT,
         fontFamily: 'Arial',
         backgroundColor: '#000000',
-        padding: { x: 10, y: 5 }
+        padding: { x: 15, y: 8 }
       }
     ).setOrigin(0.5).setAlpha(0);
 

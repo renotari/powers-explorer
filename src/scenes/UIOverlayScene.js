@@ -46,11 +46,11 @@ export class UIOverlayScene extends Phaser.Scene {
    */
   createBackButton() {
     // Create Back button
-    this.backButton = new Button(this, 60, 30, {
+    this.backButton = new Button(this, 90, 45, {
       text: 'Back',
-      width: 80,
-      height: 40,
-      fontSize: '18px',
+      width: 120,
+      height: 60,
+      fontSize: '27px',
       backgroundColor: COLORS.SECONDARY,
       textColor: COLORS.TEXT,
       hoverScale: 1.1
@@ -99,8 +99,8 @@ export class UIOverlayScene extends Phaser.Scene {
   createModeIndicator() {
     const width = this.cameras.main.width;
 
-    this.modeIndicator = this.add.text(width / 2, 20, '', {
-      fontSize: '16px',
+    this.modeIndicator = this.add.text(width / 2, 30, '', {
+      fontSize: '24px',
       color: '#cccccc',
       fontFamily: 'Arial'
     }).setOrigin(0.5);

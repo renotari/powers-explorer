@@ -91,8 +91,8 @@ export class PlanetInfoPanel extends ComponentBase {
    * Create close button
    */
   createCloseButton() {
-    const buttonSize = 30;
-    const margin = 15;
+    const buttonSize = 45;
+    const margin = 23;
 
     this.closeButton = this.scene.add.rectangle(
       SOLAR_SYSTEM.INFO_PANEL_WIDTH / 2 - margin - buttonSize / 2,
@@ -108,7 +108,7 @@ export class PlanetInfoPanel extends ComponentBase {
       margin + buttonSize / 2,
       'X',
       {
-        fontSize: '18px',
+        fontSize: '27px',
         color: COLORS.TEXT,
         fontFamily: 'Arial',
         fontStyle: 'bold'
@@ -135,9 +135,9 @@ export class PlanetInfoPanel extends ComponentBase {
    * @param {Object} planetData - Planet data
    */
   buildContent(planetData) {
-    let yOffset = 80;
-    const margin = 20;
-    const lineHeight = 25;
+    let yOffset = 120;
+    const margin = 30;
+    const lineHeight = 38;
 
     // Planet name
     const nameText = this.scene.add.text(
@@ -145,7 +145,7 @@ export class PlanetInfoPanel extends ComponentBase {
       yOffset,
       planetData.name,
       {
-        fontSize: '28px',
+        fontSize: '42px',
         color: COLORS.PRIMARY,
         fontFamily: 'Arial',
         fontStyle: 'bold'
@@ -153,7 +153,7 @@ export class PlanetInfoPanel extends ComponentBase {
     );
     this.container.add(nameText);
     this.contentElements.push(nameText);
-    yOffset += 50;
+    yOffset += 75;
 
     // Diameter
     const diameterText = this.scene.add.text(
@@ -161,7 +161,7 @@ export class PlanetInfoPanel extends ComponentBase {
       yOffset,
       `Diameter: ${ScaleCalculator.formatScale(planetData.diameter)}`,
       {
-        fontSize: '14px',
+        fontSize: '21px',
         color: COLORS.TEXT,
         fontFamily: 'Arial'
       }
@@ -215,7 +215,7 @@ export class PlanetInfoPanel extends ComponentBase {
         yOffset,
         'Facts:',
         {
-          fontSize: '16px',
+          fontSize: '24px',
           color: COLORS.PRIMARY,
           fontFamily: 'Arial',
           fontStyle: 'bold'
@@ -231,7 +231,7 @@ export class PlanetInfoPanel extends ComponentBase {
           yOffset,
           `• ${fact}`,
           {
-            fontSize: '13px',
+            fontSize: '20px',
             color: COLORS.TEXT,
             fontFamily: 'Arial',
             wordWrap: { width: SOLAR_SYSTEM.INFO_PANEL_WIDTH - margin * 2 }
@@ -239,7 +239,7 @@ export class PlanetInfoPanel extends ComponentBase {
         );
         this.container.add(factText);
         this.contentElements.push(factText);
-        yOffset += factText.height + 10;
+        yOffset += factText.height + 15;
       });
     }
   }

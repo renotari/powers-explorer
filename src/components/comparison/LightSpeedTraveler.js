@@ -82,9 +82,9 @@ export class LightSpeedTraveler extends ComponentBase {
 
     // Arrow styling
     const arrowColor = 0xFFFF00;  // Yellow
-    const lineWidth = 3;
-    const headLength = 12;
-    const headWidth = 8;
+    const lineWidth = 4;
+    const headLength = 18;
+    const headWidth = 12;
 
     // Draw arrow line
     this.traveler.lineStyle(lineWidth, arrowColor, 1);
@@ -219,10 +219,10 @@ export class LightSpeedTraveler extends ComponentBase {
     // Timer label
     const label = this.scene.add.text(
       screenWidth / 2,
-      screenHeight - 100,
+      screenHeight - 150,
       'Light Travel Time:',
       {
-        fontSize: '16px',
+        fontSize: '24px',
         color: '#cccccc',
         fontFamily: 'Arial'
       }
@@ -231,15 +231,15 @@ export class LightSpeedTraveler extends ComponentBase {
     // Timer value (starts at 0)
     this.timeText = this.scene.add.text(
       screenWidth / 2,
-      screenHeight - 70,
+      screenHeight - 105,
       '0.000 seconds',
       {
-        fontSize: '24px',
+        fontSize: '36px',
         color: COLORS.TEXT,
         fontFamily: 'Arial',
         fontStyle: 'bold',
         backgroundColor: '#000000',
-        padding: { x: 15, y: 8 }
+        padding: { x: 23, y: 12 }
       }
     ).setOrigin(0.5);
 
@@ -258,10 +258,10 @@ export class LightSpeedTraveler extends ComponentBase {
 
     this.timeLapseIndicator = this.scene.add.text(
       screenWidth / 2,
-      screenHeight - 40,
+      screenHeight - 60,
       `(Sped up 10^${exponent}× for viewing)`,
       {
-        fontSize: '12px',
+        fontSize: '18px',
         color: '#ffaa00',
         fontFamily: 'Arial',
         fontStyle: 'italic'
@@ -389,7 +389,7 @@ export class LightSpeedTraveler extends ComponentBase {
           this.traveler.clear();
           
           // Redraw arrow with current alpha
-          this.traveler.lineStyle(3, 0xFFFF00, alpha);
+          this.traveler.lineStyle(4, 0xFFFF00, alpha);
           this.traveler.beginPath();
           this.traveler.moveTo(this.startPoint.x, this.startPoint.y);
           this.traveler.lineTo(this.endPoint.x, this.endPoint.y);
@@ -399,8 +399,8 @@ export class LightSpeedTraveler extends ComponentBase {
           const dx = this.endPoint.x - this.startPoint.x;
           const dy = this.endPoint.y - this.startPoint.y;
           const angle = Math.atan2(dy, dx);
-          const headLength = 12;
-          const headWidth = 8;
+          const headLength = 18;
+          const headWidth = 12;
           
           this.traveler.fillStyle(0xFFFF00, alpha);
           this.traveler.beginPath();
