@@ -243,6 +243,7 @@ export class PlanetRenderer extends ComponentBase {
    */
   animateTo(x, y, radius, duration = SOLAR_SYSTEM.TRANSITION_DURATION) {
     return new Promise((resolve) => {
+      this.hideTooltip();
       this.x = x;
       this.y = y;
       this.radius = Math.max(radius, SOLAR_SYSTEM.MIN_PLANET_RADIUS);

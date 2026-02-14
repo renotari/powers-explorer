@@ -59,7 +59,7 @@ export class SpeedupControl extends ComponentBase {
     this.decreaseBtn = this.scene.add.text(
       this.x - 60,
       this.y + deltaY,
-      '[-]',
+      ' [-] ',
       {
         fontSize: '36px',
         color: COLORS.TEXT,

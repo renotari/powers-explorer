@@ -55,7 +55,9 @@
     "diameter": "Diametro: {value}",
     "distance": "Distanza: {value} UA",
     "orbitalPeriod": "Periodo Orbitale: {value} giorni",
-    "facts": "Curiosit\u00e0:"
+    "facts": "Curiosit\u00e0:",
+    "zoomFullSystem": "Sistema Completo",
+    "zoomInnerPlanets": "Pianeti Interni"
   },
   "units": {
     "seconds": "s",

@@ -107,5 +107,26 @@ export const SOLAR_SYSTEM = {
   TOOLTIP_FONT_SIZE: '20px',
   TOOLTIP_PADDING: 9,           // Padding around tooltip text (px)
   TOOLTIP_BG_COLOR: 0x000000,
-  TOOLTIP_BG_ALPHA: 0.8
+  TOOLTIP_BG_ALPHA: 0.8,
+
+  // Orbital Zoom constants
+  ORBITAL_ZOOM_LEVELS: [
+    {
+      id: 'fullSystem',
+      labelKey: 'solar.zoomFullSystem',
+      scaleBody: 'neptune',
+      screenFraction: 0.85,
+      baseSizes: { mercury: 6, venus: 9, earth: 9, mars: 8, jupiter: 18, saturn: 17, uranus: 12, neptune: 12 },
+      sunRadius: 18
+    },
+    {
+      id: 'innerPlanets',
+      labelKey: 'solar.zoomInnerPlanets',
+      scaleBody: 'mars',
+      screenFraction: 0.70,
+      baseSizes: { mercury: 14, venus: 18, earth: 18, mars: 16, jupiter: 22, saturn: 20, uranus: 15, neptune: 15 },
+      sunRadius: 26
+    }
+  ],
+  ORBITAL_ZOOM_TRANSITION_MS: 600
 };

@@ -55,7 +55,9 @@
     "diameter": "Diameter: {value}",
     "distance": "Distance: {value} AU",
     "orbitalPeriod": "Orbital Period: {value} days",
-    "facts": "Facts:"
+    "facts": "Facts:",
+    "zoomFullSystem": "Full System",
+    "zoomInnerPlanets": "Inner Planets"
   },
   "units": {
     "seconds": "s",

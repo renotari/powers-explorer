@@ -10,6 +10,7 @@
 
 import { ComponentBase } from '@/components/ComponentBase.js';
 import { PlanetRenderer } from './PlanetRenderer.js';
+import { ZoomControl } from './ZoomControl.js';
 import { DataManager } from '@/managers/DataManager.js';
 import { StateManager } from '@/managers/StateManager.js';
 import { I18nManager } from '@/managers/I18nManager.js';
@@ -28,6 +29,17 @@ export class OrbitalView extends ComponentBase {
     this.orbitGraphics = [];
     this.dataSourceIndicator = null;
 
+    // Zoom state
+    this.currentZoomIndex = 0;
+    this.zoomControl = null;
+    this.isZooming = false;
+    this.layoutCenterX = GAME_WIDTH / 2;
+    this.layoutCenterY = GAME_HEIGHT / 2;
+
+    // Cache orbital data for reuse during zoom
+    this.orbitalParams = null;
+    this.positions = null;
+
     this.create();
   }
 
@@ -35,18 +47,19 @@ export class OrbitalView extends ComponentBase {
    * Create the orbital view
    */
   create() {
-    const centerX = GAME_WIDTH / 2;
-    const centerY = GAME_HEIGHT / 2;
+    this.layoutCenterX = GAME_WIDTH / 2;
+    this.layoutCenterY = GAME_HEIGHT / 2;
 
-    // Calculate scale factor to fit Neptune's orbit
-    const orbitalParams = this.dataManager.getOrbitalParameters();
-    const neptuneOrbit = orbitalParams?.find(p => p.id === 'neptune');
-    if (!neptuneOrbit) {
-      console.error('[OrbitalView] Neptune orbital parameters not found');
-      return;
-    }
-    const maxOrbitRadius = Math.min(GAME_WIDTH, GAME_HEIGHT) / 2 - SOLAR_SYSTEM.ORBITAL_MARGIN;
-    this.scaleFactor = maxOrbitRadius / neptuneOrbit.semiMajorAxis;
+    // Cache orbital params and positions
+    this.orbitalParams = this.dataManager.getOrbitalParameters();
+    this.positions = this.getPositions();
+
+    // Calculate initial layout from zoom level 0
+    const zoomLevels = SOLAR_SYSTEM.ORBITAL_ZOOM_LEVELS;
+    const layout = this.calculateLayout(zoomLevels[0]);
+    if (!layout) return;
+
+    this.scaleFactor = layout.scaleFactor;
 
     // Create Sun at center
     const sunData = this.dataManager.getPlanetById(SOLAR_SYSTEM.SUN_ID);
@@ -54,9 +67,9 @@ export class OrbitalView extends ComponentBase {
       this.sunRenderer = new PlanetRenderer(
         this.scene,
         sunData,
-        centerX,
-        centerY,
-        SOLAR_SYSTEM.ORBITAL_SUN_RADIUS, // Fixed size for Sun
+        this.layoutCenterX,
+        this.layoutCenterY,
+        layout.sunRadius,
         { interactive: true }
       );
       this.sunRenderer.setLabelVisible(false);
@@ -67,16 +80,45 @@ export class OrbitalView extends ComponentBase {
     }
 
     // Draw orbits
-    this.drawOrbits(centerX, centerY);
-
-    // Get or use default positions
-    const positions = this.getPositions();
+    this.drawOrbits(this.layoutCenterX, this.layoutCenterY);
 
     // Create planets
-    this.createPlanets(centerX, centerY, positions);
+    this.createPlanets(this.layoutCenterX, this.layoutCenterY, this.positions, layout.baseSizes);
 
     // Show data source indicator
     this.createDataSourceIndicator();
+
+    // Create zoom control
+    this.zoomControl = new ZoomControl(this.scene);
+    this.zoomControl.on('zoomChanged', this.onZoomChanged, this);
+
+    // Register scroll wheel listener
+    this.wheelHandler = (pointer, gameObjects, deltaX, deltaY) => {
+      this.onMouseWheel(deltaY);
+    };
+    this.scene.input.on('wheel', this.wheelHandler);
+  }
+
+  /**
+   * Calculate layout parameters for a given zoom level
+   * @param {Object} zoomLevel - Zoom level config from constants
+   * @returns {Object|null} { scaleFactor, baseSizes, sunRadius }
+   */
+  calculateLayout(zoomLevel) {
+    const refOrbit = this.orbitalParams?.find(p => p.id === zoomLevel.scaleBody);
+    if (!refOrbit) {
+      console.error(`[OrbitalView] Orbit for '${zoomLevel.scaleBody}' not found`);
+      return null;
+    }
+
+    const maxOrbitRadius = Math.min(GAME_WIDTH, GAME_HEIGHT) / 2 - SOLAR_SYSTEM.ORBITAL_MARGIN;
+    const scaleFactor = (maxOrbitRadius * zoomLevel.screenFraction) / refOrbit.semiMajorAxis;
+
+    return {
+      scaleFactor,
+      baseSizes: zoomLevel.baseSizes,
+      sunRadius: zoomLevel.sunRadius
+    };
   }
 
   /**
@@ -87,14 +129,10 @@ export class OrbitalView extends ComponentBase {
     const orbitalPositions = this.stateManager.getOrbitalPositions();
 
     if (orbitalPositions) {
-      // Use real-time data from Astronomy Engine
       return orbitalPositions;
     } else {
-      // Use default positions from orbital-parameters.json
-      const orbitalParams = this.dataManager.getOrbitalParameters();
       const positions = {};
-      orbitalParams.forEach(param => {
-        // Convert default angle from degrees to radians
+      this.orbitalParams.forEach(param => {
         positions[param.id] = param.defaultAngularPosition * Math.PI / 180;
       });
       return positions;
@@ -107,21 +145,14 @@ export class OrbitalView extends ComponentBase {
    * @param {number} centerY - Center Y
    */
   drawOrbits(centerX, centerY) {
-    const orbitalParams = this.dataManager.getOrbitalParameters();
-
-    orbitalParams.forEach(param => {
+    this.orbitalParams.forEach(param => {
       const a = param.semiMajorAxis * this.scaleFactor;
       const e = param.eccentricity;
       const b = ScaleCalculator.calculateSemiMinorAxis(a, e);
       const c = ScaleCalculator.calculateFocalDistance(a, e);
 
-      // Create graphics for this orbit
       const graphics = this.scene.add.graphics();
       graphics.lineStyle(1, SOLAR_SYSTEM.ORBIT_LINE_COLOR, SOLAR_SYSTEM.ORBIT_LINE_ALPHA);
-
-      // Draw ellipse centered at (centerX + c, centerY)
-      // Sun is at focus (centerX, centerY)
-      // Phaser expects full width/height, not semi-axes
       graphics.strokeEllipse(centerX + c, centerY, 2 * a, 2 * b);
 
       this.container.add(graphics);
@@ -130,28 +161,46 @@ export class OrbitalView extends ComponentBase {
   }
 
   /**
+   * Redraw orbit graphics at current scaleFactor
+   * @param {number} centerX - Center X
+   * @param {number} centerY - Center Y
+   * @returns {Phaser.GameObjects.Graphics[]} New graphics objects
+   */
+  redrawOrbits(centerX, centerY) {
+    const newGraphics = [];
+
+    this.orbitalParams.forEach(param => {
+      const a = param.semiMajorAxis * this.scaleFactor;
+      const e = param.eccentricity;
+      const b = ScaleCalculator.calculateSemiMinorAxis(a, e);
+      const c = ScaleCalculator.calculateFocalDistance(a, e);
+
+      const graphics = this.scene.add.graphics();
+      graphics.lineStyle(1, SOLAR_SYSTEM.ORBIT_LINE_COLOR, SOLAR_SYSTEM.ORBIT_LINE_ALPHA);
+      graphics.strokeEllipse(centerX + c, centerY, 2 * a, 2 * b);
+      graphics.setAlpha(0);
+
+      this.container.add(graphics);
+      newGraphics.push(graphics);
+    });
+
+    return newGraphics;
+  }
+
+  /**
    * Create planets on orbits
    * @param {number} centerX - Sun X position (focus)
    * @param {number} centerY - Sun Y position (focus)
    * @param {Object} positions - Position data {planetId: theta}
+   * @param {Object} baseSizes - Size map {planetId: radius}
    */
-  createPlanets(centerX, centerY, positions) {
-    const orbitalParams = this.dataManager.getOrbitalParameters();
-
-    // Size scale for planets in orbital view
-    const baseSizes = {
-      mercury: 6, venus: 9, earth: 9, mars: 8,
-      jupiter: 18, saturn: 17, uranus: 12, neptune: 12
-    };
-
-    orbitalParams.forEach(param => {
+  createPlanets(centerX, centerY, positions, baseSizes) {
+    this.orbitalParams.forEach(param => {
       const planetData = this.dataManager.getPlanetById(param.id);
       if (!planetData) return;
 
-      // Get angular position
       const theta = positions[param.id] || 0;
 
-      // Calculate position on ellipse
       const position = ScaleCalculator.getPositionOnEllipse(
         param.semiMajorAxis,
         param.eccentricity,
@@ -161,7 +210,6 @@ export class OrbitalView extends ComponentBase {
         this.scaleFactor
       );
 
-      // Create planet renderer
       const radius = baseSizes[param.id] || 8;
       const renderer = new PlanetRenderer(
         this.scene,
@@ -179,6 +227,116 @@ export class OrbitalView extends ComponentBase {
 
       this.planetRenderers.push(renderer);
     });
+  }
+
+  /**
+   * Handle zoom level change
+   * @param {Object} data - { levelIndex, zoomLevel }
+   */
+  onZoomChanged({ levelIndex, zoomLevel }) {
+    if (this.isZooming) return;
+    this.isZooming = true;
+    this.currentZoomIndex = levelIndex;
+
+    const layout = this.calculateLayout(zoomLevel);
+    if (!layout) {
+      this.isZooming = false;
+      return;
+    }
+
+    const transitionMs = SOLAR_SYSTEM.ORBITAL_ZOOM_TRANSITION_MS;
+    const halfMs = transitionMs / 2;
+
+    // Update scale factor for new orbits
+    this.scaleFactor = layout.scaleFactor;
+
+    // 1. Fade out old orbit graphics
+    const oldGraphics = this.orbitGraphics;
+    oldGraphics.forEach(g => {
+      this.scene.tweens.add({
+        targets: g,
+        alpha: 0,
+        duration: halfMs,
+        ease: 'Quad.easeOut'
+      });
+    });
+
+    // 2. After half-time, draw new orbits and fade them in
+    this.scene.time.delayedCall(halfMs, () => {
+      // Destroy old graphics
+      oldGraphics.forEach(g => g.destroy());
+      this.orbitGraphics = [];
+
+      // Draw new orbits (start invisible, fade in)
+      const newGraphics = this.redrawOrbits(this.layoutCenterX, this.layoutCenterY);
+      this.orbitGraphics = newGraphics;
+
+      newGraphics.forEach(g => {
+        this.scene.tweens.add({
+          targets: g,
+          alpha: 1,
+          duration: halfMs,
+          ease: 'Quad.easeIn'
+        });
+      });
+    });
+
+    // 3. Animate Sun size
+    if (this.sunRenderer) {
+      this.sunRenderer.animateTo(
+        this.layoutCenterX,
+        this.layoutCenterY,
+        layout.sunRadius,
+        transitionMs
+      );
+    }
+
+    // 4. Animate planets to new positions and sizes
+    const promises = this.planetRenderers.map((renderer, i) => {
+      const param = this.orbitalParams[i];
+      if (!param) return Promise.resolve();
+
+      const theta = this.positions[param.id] || 0;
+      const newPos = ScaleCalculator.getPositionOnEllipse(
+        param.semiMajorAxis,
+        param.eccentricity,
+        theta,
+        this.layoutCenterX,
+        this.layoutCenterY,
+        this.scaleFactor
+      );
+
+      const newRadius = layout.baseSizes[param.id] || 8;
+      return renderer.animateTo(newPos.x, newPos.y, newRadius, transitionMs);
+    });
+
+    // Mark zoom as complete after all animations finish
+    Promise.all(promises).then(() => {
+      this.isZooming = false;
+    });
+  }
+
+  /**
+   * Handle mouse wheel for zoom
+   * @param {number} deltaY - Scroll delta (positive = down, negative = up)
+   */
+  onMouseWheel(deltaY) {
+    if (this.isZooming) return;
+
+    const zoomLevels = SOLAR_SYSTEM.ORBITAL_ZOOM_LEVELS;
+    let newIndex = this.currentZoomIndex;
+
+    if (deltaY < 0) {
+      // Scroll up = zoom in (inner planets)
+      newIndex = Math.min(this.currentZoomIndex + 1, zoomLevels.length - 1);
+    } else if (deltaY > 0) {
+      // Scroll down = zoom out (full system)
+      newIndex = Math.max(this.currentZoomIndex - 1, 0);
+    }
+
+    if (newIndex !== this.currentZoomIndex) {
+      this.zoomControl.setLevel(newIndex);
+    }
   }
 
   /**
@@ -207,6 +365,19 @@ export class OrbitalView extends ComponentBase {
    * Clean up resources
    */
   destroy() {
+    // Remove wheel listener
+    if (this.wheelHandler && this.scene?.input) {
+      this.scene.input.off('wheel', this.wheelHandler);
+      this.wheelHandler = null;
+    }
+
+    // Destroy zoom control
+    if (this.zoomControl) {
+      this.zoomControl.off('zoomChanged', this.onZoomChanged, this);
+      this.zoomControl.destroy();
+      this.zoomControl = null;
+    }
+
     // Remove sun renderer listeners
     if (this.sunRenderer) {
       this.sunRenderer.off('planetClicked');
@@ -228,6 +399,10 @@ export class OrbitalView extends ComponentBase {
       this.dataSourceIndicator.destroy();
       this.dataSourceIndicator = null;
     }
+
+    // Clear cached data
+    this.orbitalParams = null;
+    this.positions = null;
 
     super.destroy();
   }
