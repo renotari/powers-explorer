@@ -13,6 +13,7 @@
 
 import { ComponentBase } from '@/components/ComponentBase.js';
 import { DataManager } from '@/managers/DataManager.js';
+import { I18nManager } from '@/managers/I18nManager.js';
 import { ScaleCalculator } from '@/utils/ScaleCalculator.js';
 import { ANIMATION_DURATION, COLORS } from '@/utils/Constants.js';
 
@@ -97,20 +98,20 @@ export class LightSpeedTraveler extends ComponentBase {
     if (length >= headLength) {
       this.traveler.fillStyle(arrowColor, 1);
       this.traveler.beginPath();
-      
+
       // Arrowhead tip is at (endX, endY)
       this.traveler.moveTo(endX, endY);
-      
+
       // Left point of arrowhead
       const leftX = endX - headLength * Math.cos(angle) - headWidth * Math.sin(angle);
       const leftY = endY - headLength * Math.sin(angle) + headWidth * Math.cos(angle);
       this.traveler.lineTo(leftX, leftY);
-      
+
       // Right point of arrowhead
       const rightX = endX - headLength * Math.cos(angle) + headWidth * Math.sin(angle);
       const rightY = endY - headLength * Math.sin(angle) - headWidth * Math.cos(angle);
       this.traveler.lineTo(rightX, rightY);
-      
+
       this.traveler.closePath();
       this.traveler.fillPath();
     }
@@ -164,7 +165,7 @@ export class LightSpeedTraveler extends ComponentBase {
 
     // Create light traveler as a yellow arrow (Graphics object)
     this.traveler = this.scene.add.graphics();
-    
+
     // Initial arrow at start point (zero length)
     this.drawArrow(this.startPoint.x, this.startPoint.y, this.startPoint.x, this.startPoint.y);
 
@@ -216,11 +217,12 @@ export class LightSpeedTraveler extends ComponentBase {
     const screenWidth = this.scene.cameras.main.width;
     const screenHeight = this.scene.cameras.main.height;
 
+    let ypos = screenHeight / 3 + 80;
     // Timer label
     const label = this.scene.add.text(
       screenWidth / 2,
-      screenHeight - 150,
-      'Light Travel Time:',
+      ypos,
+      I18nManager.getInstance().t('comparison.lightTravelTime'),
       {
         fontSize: '24px',
         color: '#cccccc',
@@ -229,9 +231,10 @@ export class LightSpeedTraveler extends ComponentBase {
     ).setOrigin(0.5);
 
     // Timer value (starts at 0)
+    ypos += 40;
     this.timeText = this.scene.add.text(
       screenWidth / 2,
-      screenHeight - 105,
+      ypos,
       '0.000 seconds',
       {
         fontSize: '36px',
@@ -259,7 +262,7 @@ export class LightSpeedTraveler extends ComponentBase {
     this.timeLapseIndicator = this.scene.add.text(
       screenWidth / 2,
       screenHeight - 60,
-      `(Sped up 10^${exponent}× for viewing)`,
+      I18nManager.getInstance().t('comparison.spedUp', { exponent: String(exponent) }),
       {
         fontSize: '18px',
         color: '#ffaa00',
@@ -321,7 +324,7 @@ export class LightSpeedTraveler extends ComponentBase {
     if (this.timeLapseIndicator) {
       const exponent = Math.round(Math.log10(speedupMultiplier));
       if (speedupMultiplier > 1) {
-        this.timeLapseIndicator.setText(`(Sped up 10^${exponent}× for viewing)`);
+        this.timeLapseIndicator.setText(I18nManager.getInstance().t('comparison.spedUp', { exponent: String(exponent) }));
         this.timeLapseIndicator.setVisible(true);
       } else {
         this.timeLapseIndicator.setVisible(false);
@@ -387,21 +390,21 @@ export class LightSpeedTraveler extends ComponentBase {
           // Alternate between full opacity and reduced opacity
           const alpha = (flashCount % 2 === 0) ? 0.3 : 1.0;
           this.traveler.clear();
-          
+
           // Redraw arrow with current alpha
           this.traveler.lineStyle(4, 0xFFFF00, alpha);
           this.traveler.beginPath();
           this.traveler.moveTo(this.startPoint.x, this.startPoint.y);
           this.traveler.lineTo(this.endPoint.x, this.endPoint.y);
           this.traveler.strokePath();
-          
+
           // Redraw arrowhead
           const dx = this.endPoint.x - this.startPoint.x;
           const dy = this.endPoint.y - this.startPoint.y;
           const angle = Math.atan2(dy, dx);
           const headLength = 18;
           const headWidth = 12;
-          
+
           this.traveler.fillStyle(0xFFFF00, alpha);
           this.traveler.beginPath();
           this.traveler.moveTo(this.endPoint.x, this.endPoint.y);
@@ -414,7 +417,7 @@ export class LightSpeedTraveler extends ComponentBase {
           this.traveler.closePath();
           this.traveler.fillPath();
         }
-        
+
         flashCount++;
         if (flashCount >= 6) {
           flashInterval.remove();

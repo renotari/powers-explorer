@@ -12,6 +12,7 @@
 import { ComponentBase } from '@/components/ComponentBase.js';
 import { PlanetRenderer } from './PlanetRenderer.js';
 import { DataManager } from '@/managers/DataManager.js';
+import { I18nManager } from '@/managers/I18nManager.js';
 import { ScaleCalculator } from '@/utils/ScaleCalculator.js';
 import { GAME_WIDTH, GAME_HEIGHT, SOLAR_SYSTEM, COLORS } from '@/utils/Constants.js';
 import { parseHexColor } from '@/utils/ColorUtils.js';
@@ -369,7 +370,7 @@ export class DistanceView extends ComponentBase {
     this.realProportionsButtonText = this.scene.add.text(
       buttonX,
       buttonY,
-      'Real Proportions',
+      I18nManager.getInstance().t('solar.realProportions'),
       {
         fontSize: '21px',
         color: COLORS.TEXT,
@@ -400,8 +401,9 @@ export class DistanceView extends ComponentBase {
    */
   toggleRealProportions() {
     this.realProportions = !this.realProportions;
+    const t = (key) => I18nManager.getInstance().t(key);
     this.realProportionsButtonText.setText(
-      this.realProportions ? 'Enhanced View' : 'Real Proportions'
+      this.realProportions ? t('solar.enhancedView') : t('solar.realProportions')
     );
 
     // Clear and rebuild

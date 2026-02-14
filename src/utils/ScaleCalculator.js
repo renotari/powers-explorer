@@ -8,6 +8,7 @@
  */
 
 import { SCALE_DISPLAY } from './Constants.js';
+import { I18nManager } from '@/managers/I18nManager.js';
 
 export class ScaleCalculator {
   /**
@@ -167,18 +168,29 @@ export class ScaleCalculator {
    * @returns {string} Formatted duration (e.g., "00:00:05.280", "00:08:20", "02:19:00")
    */
   static formatTime(seconds) {
+    // Helper to get translated unit strings with English fallback
+    const _t = (key) => {
+      try {
+        return I18nManager.getInstance().t(key);
+      } catch {
+        // Fallback if I18nManager not yet initialized
+        const fallbacks = { 'units.seconds': 's', 'units.years': 'years', 'units.days': 'days', 'units.day': 'day' };
+        return fallbacks[key] || key;
+      }
+    };
+
     // Handle edge cases
     if (seconds < 0) return "00:00:00.000";
     if (seconds === 0) return "00:00:00.000";
 
     // For very short durations (under 1 second), show milliseconds only
     if (seconds < 1) {
-      return `${seconds.toFixed(3)} s`;
+      return `${seconds.toFixed(3)} ${_t('units.seconds')}`;
     }
 
     // For very long durations (1+ years), keep decimal format
     if (seconds >= 31536000) {
-      return `${(seconds / 31536000).toFixed(2)} years`;
+      return `${(seconds / 31536000).toFixed(2)} ${_t('units.years')}`;
     }
 
     // Calculate time components
@@ -209,7 +221,8 @@ export class ScaleCalculator {
       return `${hrStr}:${minStr}:${secStr}`;
     } else {
       // 1+ days: show "X day(s), HH:MM:SS"
-      const dayStr = days === 1 ? '1 day' : `${days} days`;
+      const dayUnit = days === 1 ? _t('units.day') : _t('units.days');
+      const dayStr = `${days} ${dayUnit}`;
       const hrStr = String(hours).padStart(2, '0');
       const minStr = String(minutes).padStart(2, '0');
       const secStr = String(secs).padStart(2, '0');

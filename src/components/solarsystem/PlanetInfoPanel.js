@@ -9,6 +9,7 @@
 
 import { ComponentBase } from '@/components/ComponentBase.js';
 import { DataManager } from '@/managers/DataManager.js';
+import { I18nManager } from '@/managers/I18nManager.js';
 import { ScaleCalculator } from '@/utils/ScaleCalculator.js';
 import { GAME_WIDTH, GAME_HEIGHT, SOLAR_SYSTEM, COLORS } from '@/utils/Constants.js';
 import { parseHexColor } from '@/utils/ColorUtils.js';
@@ -135,15 +136,20 @@ export class PlanetInfoPanel extends ComponentBase {
    * @param {Object} planetData - Planet data
    */
   buildContent(planetData) {
+    const i18n = I18nManager.getInstance();
+    const t = (key, params) => i18n.t(key, params);
+    const tr = i18n.getObjectTranslation(planetData.id);
+
     let yOffset = 120;
     const margin = 30;
     const lineHeight = 38;
 
-    // Planet name
+    // Planet name (translated)
+    const displayName = tr?.name ?? planetData.name;
     const nameText = this.scene.add.text(
       margin,
       yOffset,
-      planetData.name,
+      displayName,
       {
         fontSize: '42px',
         color: COLORS.PRIMARY,
@@ -159,7 +165,7 @@ export class PlanetInfoPanel extends ComponentBase {
     const diameterText = this.scene.add.text(
       margin,
       yOffset,
-      `Diameter: ${ScaleCalculator.formatScale(planetData.diameter)}`,
+      t('solar.diameter', { value: ScaleCalculator.formatScale(planetData.diameter) }),
       {
         fontSize: '21px',
         color: COLORS.TEXT,
@@ -181,7 +187,7 @@ export class PlanetInfoPanel extends ComponentBase {
         const distanceText = this.scene.add.text(
           margin,
           yOffset,
-          `Distance: ${auDistance} AU`,
+          t('solar.distance', { value: auDistance }),
           {
             fontSize: '14px',
             color: COLORS.TEXT,
@@ -195,7 +201,7 @@ export class PlanetInfoPanel extends ComponentBase {
         const periodText = this.scene.add.text(
           margin,
           yOffset,
-          `Orbital Period: ${orbitalData.orbitalPeriod.toFixed(1)} days`,
+          t('solar.orbitalPeriod', { value: orbitalData.orbitalPeriod.toFixed(1) }),
           {
             fontSize: '14px',
             color: COLORS.TEXT,
@@ -208,12 +214,13 @@ export class PlanetInfoPanel extends ComponentBase {
       }
     }
 
-    // Educational facts
-    if (planetData.educationalFacts && planetData.educationalFacts.length > 0) {
+    // Educational facts (use translated facts if available)
+    const facts = tr?.educationalFacts ?? planetData.educationalFacts;
+    if (facts && facts.length > 0) {
       const factsTitle = this.scene.add.text(
         margin,
         yOffset,
-        'Facts:',
+        t('solar.facts'),
         {
           fontSize: '24px',
           color: COLORS.PRIMARY,
@@ -225,7 +232,7 @@ export class PlanetInfoPanel extends ComponentBase {
       this.contentElements.push(factsTitle);
       yOffset += lineHeight;
 
-      planetData.educationalFacts.slice(0, 5).forEach(fact => {
+      facts.slice(0, 5).forEach(fact => {
         const factText = this.scene.add.text(
           margin,
           yOffset,

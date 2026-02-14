@@ -207,6 +207,25 @@
       "sources": ["NASA Pluto Facts", "New Horizons Mission"]
     },
     {
+      "id": "voyager-1",
+      "name": "Voyager 1",
+      "category": "spacecraft",
+      "diameter": 3.7,
+      "diameterUnit": "m",
+      "mass": 825.5,
+      "massUnit": "kg",
+      "scaleLevel": 1,
+      "description": "Space probe launched by NASA in 1977, currently the farthest human-made object from Earth",
+      "color": "#FFD700",
+      "educationalFacts": [
+        "Voyager 1 observed the volcanic activity on Io and the rings of Saturn",
+        "It carries the Golden Record with sounds and images of Earth",
+        "In 2012, it became the first human-made object to enter interstellar space",
+        "It is traveling at a speed of about 17 km/s relative to the Sun"
+      ],
+      "sources": ["NASA Voyager Mission"]
+    },
+    {
       "id": "proxima-centauri",
       "name": "Proxima Centauri",
       "category": "star",
@@ -749,6 +768,24 @@
       "lightTravelTime": 19179.4,
       "lightTravelTimeUnit": "s",
       "description": "Distance when Moon and Pluto aligned on same side of Sun"
+    },
+    {
+      "from": "earth",
+      "to": "voyager-1",
+      "distance": 24200000000000,
+      "unit": "m",
+      "lightTravelTime": 80722,
+      "lightTravelTimeUnit": "s",
+      "description": "Approximate distance from Earth to Voyager 1 (~162 AU)"
+    },
+    {
+      "from": "sun",
+      "to": "voyager-1",
+      "distance": 24350000000000,
+      "unit": "m",
+      "lightTravelTime": 81222,
+      "lightTravelTimeUnit": "s",
+      "description": "Approximate distance from Sun to Voyager 1"
     }
   ]
 }

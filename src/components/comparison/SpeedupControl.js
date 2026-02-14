@@ -10,6 +10,7 @@
  */
 
 import { ComponentBase } from '@/components/ComponentBase.js';
+import { I18nManager } from '@/managers/I18nManager.js';
 import { COLORS, SPEEDUP_CONTROL, GAME_WIDTH, GAME_HEIGHT } from '@/utils/Constants.js';
 
 export class SpeedupControl extends ComponentBase {
@@ -37,24 +38,57 @@ export class SpeedupControl extends ComponentBase {
    * Create UI elements
    */
   createUI() {
+    const deltaY = 50
+
+    // Label (centered)
+    this.speedupLabel = this.scene.add.text(
+      this.x,
+      this.y,
+      I18nManager.getInstance().t('speedup.label'),
+      {
+        fontSize: '36px',
+        color: COLORS.TEXT,
+        fontFamily: 'Arial',
+        fontStyle: 'bold',
+        backgroundColor: '#000000',
+        padding: { x: 23, y: 12 }
+      }
+    ).setOrigin(0.5);
+
     // Decrease button [-]
     this.decreaseBtn = this.scene.add.text(
-      this.x - SPEEDUP_CONTROL.WIDTH / 2 + SPEEDUP_CONTROL.MARGIN,
-      this.y,
+      this.x - 60,
+      this.y + deltaY,
       '[-]',
       {
         fontSize: '36px',
         color: COLORS.TEXT,
+        backgroundColor: 'gray',
         fontFamily: 'Arial',
         fontStyle: 'bold'
       }
     ).setOrigin(0, 0.5).setInteractive();
 
+
+    // Increase button [+]
+    this.increaseBtn = this.scene.add.text(
+      this.x + 60,
+      this.y + deltaY,
+      ' [+] ',
+      {
+        fontSize: '36px',
+        color: COLORS.TEXT,
+        backgroundColor: 'gray',
+        fontFamily: 'Arial',
+        fontStyle: 'bold'
+      }
+    ).setOrigin(1, 0.5).setInteractive();
+
     // Label (centered)
-    this.label = this.scene.add.text(
+    this.actualSpeedupLabel = this.scene.add.text(
       this.x,
-      this.y,
-      this.getLabelText(),
+      this.y + deltaY * 2,
+      this.getActualSpeedupLabelText(),
       {
         fontSize: '27px',
         color: COLORS.TEXT,
@@ -65,21 +99,8 @@ export class SpeedupControl extends ComponentBase {
       }
     ).setOrigin(0.5);
 
-    // Increase button [+]
-    this.increaseBtn = this.scene.add.text(
-      this.x + SPEEDUP_CONTROL.WIDTH / 2 - SPEEDUP_CONTROL.MARGIN,
-      this.y,
-      '[+]',
-      {
-        fontSize: '36px',
-        color: COLORS.TEXT,
-        fontFamily: 'Arial',
-        fontStyle: 'bold'
-      }
-    ).setOrigin(1, 0.5).setInteractive();
-
     // Add to container
-    this.container.add([this.decreaseBtn, this.label, this.increaseBtn]);
+    this.container.add([this.speedupLabel, this.decreaseBtn, this.actualSpeedupLabel, this.increaseBtn]);
 
     // Register event handlers
     this.setupEventHandlers();
@@ -159,7 +180,7 @@ export class SpeedupControl extends ComponentBase {
    * Update label display based on current exponent
    */
   updateDisplay() {
-    this.label.setText(this.getLabelText());
+    this.actualSpeedupLabel.setText(this.getActualSpeedupLabelText());
   }
 
   /**
@@ -167,11 +188,12 @@ export class SpeedupControl extends ComponentBase {
    *
    * @returns {string} - Display text
    */
-  getLabelText() {
+  getActualSpeedupLabelText() {
+    const t = (key, params) => I18nManager.getInstance().t(key, params);
     if (this.exponent === 0) {
-      return 'Speed: 1× (Real Time)';
+      return t('speedup.realTime');
     }
-    return `Speed: 10^${this.exponent}×`;
+    return t('speedup.multiplied', { exponent: String(this.exponent) });
   }
 
   /**
@@ -188,7 +210,7 @@ export class SpeedupControl extends ComponentBase {
       this.decreaseBtn.setAlpha(1);
       this.increaseBtn.setColor(COLORS.TEXT);
       this.increaseBtn.setAlpha(1);
-      this.label.setAlpha(1);
+      this.actualSpeedupLabel.setAlpha(1);
     } else {
       // Disable buttons (gray out)
       this.decreaseBtn.setColor(COLORS.GRAY);
@@ -197,7 +219,7 @@ export class SpeedupControl extends ComponentBase {
       this.increaseBtn.setColor(COLORS.GRAY);
       this.increaseBtn.setAlpha(0.5);
       this.increaseBtn.setScale(1); // Reset scale
-      this.label.setAlpha(0.5);
+      this.actualSpeedupLabel.setAlpha(0.5);
     }
 
     console.log(`[SpeedupControl] Control ${enabled ? 'enabled' : 'disabled'}`);

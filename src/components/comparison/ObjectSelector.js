@@ -11,6 +11,7 @@
 
 import { ComponentBase } from '@/components/ComponentBase.js';
 import { DataManager } from '@/managers/DataManager.js';
+import { I18nManager } from '@/managers/I18nManager.js';
 import { MAX_SELECTIONS, COLORS } from '@/utils/Constants.js';
 import { parseHexColor } from '@/utils/ColorUtils.js';
 
@@ -45,8 +46,10 @@ export class ObjectSelector extends ComponentBase {
    * Build object selection UI
    */
   create() {
+    const t = (key, params) => I18nManager.getInstance().t(key, params);
+
     // Title
-    const title = this.scene.add.text(this.x, this.y - 45, 'Select Two Objects:', {
+    const title = this.scene.add.text(this.x, this.y - 45, t('comparison.selectTitle'), {
       fontSize: '36px',
       color: COLORS.TEXT,
       fontFamily: 'Arial',
@@ -55,7 +58,7 @@ export class ObjectSelector extends ComponentBase {
     this.container.add(title);
 
     // Instruction text
-    const instruction = this.scene.add.text(this.x, this.y, 'Click to select objects for comparison', {
+    const instruction = this.scene.add.text(this.x, this.y, t('comparison.selectInstruction'), {
       fontSize: '21px',
       color: '#cccccc',
       fontFamily: 'Arial'
@@ -107,8 +110,14 @@ export class ObjectSelector extends ComponentBase {
     );
     border.setStrokeStyle(2, parseHexColor(obj.color), 0.8);
 
+    // Get translated object data
+    const i18n = I18nManager.getInstance();
+    const tr = i18n.getObjectTranslation(obj.id);
+    const translatedName = tr?.name ?? obj.name;
+    const translatedCategory = i18n.t(`categories.${obj.category}`) || obj.category;
+
     // Object name
-    const nameText = this.scene.add.text(x, y - 15, obj.name, {
+    const nameText = this.scene.add.text(x, y - 15, translatedName, {
       fontSize: '27px',
       color: COLORS.TEXT,
       fontFamily: 'Arial',
@@ -116,7 +125,7 @@ export class ObjectSelector extends ComponentBase {
     }).setOrigin(0.5);
 
     // Object category
-    const categoryText = this.scene.add.text(x, y + 18, obj.category, {
+    const categoryText = this.scene.add.text(x, y + 18, translatedCategory, {
       fontSize: '18px',
       color: '#aaaaaa',
       fontFamily: 'Arial'

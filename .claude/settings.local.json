@@ -1,4 +1,7 @@
 {
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+  },
   "permissions": {
     "allow": [
       "mcp__serena__list_dir",
@@ -10,7 +13,18 @@
       "WebSearch",
       "mcp__serena__check_onboarding_performed",
       "mcp__serena__think_about_collected_information",
-      "mcp__serena__replace_regex"
+      "mcp__serena__replace_regex",
+      "mcp__claude_ai_Exa_Search__get_code_context_exa",
+      "mcp__serena__find_symbol",
+      "mcp__serena__search_for_pattern",
+      "mcp__serena__get_symbols_overview",
+      "mcp__serena__find_referencing_symbols",
+      "mcp__serena__insert_after_symbol",
+      "mcp__serena__replace_symbol_body",
+      "Bash(node:*)",
+      "mcp__serena__think_about_task_adherence",
+      "mcp__serena__think_about_whether_you_are_done",
+      "mcp__serena__list_memories"
     ]
   }
 }

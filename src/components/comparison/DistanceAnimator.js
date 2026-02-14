@@ -11,6 +11,7 @@
 
 import { ComponentBase } from '@/components/ComponentBase.js';
 import { ScaleCalculator } from '@/utils/ScaleCalculator.js';
+import { I18nManager } from '@/managers/I18nManager.js';
 import { ANIMATION_DURATION, COLORS, PROPORTIONAL_SIZING } from '@/utils/Constants.js';
 import { parseHexColor } from '@/utils/ColorUtils.js';
 import { ObjectOverlay } from './ObjectOverlay.js';
@@ -104,7 +105,7 @@ export class DistanceAnimator extends ComponentBase {
     this.distanceText = this.scene.add.text(
       centerX,
       centerY + 120,
-      `Distance: ${ScaleCalculator.formatScale(realDistance)}`,
+      I18nManager.getInstance().t('comparison.distancePrefix', { value: ScaleCalculator.formatScale(realDistance) }),
       {
         fontSize: '27px',
         color: COLORS.TEXT,

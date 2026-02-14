@@ -1,0 +1,76 @@
+{
+  "boot": {
+    "title": "Powers Explorer",
+    "loading": "Caricamento...",
+    "loadingPercent": "Caricamento... {percent}%",
+    "retry": "Riprova",
+    "error": "Errore: {message}"
+  },
+  "menu": {
+    "title": "Powers Explorer",
+    "subtitle": "Esplora l'Universo dai Quark ai Quasar",
+    "cosmicComparison": "Confronto Cosmico",
+    "cosmicComparisonDesc": "Confronta dimensioni e distanze degli oggetti cosmici",
+    "solarSystem": "Sistema Solare",
+    "solarSystemDesc": "Esplora il sistema solare con tre modalit\u00e0 di visualizzazione",
+    "powersOfTen": "Potenze di Dieci",
+    "powersOfTenDesc": "Attraversa 61 livelli di scala (Prossimamente)",
+    "footer": "Strumento Educativo per la Visualizzazione delle Scale"
+  },
+  "overlay": {
+    "back": "Indietro",
+    "modeComparison": "Modalit\u00e0 Confronto Cosmico",
+    "modeSolarSystem": "Modalit\u00e0 Sistema Solare",
+    "modePowersOfTen": "Modalit\u00e0 Potenze di Dieci"
+  },
+  "comparison": {
+    "selectTitle": "Seleziona Due Oggetti:",
+    "selectInstruction": "Clicca per selezionare gli oggetti da confrontare",
+    "showDistance": "Mostra Distanza",
+    "newComparison": "Nuovo Confronto",
+    "startLightTravel": "Avvia Viaggio della Luce",
+    "restart": "Ricomincia",
+    "noDistanceData": "Dati sulla distanza non disponibili per questi oggetti",
+    "ratio": "{name1} \u00e8 {ratio} pi\u00f9 grande di {name2}",
+    "distancePrefix": "Distanza: {value}",
+    "lightTravelTime": "Tempo di Viaggio della Luce:",
+    "spedUp": "(Accelerato 10^{exponent} per la visualizzazione)"
+  },
+  "speedup": {
+    "label": "Accelerazione",
+    "realTime": "Velocit\u00e0 della luce: 1\u00d7 (Tempo Reale)",
+    "multiplied": "Velocit\u00e0 della luce: 10^{exponent}\u00d7"
+  },
+  "solar": {
+    "viewSizes": "Vista: Dimensioni",
+    "viewDistances": "Vista: Distanze",
+    "viewOrbits": "Vista: Orbite",
+    "cycleView": "Cambia Vista",
+    "showSun": "Mostra Sole",
+    "hideSun": "Nascondi Sole",
+    "realProportions": "Proporzioni Reali",
+    "enhancedView": "Vista Migliorata",
+    "realTimeData": "Dati in tempo reale",
+    "simulatedPositions": "Posizioni simulate",
+    "diameter": "Diametro: {value}",
+    "distance": "Distanza: {value} UA",
+    "orbitalPeriod": "Periodo Orbitale: {value} giorni",
+    "facts": "Curiosit\u00e0:"
+  },
+  "units": {
+    "seconds": "s",
+    "years": "anni",
+    "days": "giorni",
+    "day": "giorno"
+  },
+  "categories": {
+    "terrestrial": "terrestre",
+    "star": "stella",
+    "gas-giant": "gigante gassoso",
+    "ice-giant": "gigante di ghiaccio",
+    "dwarf-planet": "pianeta nano",
+    "satellite": "satellite",
+    "spacecraft": "sonda spaziale",
+    "galaxy": "galassia"
+  }
+}

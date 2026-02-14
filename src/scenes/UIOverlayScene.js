@@ -13,6 +13,7 @@
 
 import Phaser from 'phaser';
 import { StateManager } from '@/managers/StateManager.js';
+import { I18nManager } from '@/managers/I18nManager.js';
 import { COLORS, FULLSCREEN_BUTTON } from '@/utils/Constants.js';
 import { Button } from '@/components/ui/Button.js';
 
@@ -47,7 +48,7 @@ export class UIOverlayScene extends Phaser.Scene {
   createBackButton() {
     // Create Back button
     this.backButton = new Button(this, 90, 45, {
-      text: 'Back',
+      text: I18nManager.getInstance().t('overlay.back'),
       width: 120,
       height: 60,
       fontSize: '27px',
@@ -114,12 +115,13 @@ export class UIOverlayScene extends Phaser.Scene {
    * @param {string} mode - Current mode
    */
   updateMode(mode) {
+    const t = (key, params) => I18nManager.getInstance().t(key, params);
     if (mode === 'comparison') {
-      this.modeIndicator.setText('Cosmic Comparison Mode');
+      this.modeIndicator.setText(t('overlay.modeComparison'));
     } else if (mode === 'solarSystem') {
-      this.modeIndicator.setText('Solar System Mode');
+      this.modeIndicator.setText(t('overlay.modeSolarSystem'));
     } else if (mode === 'powersOfTen') {
-      this.modeIndicator.setText('Powers of Ten Mode');
+      this.modeIndicator.setText(t('overlay.modePowersOfTen'));
     } else {
       this.modeIndicator.setText('');
     }

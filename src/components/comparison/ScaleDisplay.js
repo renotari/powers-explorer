@@ -12,6 +12,7 @@
 import { ComponentBase } from '@/components/ComponentBase.js';
 import { ScaleCalculator } from '@/utils/ScaleCalculator.js';
 import { DataManager } from '@/managers/DataManager.js';
+import { I18nManager } from '@/managers/I18nManager.js';
 import { COLORS } from '@/utils/Constants.js';
 import { parseHexColor } from '@/utils/ColorUtils.js';
 
@@ -120,11 +121,17 @@ export class ScaleDisplay extends ComponentBase {
    * @param {number} screenHeight - Screen height
    */
   createLabels(larger, smaller, screenWidth, screenHeight) {
+    const i18n = I18nManager.getInstance();
+    const largerTr = i18n.getObjectTranslation(larger.id);
+    const smallerTr = i18n.getObjectTranslation(smaller.id);
+    const largerName = largerTr?.name ?? larger.name;
+    const smallerName = smallerTr?.name ?? smaller.name;
+
     // Larger object label
     const label1 = this.scene.add.text(
       screenWidth / 3,
       screenHeight / 2 + 300,
-      larger.name,
+      largerName,
       {
         fontSize: '30px',
         color: COLORS.TEXT,
@@ -137,7 +144,7 @@ export class ScaleDisplay extends ComponentBase {
     const label2 = this.scene.add.text(
       2 * screenWidth / 3,
       screenHeight / 2 + 300,
-      smaller.name,
+      smallerName,
       {
         fontSize: '30px',
         color: COLORS.TEXT,
@@ -182,10 +189,16 @@ export class ScaleDisplay extends ComponentBase {
    * @param {number} screenWidth - Screen width
    */
   displayRatio(larger, smaller, ratio, screenWidth) {
+    const i18n = I18nManager.getInstance();
+    const largerTr = i18n.getObjectTranslation(larger.id);
+    const smallerTr = i18n.getObjectTranslation(smaller.id);
+    const largerName = largerTr?.name ?? larger.name;
+    const smallerName = smallerTr?.name ?? smaller.name;
+
     this.ratioText = this.scene.add.text(
       screenWidth / 2,
       90,
-      `${larger.name} is ${ratio.toFixed(2)}× larger than ${smaller.name}`,
+      i18n.t('comparison.ratio', { name1: largerName, ratio: `${ratio.toFixed(2)}×`, name2: smallerName }),
       {
         fontSize: '36px',
         color: COLORS.TEXT,

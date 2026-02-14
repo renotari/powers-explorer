@@ -13,6 +13,7 @@
 
 import Phaser from 'phaser';
 import { StateManager } from '@/managers/StateManager.js';
+import { I18nManager } from '@/managers/I18nManager.js';
 import { COLORS, FULLSCREEN_BUTTON } from '@/utils/Constants.js';
 import { Button } from '@/components/ui/Button.js';
 
@@ -29,9 +30,10 @@ export class MenuScene extends Phaser.Scene {
 
     const width = this.cameras.main.width;
     const height = this.cameras.main.height;
+    const t = (key, params) => I18nManager.getInstance().t(key, params);
 
     // Title
-    this.add.text(width / 2, height / 3, 'Powers Explorer', {
+    this.add.text(width / 2, height / 4, t('menu.title'), {
       fontSize: '96px',
       color: COLORS.TEXT,
       fontFamily: 'Arial',
@@ -39,7 +41,7 @@ export class MenuScene extends Phaser.Scene {
     }).setOrigin(0.5);
 
     // Subtitle
-    this.add.text(width / 2, height / 3 + 90, 'Explore the Universe from Quarks to Quasars', {
+    this.add.text(width / 2, height / 3, t('menu.subtitle'), {
       fontSize: '27px',
       color: COLORS.TEXT,
       fontFamily: 'Arial'
@@ -52,7 +54,7 @@ export class MenuScene extends Phaser.Scene {
     this.createFullscreenButton();
 
     // Footer text
-    this.add.text(width / 2, height - 60, 'Educational Tool for Scale Visualization', {
+    this.add.text(width / 2, height - 60, t('menu.footer'), {
       fontSize: '21px',
       color: '#888888',
       fontFamily: 'Arial'
@@ -63,11 +65,14 @@ export class MenuScene extends Phaser.Scene {
    * Create mode selection buttons
    */
   createButtons(width, height) {
-    const buttonY = height / 2;
+    const t = (key, params) => I18nManager.getInstance().t(key, params);
+    let buttonY = height / 3 + 100;
+    const textDeltaY = 65; // Space between button and description text
+    const buttonSpacingY = 80; // Space between buttons
 
     // Cosmic Comparison button
     this.cosmicComparisonBtn = new Button(this, width / 2, buttonY, {
-      text: 'Cosmic Comparison',
+      text: t('menu.cosmicComparison'),
       width: 450,
       height: 90,
       fontSize: '36px',
@@ -79,16 +84,18 @@ export class MenuScene extends Phaser.Scene {
       this.startCosmicComparison();
     });
 
+    buttonY += textDeltaY;
     // Description
-    this.add.text(width / 2, buttonY + 68, 'Compare sizes and distances of cosmic objects', {
+    this.add.text(width / 2, buttonY, t('menu.cosmicComparisonDesc'), {
       fontSize: '21px',
       color: '#cccccc',
       fontFamily: 'Arial'
     }).setOrigin(0.5);
 
     // Solar System button
-    this.solarSystemBtn = new Button(this, width / 2, buttonY + 120, {
-      text: 'Solar System',
+    buttonY += buttonSpacingY;
+    this.solarSystemBtn = new Button(this, width / 2, buttonY, {
+      text: t('menu.solarSystem'),
       width: 450,
       height: 90,
       fontSize: '36px',
@@ -101,15 +108,17 @@ export class MenuScene extends Phaser.Scene {
     });
 
     // Description
-    this.add.text(width / 2, buttonY + 188, 'Explore the solar system with three visualization modes', {
+    buttonY += textDeltaY;
+    this.add.text(width / 2, buttonY, t('menu.solarSystemDesc'), {
       fontSize: '21px',
       color: '#cccccc',
       fontFamily: 'Arial'
     }).setOrigin(0.5);
 
     // Powers of Ten button (disabled - coming soon)
-    this.powersOfTenBtn = new Button(this, width / 2, buttonY + 240, {
-      text: 'Powers of Ten',
+    buttonY += buttonSpacingY;
+    this.powersOfTenBtn = new Button(this, width / 2, buttonY, {
+      text: t('menu.powersOfTen'),
       width: 450,
       height: 90,
       fontSize: '36px',
@@ -119,7 +128,8 @@ export class MenuScene extends Phaser.Scene {
     });
 
     // Description
-    this.add.text(width / 2, buttonY + 308, 'Zoom through 61 levels of scale (Coming Soon)', {
+    buttonY += textDeltaY;
+    this.add.text(width / 2, buttonY, t('menu.powersOfTenDesc'), {
       fontSize: '21px',
       color: '#777777',
       fontFamily: 'Arial'

@@ -12,6 +12,7 @@ import { ComponentBase } from '@/components/ComponentBase.js';
 import { PlanetRenderer } from './PlanetRenderer.js';
 import { DataManager } from '@/managers/DataManager.js';
 import { StateManager } from '@/managers/StateManager.js';
+import { I18nManager } from '@/managers/I18nManager.js';
 import { ScaleCalculator } from '@/utils/ScaleCalculator.js';
 import { GAME_WIDTH, GAME_HEIGHT, SOLAR_SYSTEM, COLORS } from '@/utils/Constants.js';
 import { parseHexColor } from '@/utils/ColorUtils.js';
@@ -184,8 +185,9 @@ export class OrbitalView extends ComponentBase {
    * Create data source indicator
    */
   createDataSourceIndicator() {
+    const t = (key) => I18nManager.getInstance().t(key);
     const isRealTime = this.stateManager.isUsingRealTimeData();
-    const text = isRealTime ? 'Real-time data' : 'Simulated positions';
+    const text = isRealTime ? t('solar.realTimeData') : t('solar.simulatedPositions');
     const color = isRealTime ? '#4CAF50' : '#FFA726';
 
     this.dataSourceIndicator = this.scene.add.text(

@@ -9,6 +9,7 @@
  */
 
 import { ComponentBase } from '@/components/ComponentBase.js';
+import { I18nManager } from '@/managers/I18nManager.js';
 import { COLORS, SOLAR_SYSTEM, GAME_WIDTH, GAME_HEIGHT } from '@/utils/Constants.js';
 import { parseHexColor } from '@/utils/ColorUtils.js';
 
@@ -51,11 +52,15 @@ export class PlanetRenderer extends ComponentBase {
     );
     this.container.add(this.circle);
 
+    // Get translated name for display
+    const tr = I18nManager.getInstance().getObjectTranslation(this.planetData.id);
+    this.displayName = tr?.name ?? this.planetData.name;
+
     // Create label (initially hidden)
     this.label = this.scene.add.text(
       this.x,
       this.y + this.radius + SOLAR_SYSTEM.LABEL_OFFSET_Y,
-      this.planetData.name,
+      this.displayName,
       {
         fontSize: '21px',
         color: COLORS.TEXT,
@@ -148,7 +153,7 @@ export class PlanetRenderer extends ComponentBase {
     this.tooltip = this.scene.add.text(
       this.x,
       0, // positioned below
-      this.planetData.name,
+      this.displayName,
       {
         fontSize: SOLAR_SYSTEM.TOOLTIP_FONT_SIZE,
         color: COLORS.TEXT,

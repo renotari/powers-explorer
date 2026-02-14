@@ -1,0 +1,76 @@
+{
+  "boot": {
+    "title": "Powers Explorer",
+    "loading": "Loading...",
+    "loadingPercent": "Loading... {percent}%",
+    "retry": "Retry",
+    "error": "Error: {message}"
+  },
+  "menu": {
+    "title": "Powers Explorer",
+    "subtitle": "Explore the Universe from Quarks to Quasars",
+    "cosmicComparison": "Cosmic Comparison",
+    "cosmicComparisonDesc": "Compare sizes and distances of cosmic objects",
+    "solarSystem": "Solar System",
+    "solarSystemDesc": "Explore the solar system with three visualization modes",
+    "powersOfTen": "Powers of Ten",
+    "powersOfTenDesc": "Zoom through 61 levels of scale (Coming Soon)",
+    "footer": "Educational Tool for Scale Visualization"
+  },
+  "overlay": {
+    "back": "Back",
+    "modeComparison": "Cosmic Comparison Mode",
+    "modeSolarSystem": "Solar System Mode",
+    "modePowersOfTen": "Powers of Ten Mode"
+  },
+  "comparison": {
+    "selectTitle": "Select Two Objects:",
+    "selectInstruction": "Click to select objects for comparison",
+    "showDistance": "Show Distance",
+    "newComparison": "New Comparison",
+    "startLightTravel": "Start Light Travel",
+    "restart": "Restart",
+    "noDistanceData": "Distance data not available for these objects",
+    "ratio": "{name1} is {ratio} larger than {name2}",
+    "distancePrefix": "Distance: {value}",
+    "lightTravelTime": "Light Travel Time:",
+    "spedUp": "(Sped up 10^{exponent} for viewing)"
+  },
+  "speedup": {
+    "label": "Speedup",
+    "realTime": "Speed of light: 1× (Real Time)",
+    "multiplied": "Speed of light: 10^{exponent}×"
+  },
+  "solar": {
+    "viewSizes": "View: Sizes",
+    "viewDistances": "View: Distances",
+    "viewOrbits": "View: Orbits",
+    "cycleView": "Cycle View",
+    "showSun": "Show Sun",
+    "hideSun": "Hide Sun",
+    "realProportions": "Real Proportions",
+    "enhancedView": "Enhanced View",
+    "realTimeData": "Real-time data",
+    "simulatedPositions": "Simulated positions",
+    "diameter": "Diameter: {value}",
+    "distance": "Distance: {value} AU",
+    "orbitalPeriod": "Orbital Period: {value} days",
+    "facts": "Facts:"
+  },
+  "units": {
+    "seconds": "s",
+    "years": "years",
+    "days": "days",
+    "day": "day"
+  },
+  "categories": {
+    "terrestrial": "terrestrial",
+    "star": "star",
+    "gas-giant": "gas-giant",
+    "ice-giant": "ice-giant",
+    "dwarf-planet": "dwarf-planet",
+    "satellite": "satellite",
+    "spacecraft": "spacecraft",
+    "galaxy": "galaxy"
+  }
+}

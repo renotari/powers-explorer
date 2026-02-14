@@ -8,6 +8,7 @@
  */
 
 import { ComponentBase } from '@/components/ComponentBase.js';
+import { I18nManager } from '@/managers/I18nManager.js';
 import { GAME_WIDTH, GAME_HEIGHT, COLORS } from '@/utils/Constants.js';
 import { parseHexColor } from '@/utils/ColorUtils.js';
 
@@ -87,12 +88,13 @@ export class ModeCycleButton extends ComponentBase {
    * @returns {string} Display text
    */
   getModeText(mode) {
+    const t = (key) => I18nManager.getInstance().t(key);
     const modeNames = {
-      sizeComparison: 'View: Sizes',
-      distanceView: 'View: Distances',
-      orbitalView: 'View: Orbits'
+      sizeComparison: t('solar.viewSizes'),
+      distanceView: t('solar.viewDistances'),
+      orbitalView: t('solar.viewOrbits')
     };
-    return modeNames[mode] || 'Cycle View';
+    return modeNames[mode] || t('solar.cycleView');
   }
 
   /**

@@ -1,0 +1,142 @@
+{
+  "earth": {
+    "name": "Earth",
+    "category": "terrestrial",
+    "educationalFacts": [
+      "Earth is the only known planet to harbor life",
+      "Earth's atmosphere is 78% nitrogen and 21% oxygen",
+      "Earth has one natural satellite: the Moon",
+      "Earth's core temperature is about 5,400°C, similar to the Sun's surface"
+    ]
+  },
+  "moon": {
+    "name": "Moon",
+    "category": "satellite",
+    "educationalFacts": [
+      "The Moon is about 1/4 the diameter of Earth",
+      "The Moon's gravity is about 1/6 of Earth's gravity",
+      "The Moon is slowly drifting away from Earth at about 3.8 cm per year",
+      "The same side of the Moon always faces Earth (tidal locking)"
+    ]
+  },
+  "sun": {
+    "name": "Sun",
+    "category": "star",
+    "educationalFacts": [
+      "The Sun contains 99.86% of all mass in our solar system",
+      "Light from the Sun takes about 8 minutes and 20 seconds to reach Earth",
+      "The Sun's surface temperature is approximately 5,500°C",
+      "The Sun converts about 600 million tons of hydrogen into helium every second"
+    ]
+  },
+  "mercury": {
+    "name": "Mercury",
+    "category": "terrestrial",
+    "educationalFacts": [
+      "Mercury is the smallest planet in our solar system",
+      "Despite being closest to the Sun, Mercury is not the hottest planet",
+      "A day on Mercury (sunrise to sunrise) lasts 176 Earth days",
+      "Mercury has no atmosphere and no moons"
+    ]
+  },
+  "venus": {
+    "name": "Venus",
+    "category": "terrestrial",
+    "educationalFacts": [
+      "Venus is the hottest planet in our solar system at 462°C",
+      "Venus rotates backwards compared to most planets",
+      "A day on Venus is longer than its year",
+      "Venus has a thick atmosphere of carbon dioxide with sulfuric acid clouds"
+    ]
+  },
+  "mars": {
+    "name": "Mars",
+    "category": "terrestrial",
+    "educationalFacts": [
+      "Mars has the largest volcano in the solar system: Olympus Mons",
+      "Mars has two small moons: Phobos and Deimos",
+      "A Martian day (sol) is about 24 hours and 37 minutes",
+      "Mars appears red due to iron oxide (rust) on its surface"
+    ]
+  },
+  "jupiter": {
+    "name": "Jupiter",
+    "category": "gas-giant",
+    "educationalFacts": [
+      "Jupiter is the largest planet in our solar system",
+      "Jupiter's Great Red Spot is a storm larger than Earth that has raged for centuries",
+      "Jupiter has at least 95 known moons",
+      "Jupiter's magnetic field is 20,000 times stronger than Earth's"
+    ]
+  },
+  "saturn": {
+    "name": "Saturn",
+    "category": "gas-giant",
+    "educationalFacts": [
+      "Saturn's rings are made mostly of ice particles and rocky debris",
+      "Saturn is the least dense planet — it would float in water",
+      "Saturn has 146 known moons, more than any other planet",
+      "Saturn's moon Titan has a thick atmosphere and liquid methane lakes"
+    ]
+  },
+  "uranus": {
+    "name": "Uranus",
+    "category": "ice-giant",
+    "educationalFacts": [
+      "Uranus rotates on its side, with an axial tilt of 98 degrees",
+      "Uranus was the first planet discovered with a telescope (1781)",
+      "Uranus has the coldest atmosphere of any planet, down to -224°C",
+      "Uranus has 13 known rings and 27 known moons"
+    ]
+  },
+  "neptune": {
+    "name": "Neptune",
+    "category": "ice-giant",
+    "educationalFacts": [
+      "Neptune has the strongest winds in the solar system, up to 2,100 km/h",
+      "Neptune takes 165 Earth years to orbit the Sun",
+      "Neptune was discovered mathematically before being observed",
+      "Neptune has 16 known moons, the largest being Triton"
+    ]
+  },
+  "pluto": {
+    "name": "Pluto",
+    "category": "dwarf-planet",
+    "educationalFacts": [
+      "Pluto was reclassified as a dwarf planet in 2006",
+      "Pluto's largest moon, Charon, is more than half Pluto's size",
+      "It takes Pluto 248 Earth years to orbit the Sun",
+      "NASA's New Horizons spacecraft visited Pluto in 2015"
+    ]
+  },
+  "voyager-1": {
+    "name": "Voyager 1",
+    "category": "spacecraft",
+    "educationalFacts": [
+      "Voyager 1 observed the volcanic activity on Io and the rings of Saturn",
+      "It carries the Golden Record with sounds and images of Earth",
+      "In 2012, it became the first human-made object to enter interstellar space",
+      "It is traveling at a speed of about 17 km/s relative to the Sun"
+    ]
+  },
+  "proxima-centauri": {
+    "name": "Proxima Centauri",
+    "category": "star",
+    "educationalFacts": [
+      "Proxima Centauri is only 4.24 light-years from Earth",
+      "It's about 7 times smaller than the Sun",
+      "Proxima Centauri has at least one exoplanet: Proxima b",
+      "Light from Proxima Centauri takes 4.24 years to reach Earth"
+    ]
+  },
+  "andromeda-galaxy": {
+    "name": "Andromeda Galaxy",
+    "category": "galaxy",
+    "educationalFacts": [
+      "Andromeda will collide with the Milky Way in about 4.5 billion years",
+      "Contains about 1 trillion stars (compared to Milky Way's 200-400 billion)",
+      "Visible to the naked eye from Earth on clear, dark nights",
+      "Approximately 200,000 light-years in diameter"
+    ]
+  }
+}

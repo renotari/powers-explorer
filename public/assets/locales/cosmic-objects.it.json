@@ -1,0 +1,142 @@
+{
+  "earth": {
+    "name": "Terra",
+    "category": "terrestre",
+    "educationalFacts": [
+      "La Terra \u00e8 l'unico pianeta conosciuto che ospita la vita",
+      "L'atmosfera terrestre \u00e8 composta per il 78% di azoto e il 21% di ossigeno",
+      "La Terra ha un satellite naturale: la Luna",
+      "La temperatura del nucleo terrestre \u00e8 circa 5.400\u00b0C, simile alla superficie del Sole"
+    ]
+  },
+  "moon": {
+    "name": "Luna",
+    "category": "satellite",
+    "educationalFacts": [
+      "La Luna ha un diametro pari a circa 1/4 di quello della Terra",
+      "La gravit\u00e0 lunare \u00e8 circa 1/6 di quella terrestre",
+      "La Luna si sta lentamente allontanando dalla Terra di circa 3,8 cm all'anno",
+      "La stessa faccia della Luna \u00e8 sempre rivolta verso la Terra (rotazione sincrona)"
+    ]
+  },
+  "sun": {
+    "name": "Sole",
+    "category": "stella",
+    "educationalFacts": [
+      "Il Sole contiene il 99,86% di tutta la massa del sistema solare",
+      "La luce del Sole impiega circa 8 minuti e 20 secondi per raggiungere la Terra",
+      "La temperatura superficiale del Sole \u00e8 di circa 5.500\u00b0C",
+      "Il Sole converte circa 600 milioni di tonnellate di idrogeno in elio ogni secondo"
+    ]
+  },
+  "mercury": {
+    "name": "Mercurio",
+    "category": "terrestre",
+    "educationalFacts": [
+      "Mercurio \u00e8 il pianeta pi\u00f9 piccolo del sistema solare",
+      "Nonostante sia il pi\u00f9 vicino al Sole, Mercurio non \u00e8 il pianeta pi\u00f9 caldo",
+      "Un giorno su Mercurio (da alba ad alba) dura 176 giorni terrestri",
+      "Mercurio non ha atmosfera n\u00e9 lune"
+    ]
+  },
+  "venus": {
+    "name": "Venere",
+    "category": "terrestre",
+    "educationalFacts": [
+      "Venere \u00e8 il pianeta pi\u00f9 caldo del sistema solare a 462\u00b0C",
+      "Venere ruota al contrario rispetto alla maggior parte dei pianeti",
+      "Un giorno su Venere \u00e8 pi\u00f9 lungo del suo anno",
+      "Venere ha una densa atmosfera di anidride carbonica con nubi di acido solforico"
+    ]
+  },
+  "mars": {
+    "name": "Marte",
+    "category": "terrestre",
+    "educationalFacts": [
+      "Marte ospita il vulcano pi\u00f9 grande del sistema solare: l'Olympus Mons",
+      "Marte ha due piccole lune: Phobos e Deimos",
+      "Un giorno marziano (sol) dura circa 24 ore e 37 minuti",
+      "Marte appare rosso a causa dell'ossido di ferro (ruggine) sulla sua superficie"
+    ]
+  },
+  "jupiter": {
+    "name": "Giove",
+    "category": "gigante gassoso",
+    "educationalFacts": [
+      "Giove \u00e8 il pianeta pi\u00f9 grande del sistema solare",
+      "La Grande Macchia Rossa di Giove \u00e8 una tempesta pi\u00f9 grande della Terra che infuria da secoli",
+      "Giove ha almeno 95 lune conosciute",
+      "Il campo magnetico di Giove \u00e8 20.000 volte pi\u00f9 forte di quello terrestre"
+    ]
+  },
+  "saturn": {
+    "name": "Saturno",
+    "category": "gigante gassoso",
+    "educationalFacts": [
+      "Gli anelli di Saturno sono composti principalmente da particelle di ghiaccio e detriti rocciosi",
+      "Saturno \u00e8 il pianeta meno denso: galleggerebbe nell'acqua",
+      "Saturno ha 146 lune conosciute, pi\u00f9 di qualsiasi altro pianeta",
+      "Titano, luna di Saturno, ha un'atmosfera densa e laghi di metano liquido"
+    ]
+  },
+  "uranus": {
+    "name": "Urano",
+    "category": "gigante di ghiaccio",
+    "educationalFacts": [
+      "Urano ruota su un fianco, con un'inclinazione assiale di 98 gradi",
+      "Urano fu il primo pianeta scoperto con un telescopio (1781)",
+      "Urano ha l'atmosfera pi\u00f9 fredda di qualsiasi pianeta, fino a -224\u00b0C",
+      "Urano ha 13 anelli conosciuti e 27 lune conosciute"
+    ]
+  },
+  "neptune": {
+    "name": "Nettuno",
+    "category": "gigante di ghiaccio",
+    "educationalFacts": [
+      "Nettuno ha i venti pi\u00f9 forti del sistema solare, fino a 2.100 km/h",
+      "Nettuno impiega 165 anni terrestri per orbitare intorno al Sole",
+      "Nettuno fu scoperto matematicamente prima di essere osservato",
+      "Nettuno ha 16 lune conosciute, la pi\u00f9 grande delle quali \u00e8 Tritone"
+    ]
+  },
+  "pluto": {
+    "name": "Plutone",
+    "category": "pianeta nano",
+    "educationalFacts": [
+      "Plutone \u00e8 stato riclassificato come pianeta nano nel 2006",
+      "Caronte, la luna pi\u00f9 grande di Plutone, \u00e8 pi\u00f9 della met\u00e0 delle dimensioni di Plutone",
+      "Plutone impiega 248 anni terrestri per orbitare intorno al Sole",
+      "La sonda New Horizons della NASA ha visitato Plutone nel 2015"
+    ]
+  },
+  "voyager-1": {
+    "name": "Voyager 1",
+    "category": "sonda spaziale",
+    "educationalFacts": [
+      "Voyager 1 ha osservato l'attivit\u00e0 vulcanica su Io e gli anelli di Saturno",
+      "Trasporta il Golden Record con suoni e immagini della Terra",
+      "Nel 2012 \u00e8 diventato il primo oggetto costruito dall'uomo a entrare nello spazio interstellare",
+      "Viaggia a una velocit\u00e0 di circa 17 km/s rispetto al Sole"
+    ]
+  },
+  "proxima-centauri": {
+    "name": "Proxima Centauri",
+    "category": "stella",
+    "educationalFacts": [
+      "Proxima Centauri dista solo 4,24 anni luce dalla Terra",
+      "\u00c8 circa 7 volte pi\u00f9 piccola del Sole",
+      "Proxima Centauri ha almeno un esopianeta: Proxima b",
+      "La luce di Proxima Centauri impiega 4,24 anni per raggiungere la Terra"
+    ]
+  },
+  "andromeda-galaxy": {
+    "name": "Galassia di Andromeda",
+    "category": "galassia",
+    "educationalFacts": [
+      "Andromeda collider\u00e0 con la Via Lattea tra circa 4,5 miliardi di anni",
+      "Contiene circa 1.000 miliardi di stelle (contro i 200-400 miliardi della Via Lattea)",
+      "Visibile a occhio nudo dalla Terra nelle notti limpide e buie",
+      "Ha un diametro di circa 200.000 anni luce"
+    ]
+  }
+}

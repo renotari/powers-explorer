@@ -12,6 +12,7 @@ import { ComponentBase } from '@/components/ComponentBase.js';
 import { PlanetRenderer } from './PlanetRenderer.js';
 import { StateManager } from '@/managers/StateManager.js';
 import { DataManager } from '@/managers/DataManager.js';
+import { I18nManager } from '@/managers/I18nManager.js';
 import { GAME_WIDTH, GAME_HEIGHT, SOLAR_SYSTEM, COLORS } from '@/utils/Constants.js';
 import { parseHexColor } from '@/utils/ColorUtils.js';
 
@@ -171,10 +172,11 @@ export class SizeComparisonView extends ComponentBase {
 
     // Button text
     const includeSun = this.stateManager.isSunVisible();
+    const t = (key) => I18nManager.getInstance().t(key);
     const buttonText = this.scene.add.text(
       buttonX,
       buttonY,
-      includeSun ? 'Hide Sun' : 'Show Sun',
+      includeSun ? t('solar.hideSun') : t('solar.showSun'),
       {
         fontSize: '21px',
         color: COLORS.TEXT,
@@ -210,7 +212,8 @@ export class SizeComparisonView extends ComponentBase {
    */
   toggleSun() {
     const includeSun = this.stateManager.isSunVisible();
-    this.sunToggleButtonText.setText(includeSun ? 'Hide Sun' : 'Show Sun');
+    const t = (key) => I18nManager.getInstance().t(key);
+    this.sunToggleButtonText.setText(includeSun ? t('solar.hideSun') : t('solar.showSun'));
 
     // Clear existing renderers
     this.clearRenderers();

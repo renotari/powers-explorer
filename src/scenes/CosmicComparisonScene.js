@@ -20,6 +20,7 @@ import { DistanceAnimator } from '@/components/comparison/DistanceAnimator.js';
 import { LightSpeedTraveler } from '@/components/comparison/LightSpeedTraveler.js';
 import { SpeedupControl } from '@/components/comparison/SpeedupControl.js';
 import { COLORS, GAME_WIDTH, GAME_HEIGHT } from '@/utils/Constants.js';
+import { I18nManager } from '@/managers/I18nManager.js';
 import { Button } from '@/components/ui/Button.js';
 
 export class CosmicComparisonScene extends Phaser.Scene {
@@ -54,19 +55,20 @@ export class CosmicComparisonScene extends Phaser.Scene {
    */
   initializeComponents() {
     // Object selector (shown at start)
-    this.objectSelector = new ObjectSelector(this, 375, 225);
+    this.objectSelector = new ObjectSelector(this, GAME_WIDTH / 2, 225);
 
     // Scale display (hidden initially)
     this.scaleDisplay = new ScaleDisplay(this);
     this.scaleDisplay.hide();
 
-    // Speedup control (always visible)
+    // Speedup control
     this.speedupControl = new SpeedupControl(
       this,
       GAME_WIDTH / 2,
-      GAME_HEIGHT - 150
+      GAME_HEIGHT / 4 * 3 // Position at bottom center 
     );
     this.speedupControl.on('speedupChanged', this.onSpeedupChanged, this);
+    this.speedupControl.hide();
 
     // Distance animator and light traveler will be created on-demand
     this.distanceAnimator = null;
@@ -226,7 +228,7 @@ export class CosmicComparisonScene extends Phaser.Scene {
     this.lightTraveler.on('travelComplete', this.onLightTravelComplete, this);
 
     // Create Start button instead of auto-starting
-    this.createStartRestartButton('Start');
+    this.createStartRestartButton(true);
   }
 
   // ========================================
@@ -270,11 +272,13 @@ export class CosmicComparisonScene extends Phaser.Scene {
   onLightTravelComplete() {
     console.log('[CosmicComparisonScene] Light travel complete');
 
+    this.speedupControl.hide();
+
     // Show "Restart" button
-    this.createStartRestartButton('Restart');
+    this.createStartRestartButton(false);
 
     // Show "New Comparison" button
-    this.createNewComparisonButton();
+    // this.createNewComparisonButton();
   }
 
   /**
@@ -298,13 +302,14 @@ export class CosmicComparisonScene extends Phaser.Scene {
    * Create "Show Distance" button
    */
   createDistanceButton() {
+    const t = (key, params) => I18nManager.getInstance().t(key, params);
     const width = this.cameras.main.width;
     const height = this.cameras.main.height;
     const buttonY = height - 120;
 
     // Create Show Distance button
     this.distanceButton = new Button(this, width / 2, buttonY, {
-      text: 'Show Distance',
+      text: t('comparison.showDistance'),
       width: 300,
       height: 75,
       fontSize: '30px',
@@ -334,7 +339,7 @@ export class CosmicComparisonScene extends Phaser.Scene {
 
     // Create New Comparison button
     this.newComparisonButton = new Button(this, width / 2, buttonY, {
-      text: 'New Comparison',
+      text: I18nManager.getInstance().t('comparison.newComparison'),
       width: 300,
       height: 75,
       fontSize: '30px',
@@ -356,14 +361,17 @@ export class CosmicComparisonScene extends Phaser.Scene {
 
   /**
    * Create Start/Restart button for light travel animation
-   * @param {string} label - Button text ('Start' or 'Restart')
+   * @param {boolean} isStart - true for Start, false for Restart
    */
-  createStartRestartButton(label) {
+  createStartRestartButton(isStart) {
+    const t = (key, params) => I18nManager.getInstance().t(key, params);
     const width = this.cameras.main.width;
     const height = this.cameras.main.height;
 
     // Position above speedup control (which is at height - 150)
     const buttonY = height - 300;
+
+    const label = isStart ? t('comparison.startLightTravel') : t('comparison.restart');
 
     // Create Start/Restart button
     this.startRestartButton = new Button(this, width / 2, buttonY, {
@@ -377,7 +385,7 @@ export class CosmicComparisonScene extends Phaser.Scene {
     });
 
     this.startRestartButton.on('clicked', () => {
-      if (label === 'Start') {
+      if (isStart) {
         // Hide button and start animation
         this.hideStartRestartButton();
         this.lightTraveler.animate();
@@ -385,6 +393,7 @@ export class CosmicComparisonScene extends Phaser.Scene {
         // Restart: reset speedup and replay animation
         this.restartLightAnimation();
       }
+      this.speedupControl.show();
     });
   }
 
@@ -460,7 +469,7 @@ export class CosmicComparisonScene extends Phaser.Scene {
     const message = this.add.text(
       width / 2,
       height / 2,
-      'Distance data not available for these objects',
+      I18nManager.getInstance().t('comparison.noDistanceData'),
       {
         fontSize: '30px',
         color: '#ffaa00',

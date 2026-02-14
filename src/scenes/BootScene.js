@@ -11,6 +11,7 @@
  */
 
 import Phaser from 'phaser';
+import { I18nManager } from '@/managers/I18nManager.js';
 import { DataManager } from '@/managers/DataManager.js';
 import { StateManager } from '@/managers/StateManager.js';
 import { COLORS } from '@/utils/Constants.js';
@@ -93,6 +94,10 @@ export class BootScene extends Phaser.Scene {
     console.log('[BootScene] Initializing managers...');
 
     try {
+      // Initialize I18nManager first (loads locale JSON files)
+      await I18nManager.getInstance().init(this);
+      console.log('[BootScene] I18nManager initialized');
+
       // Initialize DataManager (loads JSON files)
       await DataManager.getInstance().init(this);
       console.log('[BootScene] DataManager initialized');
@@ -122,8 +127,9 @@ export class BootScene extends Phaser.Scene {
   showError(message) {
     const width = this.cameras.main.width;
     const height = this.cameras.main.height;
+    const t = (key, params) => I18nManager.getInstance().t(key, params);
 
-    this.add.text(width / 2, height / 2, `Error: ${message}`, {
+    this.add.text(width / 2, height / 2, t('boot.error', { message }), {
       fontSize: '30px',
       color: '#ff0000',
       fontFamily: 'Arial',
@@ -137,7 +143,7 @@ export class BootScene extends Phaser.Scene {
       parseHexColor(COLORS.PRIMARY)
     ).setInteractive({ useHandCursor: true });
 
-    const retryText = this.add.text(width / 2, height / 2 + 90, 'Retry', {
+    const retryText = this.add.text(width / 2, height / 2 + 90, t('boot.retry'), {
       fontSize: '27px',
       color: COLORS.TEXT,
       fontFamily: 'Arial'
