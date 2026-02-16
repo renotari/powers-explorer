@@ -3,6 +3,7 @@
     {
       "id": "earth",
       "name": "Earth",
+      "image": { "src": "earth-512-no-bg.png", "width": 512, "height": 512 },
       "category": "terrestrial",
       "diameter": 12742000,
       "diameterUnit": "m",
@@ -52,6 +53,11 @@
       "scaleLevel": 9,
       "description": "Our solar system's star, containing 99.86% of the system's mass",
       "color": "#FDB813",
+      "image": {
+        "src": "sun-no-bg.png",
+        "width": 821,
+        "height": 821
+      },
       "educationalFacts": [
         "The Sun is approximately 4.6 billion years old",
         "Light from the Sun takes about 8 minutes to reach Earth",

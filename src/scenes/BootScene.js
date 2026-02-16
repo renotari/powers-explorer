@@ -25,15 +25,6 @@ export class BootScene extends Phaser.Scene {
   preload() {
     console.log('[BootScene] Preloading assets...');
 
-    // Load cosmic object images
-    // Each entry: texture key = object ID from cosmic-objects.json
-    const IMAGE_MANIFEST = [
-      { id: 'moon', src: './assets/img/moon-512-no-bg.png' }
-    ];
-    IMAGE_MANIFEST.forEach(({ id, src }) => {
-      this.load.image(id, src);
-    });
-
     // Show loading bar
     this.createLoadingBar();
 
@@ -111,6 +102,15 @@ export class BootScene extends Phaser.Scene {
       await DataManager.getInstance().init(this);
       console.log('[BootScene] DataManager initialized');
 
+      // Dynamically load images from cosmic-objects.json
+      const objects = DataManager.getInstance().getAllObjects();
+      const imageEntries = objects.filter(obj => obj.image && obj.image.src);
+
+      if (imageEntries.length > 0) {
+        await this.loadObjectImages(imageEntries);
+        console.log(`[BootScene] Loaded ${imageEntries.length} object images`);
+      }
+
       // Initialize StateManager
       StateManager.getInstance().init();
       console.log('[BootScene] StateManager initialized');
@@ -164,6 +164,29 @@ export class BootScene extends Phaser.Scene {
       retryBtn.destroy();
       retryText.destroy();
       this.scene.restart();
+    });
+  }
+
+  /**
+   * Dynamically load images for cosmic objects that have an image field.
+   * Used outside preload(), so requires manual this.load.start().
+   * @param {Array} entries - Objects with id and image.src fields
+   * @returns {Promise}
+   */
+  loadObjectImages(entries) {
+    return new Promise((resolve) => {
+      entries.forEach(obj => {
+        if (!this.textures.exists(obj.id)) {
+          this.load.image(obj.id, `./assets/img/${obj.image.src}`);
+        }
+      });
+
+      if (this.load.totalToLoad > 0) {
+        this.load.once('complete', resolve);
+        this.load.start();
+      } else {
+        resolve();
+      }
     });
   }
 
