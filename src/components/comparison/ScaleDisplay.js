@@ -14,7 +14,7 @@ import { ScaleCalculator } from '@/utils/ScaleCalculator.js';
 import { DataManager } from '@/managers/DataManager.js';
 import { I18nManager } from '@/managers/I18nManager.js';
 import { COLORS } from '@/utils/Constants.js';
-import { parseHexColor } from '@/utils/ColorUtils.js';
+import { SpriteFactory } from '@/utils/SpriteFactory.js';
 
 export class ScaleDisplay extends ComponentBase {
   /**
@@ -85,23 +85,17 @@ export class ScaleDisplay extends ComponentBase {
     const ratio = ScaleCalculator.calculateSizeRatio(larger.diameter, smaller.diameter);
 
     // Create larger object sprite (left side)
-    this.obj1Sprite = this.scene.add.circle(
-      screenWidth / 3,
-      screenHeight / 2,
-      largerSize / 2,  // radius
-      parseHexColor(larger.color)
+    this.obj1Sprite = SpriteFactory.create(
+      this.scene, larger, screenWidth / 3, screenHeight / 2, largerSize / 2
     );
 
     // Create smaller object sprite (right side)
-    this.obj2Sprite = this.scene.add.circle(
-      2 * screenWidth / 3,
-      screenHeight / 2,
-      smallerSize / 2,  // radius
-      parseHexColor(smaller.color)
+    this.obj2Sprite = SpriteFactory.create(
+      this.scene, smaller, 2 * screenWidth / 3, screenHeight / 2, smallerSize / 2
     );
 
     // Add to container
-    this.container.add([this.obj1Sprite, this.obj2Sprite]);
+    this.container.add([this.obj1Sprite.gameObject, this.obj2Sprite.gameObject]);
 
     // Display labels
     this.createLabels(larger, smaller, screenWidth, screenHeight);
@@ -245,7 +239,7 @@ export class ScaleDisplay extends ComponentBase {
    * Destroy component and clean up
    */
   destroy() {
-    // Clear references
+    // Destroy wrapper objects (gameObject destroyed by container, but keeps pattern consistent)
     this.obj1Sprite = null;
     this.obj2Sprite = null;
     this.obj1Data = null;

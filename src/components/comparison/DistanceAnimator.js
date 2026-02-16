@@ -131,10 +131,11 @@ export class DistanceAnimator extends ComponentBase {
     // Calculate scale factors for smooth resize (radius is read-only, must use scale)
     const obj1CurrentRadius = obj1Sprite.radius;
     const obj1TargetRadius = this.obj1Size / 2;
-    const obj1ScaleFactor = obj1TargetRadius / obj1CurrentRadius;
+    const obj1CurrentScale = obj1Sprite.gameObject.scale;
+    const obj1ScaleFactor = obj1CurrentScale * (obj1TargetRadius / obj1CurrentRadius);
 
     this.scene.tweens.add({
-      targets: obj1Sprite,
+      targets: obj1Sprite.gameObject,
       x: targetX1,
       scale: obj1ScaleFactor,  // Animate resize on VISIBLE sprite
       duration: ANIMATION_DURATION.DISTANCE,
@@ -143,10 +144,11 @@ export class DistanceAnimator extends ComponentBase {
 
     const obj2CurrentRadius = obj2Sprite.radius;
     const obj2TargetRadius = this.obj2Size / 2;
-    const obj2ScaleFactor = obj2TargetRadius / obj2CurrentRadius;
+    const obj2CurrentScale = obj2Sprite.gameObject.scale;
+    const obj2ScaleFactor = obj2CurrentScale * (obj2TargetRadius / obj2CurrentRadius);
 
     this.scene.tweens.add({
-      targets: obj2Sprite,
+      targets: obj2Sprite.gameObject,
       x: targetX2,
       scale: obj2ScaleFactor,  // Animate resize on VISIBLE sprite
       duration: ANIMATION_DURATION.DISTANCE,
@@ -187,8 +189,8 @@ export class DistanceAnimator extends ComponentBase {
     console.log('[DistanceAnimator] Swapping to overlay system');
 
     // Hide the original sprites
-    obj1Sprite.setAlpha(0);
-    obj2Sprite.setAlpha(0);
+    obj1Sprite.gameObject.setAlpha(0);
+    obj2Sprite.gameObject.setAlpha(0);
 
     // Create overlays at final positions/sizes
     console.log(`[DistanceAnimator] Creating overlay for ${this.overlayData.obj1.name} (${this.overlayData.obj1.size.toFixed(2)}px)`);

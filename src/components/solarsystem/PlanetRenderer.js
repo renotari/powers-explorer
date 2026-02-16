@@ -11,7 +11,7 @@
 import { ComponentBase } from '@/components/ComponentBase.js';
 import { I18nManager } from '@/managers/I18nManager.js';
 import { COLORS, SOLAR_SYSTEM, GAME_WIDTH, GAME_HEIGHT } from '@/utils/Constants.js';
-import { parseHexColor } from '@/utils/ColorUtils.js';
+import { SpriteFactory } from '@/utils/SpriteFactory.js';
 
 export class PlanetRenderer extends ComponentBase {
   /**
@@ -38,19 +38,11 @@ export class PlanetRenderer extends ComponentBase {
    * Create the planet visual
    */
   create() {
-    // Parse color from hex string to integer
-    const color = this.planetData.color
-      ? parseHexColor(this.planetData.color)
-      : 0xFFFFFF;
-
-    // Create planet circle
-    this.circle = this.scene.add.circle(
-      this.x,
-      this.y,
-      this.radius,
-      color
+    // Create planet visual (image if available, circle fallback)
+    this.bodySprite = SpriteFactory.create(
+      this.scene, this.planetData, this.x, this.y, this.radius
     );
-    this.container.add(this.circle);
+    this.container.add(this.bodySprite.gameObject);
 
     // Get translated name for display
     const tr = I18nManager.getInstance().getObjectTranslation(this.planetData.id);
@@ -77,7 +69,7 @@ export class PlanetRenderer extends ComponentBase {
 
     // Make interactive if enabled
     if (this.isInteractive) {
-      this.circle.setInteractive({ useHandCursor: true });
+      this.bodySprite.setInteractive({ useHandCursor: true });
       this.setupInteractions();
     }
   }
@@ -91,8 +83,8 @@ export class PlanetRenderer extends ComponentBase {
       this.emit('planetClicked', {
         planetId: this.planetData.id,
         planetData: this.planetData,
-        x: this.circle.x,
-        y: this.circle.y
+        x: this.bodySprite.x,
+        y: this.bodySprite.y
       });
     };
 
@@ -105,9 +97,9 @@ export class PlanetRenderer extends ComponentBase {
     };
 
     // Add event listeners
-    this.circle.on('pointerdown', this.onPointerDown);
-    this.circle.on('pointerover', this.onPointerOver);
-    this.circle.on('pointerout', this.onPointerOut);
+    this.bodySprite.on('pointerdown', this.onPointerDown);
+    this.bodySprite.on('pointerover', this.onPointerOver);
+    this.bodySprite.on('pointerout', this.onPointerOut);
   }
 
   /**
@@ -115,7 +107,7 @@ export class PlanetRenderer extends ComponentBase {
    */
   highlight() {
     this.scene.tweens.add({
-      targets: this.circle,
+      targets: this.bodySprite.gameObject,
       scaleX: 1.1,
       scaleY: 1.1,
       duration: 150,
@@ -129,7 +121,7 @@ export class PlanetRenderer extends ComponentBase {
    */
   unhighlight() {
     this.scene.tweens.add({
-      targets: this.circle,
+      targets: this.bodySprite.gameObject,
       scaleX: 1.0,
       scaleY: 1.0,
       duration: 150,
@@ -217,7 +209,7 @@ export class PlanetRenderer extends ComponentBase {
   setPosition(x, y) {
     this.x = x;
     this.y = y;
-    this.circle.setPosition(x, y);
+    this.bodySprite.setPosition(x, y);
     this.label.setPosition(x, y + this.radius + SOLAR_SYSTEM.LABEL_OFFSET_Y);
     this.hideTooltip();
   }
@@ -228,7 +220,7 @@ export class PlanetRenderer extends ComponentBase {
    */
   setSize(radius) {
     this.radius = Math.max(radius, SOLAR_SYSTEM.MIN_PLANET_RADIUS);
-    this.circle.setRadius(this.radius);
+    this.bodySprite.setRadius(this.radius);
     // Update label position
     this.label.setY(this.y + this.radius + SOLAR_SYSTEM.LABEL_OFFSET_Y);
   }
@@ -248,18 +240,39 @@ export class PlanetRenderer extends ComponentBase {
       this.y = y;
       this.radius = Math.max(radius, SOLAR_SYSTEM.MIN_PLANET_RADIUS);
 
-      // Animate circle position and radius
+      // Animate position (works for both circle and image)
       this.scene.tweens.add({
-        targets: this.circle,
+        targets: this.bodySprite.gameObject,
         x: x,
         y: y,
-        radius: this.radius,
         duration: duration,
-        ease: 'Quad.easeInOut',
-        onComplete: () => {
-          resolve();
-        }
+        ease: 'Quad.easeInOut'
       });
+
+      if (this.bodySprite._type === 'circle') {
+        // Circle: tween native radius property
+        this.scene.tweens.add({
+          targets: this.bodySprite.gameObject,
+          radius: this.radius,
+          duration: duration,
+          ease: 'Quad.easeInOut',
+          onComplete: () => resolve()
+        });
+      } else {
+        // Image: tween via proxy, apply display size each tick
+        const proxy = { r: this.bodySprite._radius };
+        const targetRadius = this.radius;
+        this.scene.tweens.add({
+          targets: proxy,
+          r: targetRadius,
+          duration: duration,
+          ease: 'Quad.easeInOut',
+          onUpdate: () => {
+            this.bodySprite.setRadius(proxy.r);
+          },
+          onComplete: () => resolve()
+        });
+      }
 
       // Animate label position
       this.scene.tweens.add({
@@ -287,8 +300,8 @@ export class PlanetRenderer extends ComponentBase {
   setInteractive(enabled) {
     this.isInteractive = enabled;
     if (enabled) {
-      if (!this.circle.input) {
-        this.circle.setInteractive({ useHandCursor: true });
+      if (!this.bodySprite.gameObject.input) {
+        this.bodySprite.setInteractive({ useHandCursor: true });
       }
       // Only setup interactions if handlers don't exist yet
       if (!this.onPointerDown) {
@@ -297,11 +310,11 @@ export class PlanetRenderer extends ComponentBase {
     } else {
       // Remove listeners before disabling
       if (this.onPointerDown) {
-        this.circle.off('pointerdown', this.onPointerDown);
-        this.circle.off('pointerover', this.onPointerOver);
-        this.circle.off('pointerout', this.onPointerOut);
+        this.bodySprite.off('pointerdown', this.onPointerDown);
+        this.bodySprite.off('pointerover', this.onPointerOver);
+        this.bodySprite.off('pointerout', this.onPointerOut);
       }
-      this.circle.disableInteractive();
+      this.bodySprite.disableInteractive();
     }
   }
 
@@ -327,24 +340,24 @@ export class PlanetRenderer extends ComponentBase {
   destroy() {
     this.hideTooltip();
 
-    // Kill any active tweens on the circle
-    if (this.circle && this.scene && this.scene.tweens) {
-      this.scene.tweens.killTweensOf(this.circle);
+    // Kill any active tweens on the game object
+    if (this.bodySprite && this.scene && this.scene.tweens) {
+      this.scene.tweens.killTweensOf(this.bodySprite.gameObject);
     }
 
     // Remove event listeners before destroying
-    if (this.circle && this.onPointerDown) {
-      this.circle.off('pointerdown', this.onPointerDown);
-      this.circle.off('pointerover', this.onPointerOver);
-      this.circle.off('pointerout', this.onPointerOut);
+    if (this.bodySprite && this.onPointerDown) {
+      this.bodySprite.off('pointerdown', this.onPointerDown);
+      this.bodySprite.off('pointerover', this.onPointerOver);
+      this.bodySprite.off('pointerout', this.onPointerOut);
       this.onPointerDown = null;
       this.onPointerOver = null;
       this.onPointerOut = null;
     }
 
-    if (this.circle) {
-      this.circle.destroy();
-      this.circle = null;
+    if (this.bodySprite) {
+      this.bodySprite.destroy();
+      this.bodySprite = null;
     }
     if (this.label) {
       this.label.destroy();

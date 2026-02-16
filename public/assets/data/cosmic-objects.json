@@ -29,6 +29,11 @@
       "scaleLevel": 6,
       "description": "Earth's only natural satellite, the fifth-largest moon in the Solar System",
       "color": "#C0C0C0",
+      "image": {
+        "src": "moon-512-no-bg.png",
+        "width": 512,
+        "height": 512
+      },
       "educationalFacts": [
         "The Moon's gravity causes Earth's ocean tides",
         "The same side of the Moon always faces Earth",

@@ -25,6 +25,15 @@ export class BootScene extends Phaser.Scene {
   preload() {
     console.log('[BootScene] Preloading assets...');
 
+    // Load cosmic object images
+    // Each entry: texture key = object ID from cosmic-objects.json
+    const IMAGE_MANIFEST = [
+      { id: 'moon', src: './assets/img/moon-512-no-bg.png' }
+    ];
+    IMAGE_MANIFEST.forEach(({ id, src }) => {
+      this.load.image(id, src);
+    });
+
     // Show loading bar
     this.createLoadingBar();
 
