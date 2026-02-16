@@ -11,6 +11,7 @@
 
 import { ComponentBase } from '@/components/ComponentBase.js';
 import { I18nManager } from '@/managers/I18nManager.js';
+import { ScaleCalculator } from '@/utils/ScaleCalculator.js';
 import { COLORS, SPEEDUP_CONTROL, GAME_WIDTH, GAME_HEIGHT } from '@/utils/Constants.js';
 
 export class SpeedupControl extends ComponentBase {
@@ -193,7 +194,7 @@ export class SpeedupControl extends ComponentBase {
     if (this.exponent === 0) {
       return t('speedup.realTime');
     }
-    return t('speedup.multiplied', { exponent: String(this.exponent) });
+    return t('speedup.multiplied', { exponent: ScaleCalculator.toSuperscript(this.exponent) });
   }
 
   /**

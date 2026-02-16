@@ -34,12 +34,12 @@
     "ratio": "{name1} \u00e8 {ratio} pi\u00f9 grande di {name2}",
     "distancePrefix": "Distanza: {value}",
     "lightTravelTime": "Tempo di Viaggio della Luce:",
-    "spedUp": "(Accelerato 10^{exponent} per la visualizzazione)"
+    "spedUp": "(Accelerato 10{exponent} per la visualizzazione)"
   },
   "speedup": {
     "label": "Accelerazione",
     "realTime": "Velocit\u00e0 della luce: 1\u00d7 (Tempo Reale)",
-    "multiplied": "Velocit\u00e0 della luce: 10^{exponent}\u00d7"
+    "multiplied": "Velocit\u00e0 della luce: 10{exponent}\u00d7"
   },
   "solar": {
     "viewSizes": "Vista: Dimensioni",

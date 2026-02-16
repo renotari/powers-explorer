@@ -262,7 +262,7 @@ export class LightSpeedTraveler extends ComponentBase {
     this.timeLapseIndicator = this.scene.add.text(
       screenWidth / 2,
       screenHeight - 60,
-      I18nManager.getInstance().t('comparison.spedUp', { exponent: String(exponent) }),
+      I18nManager.getInstance().t('comparison.spedUp', { exponent: ScaleCalculator.toSuperscript(exponent) }),
       {
         fontSize: '18px',
         color: '#ffaa00',
@@ -324,7 +324,7 @@ export class LightSpeedTraveler extends ComponentBase {
     if (this.timeLapseIndicator) {
       const exponent = Math.round(Math.log10(speedupMultiplier));
       if (speedupMultiplier > 1) {
-        this.timeLapseIndicator.setText(I18nManager.getInstance().t('comparison.spedUp', { exponent: String(exponent) }));
+        this.timeLapseIndicator.setText(I18nManager.getInstance().t('comparison.spedUp', { exponent: ScaleCalculator.toSuperscript(exponent) }));
         this.timeLapseIndicator.setVisible(true);
       } else {
         this.timeLapseIndicator.setVisible(false);

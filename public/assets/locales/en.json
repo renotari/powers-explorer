@@ -34,12 +34,12 @@
     "ratio": "{name1} is {ratio} larger than {name2}",
     "distancePrefix": "Distance: {value}",
     "lightTravelTime": "Light Travel Time:",
-    "spedUp": "(Sped up 10^{exponent} for viewing)"
+    "spedUp": "(Sped up 10{exponent} for viewing)"
   },
   "speedup": {
     "label": "Speedup",
     "realTime": "Speed of light: 1× (Real Time)",
-    "multiplied": "Speed of light: 10^{exponent}×"
+    "multiplied": "Speed of light: 10{exponent}×"
   },
   "solar": {
     "viewSizes": "View: Sizes",
