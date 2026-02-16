@@ -120,8 +120,8 @@ export class DistanceAnimator extends ComponentBase {
     // Store overlay creation data for after animation completes
     // Overlays will be created AFTER sprites finish animating
     this.overlayData = {
-      obj1: { size: this.obj1Size, position: { x: targetX1, y: centerY }, color: obj1Data.color, name: obj1Data.name },
-      obj2: { size: this.obj2Size, position: { x: targetX2, y: centerY }, color: obj2Data.color, name: obj2Data.name }
+      obj1: { size: this.obj1Size, position: { x: targetX1, y: centerY }, color: obj1Data.color, name: obj1Data.name, objectData: obj1Data },
+      obj2: { size: this.obj2Size, position: { x: targetX2, y: centerY }, color: obj2Data.color, name: obj2Data.name, objectData: obj2Data }
     };
 
     console.log(`[DistanceAnimator] Animating visible sprites, overlays will appear after animation`);
@@ -199,7 +199,8 @@ export class DistanceAnimator extends ComponentBase {
       this.overlayData.obj1.size,
       this.overlayData.obj1.position,
       this.overlayData.obj1.color,
-      this.overlayData.obj1.name
+      this.overlayData.obj1.name,
+      this.overlayData.obj1.objectData
     );
     this.container.add(this.overlay1.container);
 
@@ -209,7 +210,8 @@ export class DistanceAnimator extends ComponentBase {
       this.overlayData.obj2.size,
       this.overlayData.obj2.position,
       this.overlayData.obj2.color,
-      this.overlayData.obj2.name
+      this.overlayData.obj2.name,
+      this.overlayData.obj2.objectData
     );
     this.container.add(this.overlay2.container);
 

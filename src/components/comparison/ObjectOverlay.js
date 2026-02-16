@@ -12,6 +12,7 @@
 import { ComponentBase } from '@/components/ComponentBase.js';
 import { PROPORTIONAL_SIZING } from '@/utils/Constants.js';
 import { parseHexColor } from '@/utils/ColorUtils.js';
+import { SpriteFactory } from '@/utils/SpriteFactory.js';
 
 export class ObjectOverlay extends ComponentBase {
   constructor(scene, config = {}) {
@@ -40,7 +41,7 @@ export class ObjectOverlay extends ComponentBase {
    * @param {string} objectColor - Color as "#RRGGBB"
    * @param {string} objectName - Name for label display
    */
-  create(actualSize, actualPosition, objectColor, objectName) {
+  create(actualSize, actualPosition, objectColor, objectName, objectData) {
     const actualRadius = actualSize / 2;
     const x = actualPosition.x;
     const y = actualPosition.y;
@@ -54,13 +55,13 @@ export class ObjectOverlay extends ComponentBase {
     const line2EndY = line2StartY + 15;                   // 15px second segment
     const labelY = line2EndY + this.labelOffsetY;         // 15px to label
 
-    // Create tiny actual-size object
-    this.actualSprite = this.scene.add.circle(
-      x,
-      y,
-      actualRadius,
-      parseHexColor(objectColor)
-    );
+    // Create tiny actual-size object (use image if available, fall back to circle)
+    if (objectData) {
+      const wrapper = SpriteFactory.create(this.scene, objectData, x, y, actualRadius);
+      this.actualSprite = wrapper.gameObject;
+    } else {
+      this.actualSprite = this.scene.add.circle(x, y, actualRadius, parseHexColor(objectColor));
+    }
     this.actualSprite.setAlpha(0);  // Start invisible, will fade in
 
     // Create first line segment (object bottom → arrow tip)
